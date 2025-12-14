@@ -1,0 +1,28 @@
+const { NextResponse } = require("next/server");
+const connectDB = require("@/server/db");
+const customerService = require("@/server/modules/customer/customer.service");
+const validate = require("@/server/middlewares/validate");
+const { login: loginSchema } = require("@/validation/customer.validation");
+
+exports.runtime = "nodejs";
+
+exports.POST = async function (req) {
+  try {
+    await connectDB();
+
+    const body = await req.json();
+    const data = await validate(loginSchema, body);
+
+    const { customer, token } = await customerService.login(data);
+
+    return NextResponse.json({
+      message: ` ${customer.firstName} عزیز، خوش آمدی!`,
+      data: { customer, token },
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { message: error.message },
+      { status: error.statusCode || 500 }
+    );
+  }
+};
