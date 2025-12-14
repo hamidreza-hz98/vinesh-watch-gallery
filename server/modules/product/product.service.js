@@ -63,32 +63,35 @@ const productService = {
   },
 
   async getDetails(filter) {
-    if (!filter || Object.keys(filter).length === 0) {
-      throwError(
-        "فیلتر مورد نیاز برای دریافت جزئیات محصول ارسال نشده است",
-        400
-      );
-    }
+  if (!filter || Object.keys(filter).length === 0) {
+    throwError(
+      "فیلتر مورد نیاز برای دریافت جزئیات محصول ارسال نشده است",
+      400
+    );
+  }
 
-    const product = await Product.findOneAndUpdate(
-      filter,
-      { $inc: { visits: 1 } },
-      { new: true }
-    )
-      .populate("categories media seo.ogImage seo.twitterImage tags brand")
-      .populate({
-        path: "relatedProducts",
-        populate: {
-          path: "media",
-        },
-      });
+  // Increment visits manually
+  const product = await Product.findOneAndUpdate(
+    filter,
+    { $inc: { visits: 1 } },
+    { new: true }
+  )
+    .populate("categories media tags brand")
+    .populate({ path: "seo.ogImage" })
+    .populate({ path: "seo.twitterImage" })
+    .populate({
+      path: "relatedProducts",
+      populate: { path: "media" },
+    })
+    .lean();
 
-    if (!product) {
-      throwError("محصول مورد نظر یافت نشد", 404);
-    }
+  if (!product) {
+    throwError("محصول مورد نظر یافت نشد", 404);
+  }
 
-    return product;
-  },
+  return product;
+},
+
 
   async delete(_id) {
     const existing = await Product.exists({ _id });
@@ -168,12 +171,14 @@ const productService = {
     const totalProducts = await Product.countDocuments();
 
     const mostVisitedProducts = await Product.find()
-    .select("title slug excerpt price discount media stock visits soldNumber").populate("media")
+      .select("title slug excerpt price discount media stock visits soldNumber")
+      .populate("media")
       .sort({ visits: -1 })
       .limit(10);
 
     const mostSoldProducts = await Product.find()
-    .select("title slug excerpt price discount media stock visits soldNumber").populate("media")
+      .select("title slug excerpt price discount media stock visits soldNumber")
+      .populate("media")
       .sort({ soldNumber: -1 })
       .limit(10);
 

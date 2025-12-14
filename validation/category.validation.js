@@ -1,6 +1,6 @@
 const yup = require("yup");
+const seoValidationSchema = require("./seo.validation");
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
-const seoValidationSchema = require("../../constants/seo-validation-schema");
 
 const categoryValidation = {
   create: yup.object({

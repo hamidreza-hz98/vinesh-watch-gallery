@@ -5,17 +5,19 @@ const { authenticate, requireAdmin } = require("@/server/middlewares/auth");
 const validate = require("@/server/middlewares/validate");
 const { createTagSchema } = require("@/validation/tag.validation");
 
-exports.runtime = "nodejs";
+export const runtime = "nodejs";
 
-exports.POST = async function (req) {
+export const POST = async (req) => {
   try {
     await connectDB();
+    
     const auth = await authenticate(req);
     requireAdmin(auth);
+    
 
     const body = await req.json();
     const data = await validate(createTagSchema, body);
-
+    
     const tag = await tagService.create(data);
 
     return NextResponse.json(
@@ -40,13 +42,12 @@ exports.GET = async function (req) {
     const { searchParams } = new URL(req.url);
     const query = Object.fromEntries(searchParams.entries());
 
-    const result = await tagService.getAll(query);
+    const { tags, total } = await tagService.getAll(query);
 
     return NextResponse.json({
       message: "برچسب ها با موفقیت دریافت شدند.",
       data: {
-        ...result,
-        ...query,
+        tags, total, ...query
       },
     });
   } catch (error) {

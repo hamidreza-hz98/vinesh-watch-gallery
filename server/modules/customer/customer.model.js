@@ -35,24 +35,6 @@ const CustomerSchema = new Schema({
 
 CustomerSchema.plugin(timestamps);
 
-CustomerSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
-
-CustomerSchema.pre("findOneAndUpdate", async function (next) {
-  const update = this.getUpdate();
-
-  if (update.password) {
-    const salt = await bcrypt.genSalt(10);
-    update.password = await bcrypt.hash(update.password, salt);
-  }
-
-  next();
-});
-
 CustomerSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };

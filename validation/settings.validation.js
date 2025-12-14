@@ -1,6 +1,6 @@
 // validations/settings.validation.js
 const yup = require("yup");
-const seoValidationSchema = require("../../constants/seo-validation-schema");
+const seoValidationSchema = require("./seo.validation");
 
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 const iranMobileRegex = /^09\d{9}$/;

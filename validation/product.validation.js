@@ -1,6 +1,6 @@
 // validations/product.validation.js
 const yup = require("yup");
-const seoValidationSchema = require("../../constants/seo-validation-schema");
+const seoValidationSchema = require("./seo.validation");
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 
 const specificationSchema = yup.object({
@@ -8,63 +8,94 @@ const specificationSchema = yup.object({
   value: yup.string().required(),
 });
 
-const productValidation = {
-  create: yup.object({
-    title: yup.string().required(),
-    slug: yup.string().nullable(),
-    excerpt: yup.string().required(),
+exports.createProductSchema = yup.object({
+  title: yup.string().required(),
+  slug: yup.string().nullable(),
+  excerpt: yup.string().required(),
 
-    price: yup.number().min(0).default(0),
-    discount: yup.number().min(0).default(0),
-    description: yup.string().nullable(),
+  price: yup.number().min(0).default(0),
+  discount: yup.number().min(0).default(0),
+  description: yup.string().nullable(),
 
-    media: yup.array().of(yup.string().matches(objectIdRegex)).default([]),
+  media: yup
+    .array()
+    .of(yup.string().matches(objectIdRegex))
+    .default([]),
 
-    stock: yup.number().min(0).default(0),
-    relatedProducts: yup.array().of(yup.string().matches(objectIdRegex)).default([]),
+  stock: yup.number().min(0).default(0),
 
-    visits: yup.number().min(0).default(0),
-    tags: yup.array().of(yup.string().matches(objectIdRegex)).default([]),
-    categories: yup.array().of(yup.string().matches(objectIdRegex)).min(1).required(),
-    brand: yup.string().matches(objectIdRegex).nullable(),
+  relatedProducts: yup
+    .array()
+    .of(yup.string().matches(objectIdRegex))
+    .default([]),
 
-    soldNumber: yup.number().min(0).default(0),
+  visits: yup.number().min(0).default(0),
 
-    shortSpecifications: yup.array().of(specificationSchema).default([]),
-    specifications: yup.array().of(specificationSchema).default([]),
+  tags: yup
+    .array()
+    .of(yup.string().matches(objectIdRegex))
+    .default([]),
 
-    seo: seoValidationSchema,
-  }),
+  categories: yup
+    .array()
+    .of(yup.string().matches(objectIdRegex))
+    .min(1)
+    .required(),
 
-  update: yup.object({
-    title: yup.string(),
-    slug: yup.string(),
-    excerpt: yup.string(),
+  brand: yup.string().matches(objectIdRegex).nullable(),
 
-    price: yup.number().min(0),
-    discount: yup.number().min(0),
-    description: yup.string().nullable(),
+  soldNumber: yup.number().min(0).default(0),
 
-    media: yup.array().of(yup.string().matches(objectIdRegex)),
-    stock: yup.number().min(0),
-    relatedProducts: yup.array().of(yup.string().matches(objectIdRegex)),
+  shortSpecifications: yup
+    .array()
+    .of(specificationSchema)
+    .default([]),
 
-    visits: yup.number().min(0),
-    tags: yup.array().of(yup.string().matches(objectIdRegex)),
-    categories: yup.array().of(yup.string().matches(objectIdRegex)),
-    brand: yup.string().matches(objectIdRegex).nullable(),
+  specifications: yup
+    .array()
+    .of(specificationSchema)
+    .default([]),
 
-    soldNumber: yup.number().min(0),
+  seo: seoValidationSchema,
+});
 
-    shortSpecifications: yup.array().of(specificationSchema),
-    specifications: yup.array().of(specificationSchema),
+/* ---------------------------------- */
+/* UPDATE PRODUCT */
+/* ---------------------------------- */
 
-    seo: seoValidationSchema,
-  }).test(
-    "at-least-one",
-    "At least one field must be updated",
-    (value) => value && Object.keys(value).length > 0
+exports.updateProductSchema = yup.object({
+  title: yup.string(),
+  slug: yup.string(),
+  excerpt: yup.string(),
+
+  price: yup.number().min(0),
+  discount: yup.number().min(0),
+  description: yup.string().nullable(),
+
+  media: yup.array().of(yup.string().matches(objectIdRegex)),
+
+  stock: yup.number().min(0),
+
+  relatedProducts: yup.array().of(
+    yup.string().matches(objectIdRegex)
   ),
-};
 
-module.exports = productValidation;
+  visits: yup.number().min(0),
+
+  tags: yup.array().of(yup.string().matches(objectIdRegex)),
+
+  categories: yup.array().of(
+    yup.string().matches(objectIdRegex)
+  ),
+
+  brand: yup.string().matches(objectIdRegex).nullable(),
+
+  soldNumber: yup.number().min(0),
+
+  shortSpecifications: yup.array().of(specificationSchema),
+
+  specifications: yup.array().of(specificationSchema),
+
+  seo: seoValidationSchema,
+});
+

@@ -5,17 +5,19 @@ const { slugify } = require("@/server/lib/general");
 
 const tagService = {
   async create(data) {
-    const existing = await Tag.exists({ slug: slugify(data.name) });
-    
-    
-    
-    if (existing) {
-      throwError("برچسب با این نام قبلا ایجاد شده است", 409);
+    try {
+      const existing = await Tag.exists({ slug: slugify(data.name) });
+      
+      if (existing) {
+        throwError("برچسب با این نام قبلا ایجاد شده است", 409);
+      }
+      
+      const tag = await new Tag({...data, slug: slugify(data.name)}).save();
+  
+      return tag 
+    } catch (error) {
+      console.log(error);
     }
-    
-    const tag = new Tag(data);
-    
-    return await tag.save();
   },
 
   async update(data, _id) {
@@ -25,7 +27,7 @@ const tagService = {
       throwError("برچسب مورد نظر یافت نشد", 404);
     }
 
-    const updated = await Tag.findByIdAndUpdate(_id, data, { new: true });
+    const updated = await Tag.findByIdAndUpdate(_id, {...data, slug: slugify(data.name)}, { new: true });
 
     return updated;
   },

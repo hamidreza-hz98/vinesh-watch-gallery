@@ -3,7 +3,9 @@ const connectDB = require("@/server/db");
 const categoryService = require("@/server/modules/category/category.service");
 const { authenticate, requireAdmin } = require("@/server/middlewares/auth");
 const validate = require("@/server/middlewares/validate");
-const { create: createCategorySchema } = require("@/validation/category.validation");
+const {
+  create: createCategorySchema,
+} = require("@/validation/category.validation");
 
 exports.runtime = "nodejs";
 
@@ -38,12 +40,10 @@ exports.GET = async function (req) {
     const url = new URL(req.url);
     const query = Object.fromEntries(url.searchParams.entries());
 
-    const result = await categoryService.getAll(query);
+    const { categories, total } = await categoryService.getAll(query);
 
     return NextResponse.json({
-      data: result.categories,
-      total: result.total,
-      ...query,
+      data: { categories, total, ...query },
     });
   } catch (error) {
     return NextResponse.json(

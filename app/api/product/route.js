@@ -4,7 +4,7 @@ const connectDB = require("@/server/db");
 const productService = require("@/server/modules/product/product.service");
 const { authenticate, requireAdmin } = require("@/server/middlewares/auth");
 const validate = require("@/server/middlewares/validate");
-const { productValidation } = require("@/server/modules/product/product.validation");
+const { createProductSchema } = require("@/validation/product.validation");
 
 exports.runtime = "nodejs";
 
@@ -17,7 +17,7 @@ exports.POST = async (req) => {
     requireAdmin(auth);
 
     const body = await req.json();
-    const data = await validate(productValidation.create, body);
+    const data = await validate(createProductSchema, body);
 
     const product = await productService.create(data);
 
@@ -41,21 +41,6 @@ exports.GET = async (req) => {
     const { products, total } = await productService.getAll(query);
 
     return NextResponse.json({ data: { products, total, ...query } });
-  } catch (error) {
-    return NextResponse.json({ message: error.message }, { status: error.statusCode || 500 });
-  }
-};
-
-// GET PRODUCT DETAILS
-exports.GET_DETAILS = async (req) => {
-  try {
-    await connectDB();
-    const url = new URL(req.url);
-    const filter = Object.fromEntries(url.searchParams.entries());
-
-    const product = await productService.getDetails(filter);
-
-    return NextResponse.json({ data: product });
   } catch (error) {
     return NextResponse.json({ message: error.message }, { status: error.statusCode || 500 });
   }

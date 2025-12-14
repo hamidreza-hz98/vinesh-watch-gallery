@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const timestamps = require("mongoose-timestamp");
-const SeoSchema = require("../seo/SEO");
+const SeoSchema = require("../seo/seo.model");
 
 const CategorySchema = new Schema({
   name: {
@@ -52,4 +52,4 @@ CategorySchema.index({ tags: 1 });
 CategorySchema.index({ children: 1 });
 CategorySchema.index({ visits: -1 });
 
-module.exports = mongoose.model("Category", CategorySchema);
+module.exports = mongoose.models.Category || mongoose.model("Category", CategorySchema);

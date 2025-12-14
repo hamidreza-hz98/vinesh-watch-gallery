@@ -17,9 +17,7 @@ exports.GET = async function (req) {
 
     const dashboard = await dashboardService.getDashboardData(status);
 
-    return NextResponse.json({
-      data: dashboard,
-    });
+    return NextResponse.json(dashboard);
   } catch (error) {
     return NextResponse.json(
       {

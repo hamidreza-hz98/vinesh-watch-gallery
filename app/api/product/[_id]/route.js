@@ -4,12 +4,12 @@ const connectDB = require("@/server/db");
 const productService = require("@/server/modules/product/product.service");
 const { authenticate, requireAdmin } = require("@/server/middlewares/auth");
 const validate = require("@/server/middlewares/validate");
-const { productValidation } = require("@/server/modules/product/product.validation");
+const { updateProductSchema } = require("@/validation/product.validation");
 
 exports.runtime = "nodejs";
 
 // UPDATE PRODUCT
-exports.PUT = async (req, { params }) => {
+export async function PUT(req, { params }) {
   try {
     await connectDB();
 
@@ -17,7 +17,7 @@ exports.PUT = async (req, { params }) => {
     requireAdmin(auth);
 
     const body = await req.json();
-    const data = await validate(productValidation.update, body);
+    const data = await validate(updateProductSchema, body);
 
     const product = await productService.update(data, params._id);
 
@@ -26,25 +26,33 @@ exports.PUT = async (req, { params }) => {
       data: product,
     });
   } catch (error) {
-    return NextResponse.json({ message: error.message }, { status: error.statusCode || 500 });
+    return NextResponse.json(
+      { message: error.message },
+      { status: error.statusCode || 500 }
+    );
   }
-};
+}
 
 // DELETE PRODUCT
-exports.DELETE = async (req, { params }) => {
+export async function DELETE(req, { params }) {
   try {
     await connectDB();
+    const { _id } = await params;
 
     const auth = await authenticate(req);
+
     requireAdmin(auth);
 
-    const product = await productService.delete(params._id);
+    const product = await productService.delete(_id);
 
     return NextResponse.json({
       message: `محصول ${product.title} با موفقیت حذف شد.`,
       data: product,
     });
   } catch (error) {
-    return NextResponse.json({ message: error.message }, { status: error.statusCode || 500 });
+    return NextResponse.json(
+      { message: error.message },
+      { status: error.statusCode || 500 }
+    );
   }
-};
+}

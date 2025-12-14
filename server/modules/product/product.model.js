@@ -105,4 +105,5 @@ ProductSchema.index({ brand: 1 });
 ProductSchema.index({ visits: -1 });
 ProductSchema.index({ soldNumber: -1 });
 
-module.exports = mongoose.models.Product || mongoose.model("Product", ProductSchema);
+module.exports =
+  mongoose.models.Product || mongoose.model("Product", ProductSchema);

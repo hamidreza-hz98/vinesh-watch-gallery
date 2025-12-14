@@ -25,37 +25,6 @@ const MediaSchema = new Schema(
   },
 );
 
-MediaSchema.pre("save", function (next) {
-  if (this.isModified("filename") || !this.path) {
-    this.path = `/uploads/${this.filename}`;
-  }
-  next();
-});
-
-MediaSchema.pre("findOneAndUpdate", function (next) {
-  const update = this.getUpdate();
-
-  const filename =
-    update.filename ||
-    (update.$set && update.$set.filename);
-
-  const path =
-    update.path ||
-    (update.$set && update.$set.path);
-
-  if (filename && !path) {
-    const newPath = `/uploads/${filename}`;
-
-    if (update.$set) {
-      update.$set.path = newPath;
-    } else {
-      update.path = newPath;
-    }
-  }
-
-  next();
-});
-
 
 MediaSchema.plugin(timestamps);
 

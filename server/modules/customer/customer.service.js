@@ -5,43 +5,51 @@ const { generateToken } = require("@/server/lib/token");
 const bcrypt = require("bcrypt");
 
 const customerService = {
+  /* -------------------- */
+  /* CREATE CUSTOMER      */
+  /* -------------------- */
   async create(data) {
     const existing = await Customer.exists({ phone: data.phone });
-
     if (existing) {
       throwError("مشتری با این شماره تلفن قبلا ثبت نام کرده است.", 409);
     }
 
-    const customer = new Customer(data);
+    // Hash password here
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(data.password, salt);
+
+    const customer = new Customer({
+      ...data,
+      password: hashedPassword,
+    });
 
     return await customer.save();
   },
 
+  /* -------------------- */
+  /* UPDATE CUSTOMER      */
+  /* -------------------- */
   async update(data, _id) {
     const existing = await Customer.exists({ _id });
-
     if (!existing) {
       throwError("مشتری با این مشخصات یافت نشد.", 404);
     }
 
-    const updated = await Customer.findByIdAndUpdate(_id, data, { new: true });
+    // Hash password if provided
+    if (data.password) {
+      const salt = await bcrypt.genSalt(10);
+      data.password = await bcrypt.hash(data.password, salt);
+    }
 
+    const updated = await Customer.findByIdAndUpdate(_id, data, { new: true });
     return updated;
   },
 
-  async getAll({
-    search = "",
-    sort = [{ field: "createdAt", order: "desc" }],
-    page = 1,
-    page_size = 10,
-    filters = {},
-  }) {
-    const query = buildMongoFindQuery(filters, search, [
-      "firstName",
-      "lastName",
-      "phone",
-      "email",
-    ]);
+  /* -------------------- */
+  /* GET ALL CUSTOMERS    */
+  /* -------------------- */
+  async getAll({ search = "", sort = [{ field: "createdAt", order: "desc" }], page = 1, page_size = 10, filters = {} }) {
+    const query = buildMongoFindQuery(filters, search, ["firstName", "lastName", "phone", "email"]);
     const sortOption = buildMongoSort(sort);
     const skip = (page - 1) * page_size;
 
@@ -53,30 +61,33 @@ const customerService = {
     return { customers, total };
   },
 
+  /* -------------------- */
+  /* GET CUSTOMER DETAILS */
+  /* -------------------- */
   async getDetails(_id) {
-    const existing = await Customer.exists({_id});
-
+    const existing = await Customer.exists({ _id });
     if (!existing) {
       throwError("مشتری با این مشخصات یافت نشد.", 404);
     }
 
-    const customer = await Customer.findById(_id);
-
-    return customer;
+    return await Customer.findById(_id);
   },
 
+  /* -------------------- */
+  /* DELETE CUSTOMER      */
+  /* -------------------- */
   async delete(_id) {
     const existing = await Customer.exists({ _id });
-
     if (!existing) {
       throwError("مشتری با این مشخصات یافت نشد.", 404);
     }
 
-    const deleted = await Customer.findByIdAndDelete(_id);
-
-    return deleted;
+    return await Customer.findByIdAndDelete(_id);
   },
 
+  /* -------------------- */
+  /* SIGNUP CUSTOMER      */
+  /* -------------------- */
   async signup(data) {
     const customer = await this.create(data);
 
@@ -86,13 +97,14 @@ const customerService = {
     });
 
     const { password: _, ...customerData } = customer.toObject();
-
     return { customer: customerData, token };
   },
 
+  /* -------------------- */
+  /* LOGIN CUSTOMER       */
+  /* -------------------- */
   async login(data) {
     const existing = await Customer.findOne({ phone: data.phone });
-
     if (!existing) {
       throwError("مشخصات کاربری اشتباه است.", 401);
     }
@@ -108,13 +120,15 @@ const customerService = {
     });
 
     const { password: _, ...customerData } = existing.toObject();
-
     return { customer: customerData, token };
   },
 
-  async getDashboardData(){
-    return await Customer.countDocuments()
-  }
+  /* -------------------- */
+  /* DASHBOARD DATA       */
+  /* -------------------- */
+  async getDashboardData() {
+    return await Customer.countDocuments();
+  },
 };
 
 module.exports = customerService;
