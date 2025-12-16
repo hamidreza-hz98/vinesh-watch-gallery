@@ -2,10 +2,8 @@
 
 import { aboutSettingsDefaultValues } from "@/constants/default-form-values";
 import React from "react";
-import { useDispatch } from "react-redux";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { Controller, useForm } from "react-hook-form";
-import Loader from "@/components/common/Loader";
 import { Box, Button, Drawer, Grid, Stack, Typography } from "@mui/material";
 import MediaPreview from "@/components/common/MediaPreview";
 import RichTextEditor from "@/components/fields/RichTextEditor";

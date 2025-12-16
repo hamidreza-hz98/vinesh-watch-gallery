@@ -1,10 +1,7 @@
 "use client";
 
-import { getSettings, updateSettings } from "@/store/settings/settings.actions";
-import { selectSettings } from "@/store/settings/settings.selector";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "../common/PageContainer";
 import { settingsInfo } from "@/constants/settings";
 import GeneralSettingsForm from "../forms/settings/GeneralSettingsForm";
@@ -14,21 +11,37 @@ import FaqSettingsForm from "../forms/settings/FaqSettingsForm";
 import AboutSettingsForm from "../forms/settings/AboutSettingsForm";
 import { purifyData } from "@/lib/request";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
+import { fetchWithAuth } from "@/lib/fetch";
+import { getSettingsApi, modifySettingsApi } from "@/constants/api.routes";
+import Loader from "../common/Loader";
 
 const SettingsPageWrapper = () => {
-  const dispatch = useDispatch();
+  const [settings, setSettings] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
+
   const { section } = useParams();
   const notifications = useNotifications();
 
-  const settings = useSelector(selectSettings);
+  const loadData = React.useCallback(async () => {
+    try {
+      setLoading(true);
 
-  const loadData = async () => {
-    await dispatch(getSettings(section)).unwrap();
-  };
+      const { settings } = await fetchWithAuth(getSettingsApi(section));
+
+      setSettings(settings);
+    } catch (error) {
+      notifications.show("خطا در بارگذاری تنظیمات", {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [section, notifications]);
 
   React.useEffect(() => {
     loadData();
-  }, [dispatch, section]);
+  }, [loadData]);
 
   const sectionForms = {
     general: GeneralSettingsForm,
@@ -46,12 +59,10 @@ const SettingsPageWrapper = () => {
     try {
       const body = purifyData(data, settingsInfo[section].dataToPurify || []);
 
-
-      const { message } = await dispatch(
-        updateSettings({
-          body: { [`${section}`]: body }, section,
-        })
-      ).unwrap();
+      const { message } = await fetchWithAuth(modifySettingsApi(section), {
+        method: "PUT",
+        body: { [`${section}`]: body },
+      });
 
       notifications.show(message, {
         severity: "success",
@@ -65,6 +76,10 @@ const SettingsPageWrapper = () => {
     }
   };
 
+  if (loading || !settings) {
+    return <Loader />;
+  }
+
   return (
     <PageContainer
       title={settingsInfo[section].title}
@@ -74,7 +89,10 @@ const SettingsPageWrapper = () => {
         { name: settingsInfo[section].title, path: `/dashboard/${section}` },
       ]}
     >
-      <FormComponent data={settings || null} onSubmit={handleUpdateSettings} />
+      <FormComponent
+        data={settings || null}
+        onSubmit={handleUpdateSettings}
+      />
     </PageContainer>
   );
 };

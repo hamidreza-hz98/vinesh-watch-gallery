@@ -1,31 +1,30 @@
-// /app/api/product/[_id]/route.js
+import { authenticate, requireAdmin } from "@/server/middlewares/auth";
+import validate from "@/server/middlewares/validate";
+import brandService from "@/server/modules/brand/brand.service";
+import { updateBrandSchema } from "@/validation/brand.validation";
+
 const { NextResponse } = require("next/server");
 const connectDB = require("@/server/db");
-const productService = require("@/server/modules/product/product.service");
-const { authenticate, requireAdmin } = require("@/server/middlewares/auth");
-const validate = require("@/server/middlewares/validate");
-const { updateProductSchema } = require("@/validation/product.validation");
 
 exports.runtime = "nodejs";
 
-// UPDATE PRODUCT
 export async function PUT(req, { params }) {
   try {
     await connectDB();
 
-    const {_id} = await params;
+    const { _id } = await params;
 
     const auth = await authenticate(req);
     requireAdmin(auth);
 
     const body = await req.json();
-    const data = await validate(updateProductSchema, body);
+    const data = await validate(updateBrandSchema, body);
 
-    const product = await productService.update(data, _id);
+    const brand = await brandService.update(data, _id);
 
     return NextResponse.json({
-      message: `محصول ${product.title} با موفقیت به‌روزرسانی شد.`,
-      data: product,
+      message: `برند ${brand.name} با موفقیت به‌روزرسانی شد.`,
+      data: brand,
     });
   } catch (error) {
     return NextResponse.json(
@@ -35,21 +34,20 @@ export async function PUT(req, { params }) {
   }
 }
 
-// DELETE PRODUCT
 export async function DELETE(req, { params }) {
   try {
     await connectDB();
+
     const { _id } = await params;
 
     const auth = await authenticate(req);
-
     requireAdmin(auth);
 
-    const product = await productService.delete(_id);
+    const brand = await brandService.delete(_id);
 
     return NextResponse.json({
-      message: `محصول ${product.title} با موفقیت حذف شد.`,
-      data: product,
+      message: `برند ${brand.name} با موفقیت حذف شد.`,
+      data: brand,
     });
   } catch (error) {
     return NextResponse.json(

@@ -39,4 +39,4 @@ TransactionSchema.plugin(timestamps);
 TransactionSchema.index({ status: 1 });
 TransactionSchema.index({ createdAt: -1 });
 
-module.exports = mongoose.model("Transaction", TransactionSchema);
+module.exports = mongoose.models.Transaction || mongoose.model("Transaction", TransactionSchema);

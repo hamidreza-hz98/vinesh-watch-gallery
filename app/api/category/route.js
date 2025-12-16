@@ -6,6 +6,7 @@ const validate = require("@/server/middlewares/validate");
 const {
   create: createCategorySchema,
 } = require("@/validation/category.validation");
+const QueryString = require("qs");
 
 exports.runtime = "nodejs";
 
@@ -38,7 +39,8 @@ exports.GET = async function (req) {
     await connectDB();
 
     const url = new URL(req.url);
-    const query = Object.fromEntries(url.searchParams.entries());
+    const objectedQuery = Object.fromEntries(url.searchParams.entries());
+    const query = QueryString.parse(objectedQuery)
 
     const { categories, total } = await categoryService.getAll(query);
 

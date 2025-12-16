@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import Loader from "../common/Loader";
 import Image from "next/image";
 import { setFilePath } from "@/lib/media";
@@ -45,14 +44,10 @@ const SectionTitle = ({ title }) => (
 );
 
 const OrderForm = ({ order, onSubmit }) => {
-  const dispatch = useDispatch();
-
   const {
     control,
     handleSubmit,
     reset,
-    getValues,
-    setValue,
     formState: { isSubmitting },
   } = useForm({
     defaultValues: defaultOrderValues(order),
@@ -245,7 +240,7 @@ const OrderForm = ({ order, onSubmit }) => {
             <Box display="flex" justifyContent="space-between" flexDirection={{xs: "column", sm: "row"}} gap={2}>
               <Box display="flex" justifyContent="start" gap={2}>
                 <Image
-                  src={setFilePath(item?.product?.media?.[0].path)}
+                  src={(item?.product?.media?.[0].path)}
                   alt={item?.product?.title}
                   width={0}
                   height={0}
@@ -261,10 +256,10 @@ const OrderForm = ({ order, onSubmit }) => {
                 />
                 <Box>
                   <Typography fontWeight="bold">
-                    {item.product.title}
+                    {item?.product?.title}
                   </Typography>
                   <Typography fontSize={14} color="text.secondary">
-                    تعداد: {item.quantity}
+                    تعداد: {item?.quantity}
                   </Typography>
                 </Box>
               </Box>

@@ -31,24 +31,23 @@ export default function MediaMasonry({
 }) {
   const [selected, setSelected] = React.useState([]);
 
-const isSelected = (item) => selected.some((s) => s._id === item._id);
+  const isSelected = (item) => selected.some((s) => s._id === item._id);
 
-const handleSelectItem = (item) => {
-  setSelected((prev) => {
-    let newSelection;
-    if (isSelected(item)) {
-      // Deselect
-      newSelection = prev.filter((s) => s._id !== item._id);
-    } else {
-      // Select
-      newSelection = multiple ? [...prev, item] : [item];
-    }
+  const handleSelectItem = (item) => {
+    setSelected((prev) => {
+      let newSelection;
+      if (isSelected(item)) {
+        // Deselect
+        newSelection = prev.filter((s) => s._id !== item._id);
+      } else {
+        // Select
+        newSelection = multiple ? [...prev, item] : [item];
+      }
 
-    onSelect?.(newSelection);
-    return newSelection;
-  });
-};
-
+      onSelect?.(newSelection);
+      return newSelection;
+    });
+  };
 
   return (
     <Box sx={{ width: "100%", minHeight: 829 }}>
@@ -78,9 +77,7 @@ const handleSelectItem = (item) => {
                   justifyContent="space-between"
                   alignItems="center"
                 >
-                  <Typography variant="subtitle2">
-                    {item?.title}
-                  </Typography>
+                  <Typography variant="subtitle2">{item?.title}</Typography>
 
                   <CancelOutlinedIcon
                     color="error"
@@ -92,7 +89,7 @@ const handleSelectItem = (item) => {
               {item?.mimeType?.includes("image") && (
                 <Image
                   onClick={() => handleSelectItem(item)}
-                  src={ setFilePath(item.path) }
+                  src={item.path}
                   alt={item?.title}
                   crossOrigin="anonymous"
                   unoptimized
@@ -114,13 +111,13 @@ const handleSelectItem = (item) => {
                   width="100%"
                   crossOrigin="anonymous"
                 >
-                  <source src={setFilePath(item.path)} type={item.mimeType} />
+                  <source src={item.path} type={item.mimeType} />
                 </video>
               )}
               {item?.mimeType?.includes("catalogue") && (
                 <iframe
                   onClick={() => handleSelectItem(item)}
-                  src={setFilePath(item.path)}
+                  src={item.path}
                   style={{
                     width: "100%",
                     height: 300,

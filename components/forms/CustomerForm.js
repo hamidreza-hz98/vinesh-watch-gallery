@@ -1,31 +1,24 @@
 "use client";
 
 import { defaultCustomerValues } from "@/constants/default-form-values";
-import {
-  createCustomer,
-  updateCustomer,
-} from "@/store/customer/customer.action";
-import customerSchema from "@/validation/customer.validation";
+import {createCustomerSchema} from "@/validation/customer.validation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, TextField, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import CustomDatePicker from "../fields/CustomDatePicker";
+import { fetchWithAuth } from "@/lib/fetch";
+import { customerApi, modifyCustomerApi } from "@/constants/api.routes";
 
 const CustomerForm = ({ mode, data, onClose, onSuccess, onError }) => {
-  const dispatch = useDispatch();
-
   const {
     control,
     handleSubmit,
     reset,
-    getValues,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: yupResolver(customerSchema),
+    resolver: yupResolver(createCustomerSchema),
     defaultValues: defaultCustomerValues(data),
   });
 
@@ -37,18 +30,18 @@ const CustomerForm = ({ mode, data, onClose, onSuccess, onError }) => {
     let message = "";
 
     try {
-      if (mode === "edit") {
-        message = await dispatch(
-          updateCustomer({ _id: data?._id, body })
-        ).unwrap();
-      } else {
-        message = await dispatch(createCustomer(body)).unwrap();
-      }
+      const { message } =
+        mode === "edit"
+          ? await fetchWithAuth(modifyCustomerApi(data._id), {
+              method: "PUT",
+              body,
+            })
+          : await fetchWithAuth(customerApi, { method: "POST", body });
 
       reset();
-      onSuccess && onSuccess( message );
+      onSuccess && onSuccess(message);
     } catch (error) {
-      onError && onError(message );
+      onError && onError(message);
     }
   };
   return (

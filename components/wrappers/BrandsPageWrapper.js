@@ -3,29 +3,36 @@
 import React from "react";
 import Overview from "../common/overview/Overview";
 import { brandColumns } from "@/constants/columns";
-import { useDispatch } from "react-redux";
-import { deleteBrand, getAllBrands } from "@/store/brand/brand.action";
 import { transformGridQuery } from "@/lib/request";
 import QueryString from "qs";
+import { fetchWithAuth } from "@/lib/fetch";
+import { getAllBrandsApi, modifyBrandApi } from "@/constants/api.routes";
 
 const BrandsPageWrapper = () => {
-  const dispatch = useDispatch();
-
   const getBrands = async (params) => {
-    const query = transformGridQuery({ ...params });
+    try {
+      const transformedQuery = transformGridQuery({ ...params });
+      const query = QueryString.stringify(transformedQuery);
 
-    const data = await dispatch(
-      getAllBrands(QueryString.stringify(query, { encodedValuesOnly: true }))
-    ).unwrap();
+      const data = await fetchWithAuth(getAllBrandsApi(query));
 
-    return {
-      items: data.brands,
-      rowCount: data.total,
-    };
+      return {
+        items: data.brands,
+        rowCount: data.total,
+      };
+    } catch (error) {
+      console.error("Failed to fetch brands:", error);
+      return {
+        items: [],
+        rowCount: 0,
+      };
+    }
   };
 
   const handleDeleteBrand = async (_id) => {
-    const message = await dispatch(deleteBrand(_id)).unwrap();
+    const { message } = await fetchWithAuth(modifyBrandApi(_id), {
+      method: "DELETE",
+    });
 
     return { success: true, message };
   };

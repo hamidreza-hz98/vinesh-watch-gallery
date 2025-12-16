@@ -2,44 +2,57 @@
 
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { purifyData } from "@/lib/request";
-import {
-  createBrand,
-  getBrandDetails,
-  updateBrand,
-} from "@/store/brand/brand.action";
-import { selectBrand } from "@/store/brand/brand.selector";
 import { useRouter, useSearchParams } from "next/navigation";
 import QueryString from "qs";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import Loader from "../common/Loader";
 import PageContainer from "../common/PageContainer";
 import BrandForm from "../forms/BrandForm";
+import { fetchWithAuth } from "@/lib/fetch";
+import {
+  brandApi,
+  brandDetailsApi,
+  modifyBrandApi,
+} from "@/constants/api.routes";
 
 const CreateOrUpdateBrandPageWrapper = () => {
+  const [brandDetails, setBrandDetails] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
+
   const searchParams = useSearchParams();
-  const dispatch = useDispatch();
   const router = useRouter();
-  const brandDetails = useSelector(selectBrand);
   const notifications = useNotifications();
 
-  const _id = searchParams.get("id");
+  const _id = searchParams.get("_id");
 
   const loadData = React.useCallback(async () => {
-    if (_id) {
-      const query = { _id };
+    if (!_id) return;
 
-      await dispatch(getBrandDetails(QueryString.stringify(query))).unwrap();
+    try {
+      setLoading(true);
+
+      const query = QueryString.stringify({ _id });
+
+      const { data } = await fetchWithAuth(brandDetailsApi(query));
+
+      setBrandDetails(data);
+    } catch (error) {
+      notifications.show(error.message || "خطا در دریافت اطلاعات برند", {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
+    } finally {
+      setLoading(false);
     }
-  }, [dispatch, _id]);
+  }, [_id, notifications]);
 
   const handleCreateOrUpdateBrand = async (brand) => {
     try {
-      const body = purifyData(brand, ["tags", "logo"]);
+      const body = purifyData(brand, ["tags", "logo", "seo.ogImage", "seo.twitterImage"]);
 
-      const message = _id
-        ? await dispatch(updateBrand({ _id, body })).unwrap()
-        : await dispatch(createBrand(body)).unwrap();
+      const { message } = _id
+        ? await fetchWithAuth(modifyBrandApi(_id), { method: "PUT", body })
+        : await fetchWithAuth(brandApi, { method: "POST", body });
 
       notifications.show(message, {
         severity: "success",
@@ -48,30 +61,31 @@ const CreateOrUpdateBrandPageWrapper = () => {
 
       router.push("/dashboard/brands");
     } catch (error) {
-      notifications.show(error, {
+      notifications.show(error.message, {
         severity: "error",
         autoHideDuration: 3000,
       });
     }
   };
 
-  if (!brandDetails) {
-    return <Loader />;
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   React.useEffect(() => {
     loadData();
   }, [loadData]);
 
+  if (_id && (loading || !brandDetails)) {
+    return <Loader />;
+  }
+
   return (
-    <PageContainer  title="مشخصات برند:"
-        breadcrumbs={[
-          { name: "گالری ساعت وینش" },
-          { name: "داشبورد", path: "/dashboard" },
-          { name: "برند ها", path: "/dashboard/brands" },
-          { name: _id ? "ویرایش برند" : "ساخت برند جدید" },
-        ]} >
+    <PageContainer
+      title="مشخصات برند:"
+      breadcrumbs={[
+        { name: "گالری ساعت وینش" },
+        { name: "داشبورد", path: "/dashboard" },
+        { name: "برند ها", path: "/dashboard/brands" },
+        { name: _id ? "ویرایش برند" : "ساخت برند جدید" },
+      ]}
+    >
       <BrandForm
         onSubmit={handleCreateOrUpdateBrand}
         data={brandDetails || null}

@@ -1,24 +1,19 @@
-"use client"
+"use client";
 
 import React from "react";
 import Overview from "../common/overview/Overview";
-import { useDispatch } from "react-redux";
 import { transformGridQuery } from "@/lib/request";
 import QueryString from "qs";
-import { deleteCategory, getAllCategories } from "@/store/category/category.action";
 import { categoryColumns } from "@/constants/columns";
+import { fetchWithAuth } from "@/lib/fetch";
+import { getAllCategoriesApi, modifyCategoryApi } from "@/constants/api.routes";
 
 const CategoriesPageWrapper = () => {
-  const dispatch = useDispatch();
-
   const getCategories = async (params) => {
-    const query = transformGridQuery({ ...params });
+    const transformedQuery = transformGridQuery({ ...params });
+    const query = QueryString.stringify(transformedQuery);
 
-    const data = await dispatch(
-      getAllCategories(
-        QueryString.stringify(query, { encodedValuesOnly: true })
-      )
-    ).unwrap();
+    const { data } = await fetchWithAuth(getAllCategoriesApi(query));
 
     return {
       items: data.categories,
@@ -27,7 +22,9 @@ const CategoriesPageWrapper = () => {
   };
 
   const handleDeleteCategory = async (_id) => {
-    const message = await dispatch(deleteCategory(_id)).unwrap();
+    const { message } = await fetchWithAuth(modifyCategoryApi(_id), {
+      method: "DELETE",
+    });
 
     return { success: true, message };
   };

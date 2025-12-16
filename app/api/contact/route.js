@@ -40,7 +40,7 @@ exports.GET = async function (req) {
     const { contacts, total } = await contactService.getAll(query);
 
     return NextResponse.json({
-      data: contacts,
+      contacts,
       total,
       ...query,
     });

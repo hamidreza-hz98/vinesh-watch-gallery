@@ -20,14 +20,17 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import MediaPreview from "../common/MediaPreview";
 import TagField from "../fields/TagField";
 import MediaPageWrapper from "../wrappers/MediaPageWrapper";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllCategories } from "@/store/category/category.action";
-import { selectCategories } from "@/store/category/category.selector";
 import QueryString from "qs";
+import { fetchWithAuth } from "@/lib/fetch";
+import {
+  categoryApi,
+  getAllCategoriesApi,
+  tagApi,
+} from "@/constants/api.routes";
 
 const CategoryForm = ({ data, mode = "create", onSubmit }) => {
-  const dispatch = useDispatch();
-  const { categories } = useSelector(selectCategories);
+  const [categories, setCategories] = React.useState([]);
+  const [tags, setTags] = React.useState([]);
 
   const [activeField, setActiveField] = React.useState(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -49,11 +52,26 @@ const CategoryForm = ({ data, mode = "create", onSubmit }) => {
   const initialized = React.useRef(false);
 
   React.useEffect(() => {
-    dispatch(getAllCategories(QueryString.stringify({ page_size: 5000 })));
-  }, [dispatch]);
+    const fetchDependencies = async () => {
+      const query = QueryString.stringify({ page_size: 5000 });
+
+      const [categoriesRes, tagsRes] = await Promise.all([
+        fetchWithAuth(getAllCategoriesApi(query)),
+        fetchWithAuth(tagApi, { query }),
+      ]);
+
+      const { categories } = categoriesRes.data;
+      const { tags } = tagsRes.data;
+
+      setCategories(categories || []);
+      setTags(tags || []);
+    };
+
+    fetchDependencies();
+  }, []);
 
   React.useEffect(() => {
-    if (!categories || !data?._id || initialized.current) return;
+    if (!categories || !tags || !data?._id || initialized.current) return;
     initialized.current = true;
 
     if (data.categories)
@@ -61,7 +79,13 @@ const CategoryForm = ({ data, mode = "create", onSubmit }) => {
         "children",
         data.categories.map((t) => (t?._id ? t._id : t))
       );
-  }, [data, categories, setValue]);
+
+    if (data.tags)
+      setValue(
+        "tags",
+        data.tags.map((t) => (t?._id ? t._id : t))
+      );
+  }, [data, categories, tags, setValue]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -148,7 +172,7 @@ const CategoryForm = ({ data, mode = "create", onSubmit }) => {
                     size="small"
                     fullWidth
                     options={categories || []}
-                    getOptionLabel={(option) => option.name}
+                    getOptionLabel={(option) => option?.name}
                     value={selectedCategories}
                     noOptionsText="دسته بندی ای یافت نشد!"
                     onChange={(e, newValue) =>
@@ -203,6 +227,7 @@ const CategoryForm = ({ data, mode = "create", onSubmit }) => {
               defaultValue={[]}
               render={({ field }) => (
                 <TagField
+                  initialTags={tags}
                   value={field.value}
                   onChange={(newValue) => field.onChange(newValue)}
                 />

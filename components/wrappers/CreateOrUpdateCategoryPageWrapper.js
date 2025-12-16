@@ -2,44 +2,65 @@
 
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { purifyData } from "@/lib/request";
-import {
-  createCategory,
-  getCategoryDetails,
-  updateCategory,
-} from "@/store/category/category.action";
-import { selectCategory } from "@/store/category/category.selector";
 import { useRouter, useSearchParams } from "next/navigation";
 import QueryString from "qs";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import Loader from "../common/Loader";
 import PageContainer from "../common/PageContainer";
 import CategoryForm from "../forms/CategoryForm";
+import { fetchWithAuth } from "@/lib/fetch";
+import {
+  categoryApi,
+  categoryDetailsApi,
+  modifyCategoryApi,
+} from "@/constants/api.routes";
 
 const CreateOrUpdateCategoryPageWrapper = () => {
+  const [categoryDetails, setCategoryDetails] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
+
   const searchParams = useSearchParams();
-  const dispatch = useDispatch();
   const router = useRouter();
-  const categoryDetails = useSelector(selectCategory);
   const notifications = useNotifications();
 
-  const _id = searchParams.get("id");
+  const _id = searchParams.get("_id");
 
   const loadData = React.useCallback(async () => {
-    if (_id) {
-      const query = { _id };
+    if (!_id) return;
 
-      await dispatch(getCategoryDetails(QueryString.stringify(query))).unwrap();
+    try {
+      setLoading(true);
+
+      const query = QueryString.stringify({ _id });
+
+      const { data } = await fetchWithAuth(categoryDetailsApi(query));
+
+      setCategoryDetails(data);
+    } catch (error) {
+      console.log(error)
+
+      notifications.show(error.message || "خطا در دریافت اطلاعات محصول", {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
+    } finally {
+      setLoading(false);
     }
-  }, [dispatch, _id]);
+  }, [_id, notifications]);
 
   const handleCreateOrUpdateCategory = async (category) => {
     try {
-      const body = purifyData(category, ["tags", "children", "image", "seo.ogImage", "seo.twitterImage"]);
+      const body = purifyData(category, [
+        "tags",
+        "children",
+        "image",
+        "seo.ogImage",
+        "seo.twitterImage",
+      ]);
 
-      const message = _id
-        ? await dispatch(updateCategory({ _id, body })).unwrap()
-        : await dispatch(createCategory(body)).unwrap();
+      const { message } = _id
+        ? await fetchWithAuth(modifyCategoryApi(_id), { method: "PUT", body })
+        : await fetchWithAuth(categoryApi, { method: "POST", body });
 
       notifications.show(message, {
         severity: "success",
@@ -48,21 +69,20 @@ const CreateOrUpdateCategoryPageWrapper = () => {
 
       router.push("/dashboard/categories");
     } catch (error) {
-      notifications.show(error, {
+      notifications.show(error.message || "مشکلی پیش آمد", {
         severity: "error",
         autoHideDuration: 3000,
       });
     }
   };
 
-  if (!categoryDetails) {
-    return <Loader />;
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   React.useEffect(() => {
     loadData();
   }, [loadData]);
+
+  if (_id && (loading || !categoryDetails)) {
+    return <Loader />;
+  }
 
   return (
     <PageContainer

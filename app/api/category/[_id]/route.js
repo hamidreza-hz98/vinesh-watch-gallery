@@ -11,13 +11,15 @@ exports.PUT = async function (req, { params }) {
   try {
     await connectDB();
 
+    const { _id } = await params
+    
     const auth = await authenticate(req);
     requireAdmin(auth);
-
+    
     const body = await req.json();
     const data = await validate(updateCategorySchema, body);
-
-    const category = await categoryService.update(data, params._id);
+    
+    const category = await categoryService.update(data, _id);
 
     return NextResponse.json({
       message: `دسته بندی ${category.name} با موفقیت ویرایش شد.`,
@@ -34,11 +36,12 @@ exports.PUT = async function (req, { params }) {
 exports.DELETE = async function (req, { params }) {
   try {
     await connectDB();
+    const { _id } = await params
 
     const auth = await authenticate(req);
     requireAdmin(auth);
 
-    const category = await categoryService.delete(params._id);
+    const category = await categoryService.delete(_id);
 
     return NextResponse.json({
       message: `دسته بندی ${category.name} با موفقیت حذف شد.`,

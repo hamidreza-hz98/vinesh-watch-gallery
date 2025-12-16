@@ -14,14 +14,7 @@ const customerService = {
       throwError("مشتری با این شماره تلفن قبلا ثبت نام کرده است.", 409);
     }
 
-    // Hash password here
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(data.password, salt);
-
-    const customer = new Customer({
-      ...data,
-      password: hashedPassword,
-    });
+    const customer = new Customer(data);
 
     return await customer.save();
   },
@@ -33,12 +26,6 @@ const customerService = {
     const existing = await Customer.exists({ _id });
     if (!existing) {
       throwError("مشتری با این مشخصات یافت نشد.", 404);
-    }
-
-    // Hash password if provided
-    if (data.password) {
-      const salt = await bcrypt.genSalt(10);
-      data.password = await bcrypt.hash(data.password, salt);
     }
 
     const updated = await Customer.findByIdAndUpdate(_id, data, { new: true });

@@ -21,8 +21,7 @@ const priceSchema = yup.object({
 }).default({});
 
 // Main order validation schemas
-const orderValidation = {
-  create: yup.object({
+  export const createOrderSchema = yup.object().shape({
     status: yup
       .string()
       .oneOf(["pending_payment", "paid", "shipping", "delivered"])
@@ -36,10 +35,10 @@ const orderValidation = {
     transaction: yup.string().matches(objectIdRegex).nullable(),
     shipmentDate: yup.date().nullable(),
     shipmentTrackNumber: yup.string().nullable().default(""),
-  }),
+  })
 
-  update: yup
-    .object({
+  export const updateOrderSchema = yup
+    .object().shape({
       status: yup.string().oneOf(["pending_payment", "paid", "shipping", "delivered"]),
       shipmentTrackNumber: yup.string().nullable(),
     })
@@ -47,11 +46,4 @@ const orderValidation = {
       "at-least-one",
       "At least one field must be updated",
       (value) => value && Object.keys(value).length > 0
-    ),
-};
-
-module.exports = {
-  orderProductSchema,
-  priceSchema,
-  orderValidation,
-};
+    )

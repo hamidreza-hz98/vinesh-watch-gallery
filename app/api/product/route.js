@@ -5,6 +5,7 @@ const productService = require("@/server/modules/product/product.service");
 const { authenticate, requireAdmin } = require("@/server/middlewares/auth");
 const validate = require("@/server/middlewares/validate");
 const { createProductSchema } = require("@/validation/product.validation");
+const QueryString = require("qs");
 
 exports.runtime = "nodejs";
 
@@ -36,7 +37,8 @@ exports.GET = async (req) => {
     await connectDB();
 
     const url = new URL(req.url);
-    const query = Object.fromEntries(url.searchParams.entries());
+    const objectedQuery = Object.fromEntries(url.searchParams.entries());
+    const query = QueryString.parse(objectedQuery)
 
     const { products, total } = await productService.getAll(query);
 

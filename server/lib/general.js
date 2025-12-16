@@ -11,7 +11,28 @@ const slugify = (text) =>
     .replace(/^-+/, "") // Trim - from start
     .replace(/-+$/, ""); // Trim - from end
 
+function removeEmptyObjects(obj) {
+  if (!obj || typeof obj !== "object") return obj;
+
+  Object.keys(obj).forEach((key) => {
+    if (
+      obj[key] &&
+      typeof obj[key] === "object" &&
+      !Array.isArray(obj[key])
+    ) {
+      removeEmptyObjects(obj[key]);
+      if (Object.keys(obj[key]).length === 0) {
+        delete obj[key];
+      }
+    }
+  });
+
+  return obj;
+}
+
+
 module.exports = {
   slugify,
   createOrderCode,
+  removeEmptyObjects
 };

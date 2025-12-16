@@ -1,27 +1,35 @@
 "use client";
 
 import { transformGridQuery } from "@/lib/request";
-import { getAllOrders } from "@/store/order/order.action";
 import QueryString from "qs";
 import React from "react";
-import { useDispatch } from "react-redux";
 import Overview from "../common/overview/Overview";
 import { orderColumns } from "@/constants/columns";
+import { fetchWithAuth } from "@/lib/fetch";
+import { getAllOrdersApi } from "@/constants/api.routes";
 
 const OrdersPageWrapper = () => {
-  const dispatch = useDispatch();
-
   const getOrders = async (params) => {
-    const query = transformGridQuery({ ...params });
+    try {
+      const transformedQuery = transformGridQuery({ ...params });
+      const query = QueryString.stringify(transformedQuery);
 
-    const data = await dispatch(
-      getAllOrders(QueryString.stringify(query, { encodedValuesOnly: true }))
-    ).unwrap();
+      const data = await fetchWithAuth(getAllOrdersApi(query));
 
-    return {
-      items: data.orders,
-      rowCount: data.total,
-    };
+      console.log(data);
+      
+
+      return {
+        items: data.orders,
+        rowCount: data.total,
+      };
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+      return {
+        items: [],
+        rowCount: 0,
+      };
+    }
   };
 
   return (

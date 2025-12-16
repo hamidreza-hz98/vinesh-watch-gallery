@@ -3,6 +3,8 @@ const throwError = require("../../middlewares/throw-error");
 const { buildMongoFindQuery, buildMongoSort } = require("@/server/lib/filter");
 const { generateProductSchema } = require("@/server/lib/seo");
 
+
+
 const productService = {
   async create(data) {
     const existing = await Product.exists({ slug: data.slug });
@@ -35,6 +37,7 @@ const productService = {
     page_size = 10,
     filters = {},
   }) {
+    
     const query = buildMongoFindQuery(filters, search, [
       "title",
       "excerpt",
@@ -83,7 +86,6 @@ const productService = {
       path: "relatedProducts",
       populate: { path: "media" },
     })
-    .lean();
 
   if (!product) {
     throwError("محصول مورد نظر یافت نشد", 404);

@@ -16,7 +16,6 @@ import { toPersian } from "@/lib/number";
 const ContactDrawer = ({ data, onClose }) => {
   const theme = useTheme();
 
-
   if(!data){
     return
   }

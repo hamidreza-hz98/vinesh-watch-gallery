@@ -1,28 +1,35 @@
 "use client"
 
 import { transformGridQuery } from '@/lib/request';
-import { getAllContactForms } from '@/store/contact/contact.action';
 import QueryString from 'qs';
 import React from 'react'
-import { useDispatch } from 'react-redux';
 import Overview from '../common/overview/Overview';
 import { contactFormColumns } from '@/constants/columns';
 import ContactDrawer from '../ContactDrawer';
+import { fetchWithAuth } from '@/lib/fetch';
+import { contactApi } from '@/constants/api.routes';
 
 const ContactPageWrapper = () => {
-   const dispatch = useDispatch();
-
+  
   const getContacts = async (params) => {
-    const query = transformGridQuery({ ...params });
-
-    const data = await dispatch(
-      getAllContactForms(QueryString.stringify(query, { encodedValuesOnly: true }))
-    ).unwrap();
-
-    return {
-      items: data.contacts,
-      rowCount: data.total,
-    };
+    try {
+      
+      const transformedQuery = transformGridQuery({ ...params });
+            const query = QueryString.stringify(transformedQuery);
+      
+      const data = await fetchWithAuth(contactApi(query))
+      
+      return {
+        items: data.contacts,
+        rowCount: data.total,
+      };
+    } catch (error) {
+       console.error("Failed to fetch products:", error);
+      return {
+        items: [],
+        rowCount: 0,
+      };
+    }
   };
   
   return (

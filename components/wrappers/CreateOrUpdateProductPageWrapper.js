@@ -39,6 +39,7 @@ const CreateOrUpdateProductPageWrapper = () => {
     } catch (error) {
       notifications.show(error.message || "خطا در دریافت اطلاعات محصول", {
         severity: "error",
+        autoHideDuration: 3000,
       });
     } finally {
       setLoading(false);

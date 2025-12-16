@@ -35,7 +35,7 @@ export const POST = async (req) => {
   }
 };
 
-exports.GET = async function (req) {
+export const GET = async (req) => {
   try {
     await connectDB();
 

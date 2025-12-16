@@ -2,6 +2,7 @@ const _ = require("lodash");
 const Settings = require("./settings.model");
 const throwError = require("../../middlewares/throw-error");
 const { generateFAQSchema, generateTermsSchema } = require("@/server/lib/seo");
+const { removeEmptyObjects } = require("@/server/lib/general");
 
 const settingsService = {
   /**
@@ -9,27 +10,29 @@ const settingsService = {
    * - If no settings found, it creates one
    * - Performs deep merge update
    */
-  async update(data, section) {
-    let settings = await Settings.findOne();
+async update(data, section) {
+  let settings = await Settings.findOne();
+  if (!settings) settings = await Settings.create({});
 
-    if (!settings) {
-      settings = await Settings.create({});
-    }
+  const cleanData = removeEmptyObjects(data);
 
-    const updatedSettings = await Settings.findOneAndUpdate(
-      { _id: settings._id },
-      { $set: data },
-      { new: true }
-    ).populate([
+  const updatedSettings = await Settings.findOneAndUpdate(
+    { _id: settings._id },
+    { $set: cleanData },
+    { new: true }
+  )
+    .populate([
       "general.logo",
       "general.homepageSlider",
       "default-seo.ogImage",
       "default-seo.twitterImage",
       "about.image",
-    ]);
+    ])
+    .lean();
 
-    return updatedSettings[section];
-  },
+  return updatedSettings[section];
+},
+
 
   /**
    * Get a specific section of Settings

@@ -26,6 +26,10 @@ import MediaPageWrapper from "../wrappers/MediaPageWrapper";
 import {
   brandApi,
   categoryApi,
+  getAllBrandsApi,
+  getAllCategoriesApi,
+  getAllProductsApi,
+  getAlltagsApi,
   productApi,
   tagApi,
 } from "@/constants/api.routes";
@@ -66,10 +70,10 @@ const ProductForm = ({ data, mode = "create", onSubmit }) => {
 
         const [productsRes, categoriesRes, tagsRes, brandsRes] =
           await Promise.all([
-            fetchWithAuth(productApi, { query }),
-            fetchWithAuth(categoryApi, { query }),
-            fetchWithAuth(tagApi, { query }),
-            fetchWithAuth(brandApi, { query }),
+            fetchWithAuth(getAllProductsApi(query)),
+            fetchWithAuth(getAllCategoriesApi(query)),
+            fetchWithAuth(getAlltagsApi(query)),
+            fetchWithAuth(getAllBrandsApi(query)),
           ]);
 
         setProducts(productsRes.data.products || []);
@@ -403,7 +407,7 @@ const ProductForm = ({ data, mode = "create", onSubmit }) => {
               defaultValue={[]}
               render={({ field }) => (
                 <TagField
-                  tags={tags}
+                  initialTags={tags}
                   value={field.value}
                   onChange={(newValue) => field.onChange(newValue)}
                 />

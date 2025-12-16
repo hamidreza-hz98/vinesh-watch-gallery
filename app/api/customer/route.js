@@ -3,7 +3,7 @@ const connectDB = require("@/server/db");
 const customerService = require("@/server/modules/customer/customer.service");
 const validate = require("@/server/middlewares/validate");
 const { authenticate, requireAdmin } = require("@/server/middlewares/auth");
-const { create: createCustomerSchema } = require("@/validation/customer.validation");
+const { createCustomerSchema } = require("@/validation/customer.validation");
 
 exports.runtime = "nodejs";
 

@@ -15,13 +15,11 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import MediaPreview from "@/components/common/MediaPreview";
 import RichTextEditor from "@/components/fields/RichTextEditor";
 
 const GeneralSettingsForm = ({ data, onSubmit }) => {
-  const dispatch = useDispatch();
 
   const [activeField, setActiveField] = React.useState(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -72,9 +70,6 @@ const GeneralSettingsForm = ({ data, onSubmit }) => {
     setDrawerOpen(false);
   };
 
-  if (!data) {
-    return <Loader />;
-  }
   return (
     <>
       <Box

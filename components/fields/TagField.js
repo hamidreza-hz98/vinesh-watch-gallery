@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Autocomplete,
   TextField,
@@ -16,17 +16,45 @@ import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { fetchWithAuth } from "@/lib/fetch";
 import { modifyTagApi, tagApi } from "@/constants/api.routes";
 
-export default function TagField({ tags = [], value = [], onChange }) {
+export default function TagField({ initialTags= [], value = [], onChange }) {
   const notifications = useNotifications();
+  const [tags, setTags] = useState(initialTags);
   const [loading, setLoading] = useState(false);
 
-  // Map ObjectIds to full tag objects for display
-  const selectedTags = value
-    .map((id) => tags.find((t) => t._id === id))
+  /* -------------------------------- fetch all tags -------------------------------- */
+
+  const fetchTags = useCallback(async () => {
+    try {
+      const {data} = await fetchWithAuth(tagApi);
+      setTags(data?.tags || []);
+    } catch {
+      notifications.show("خطا در دریافت تگ‌ها.", { severity: "error" });
+    }
+  }, [notifications]);
+
+  useEffect(() => {
+    fetchTags();
+  }, [fetchTags]);
+
+  /* -------------------- map ObjectIds → full tag objects -------------------- */
+
+  const selectedTags = React.useMemo(() => {
+  return value
+    .map((v) => {
+      if (typeof v === "object") return v;
+      return tags.find((t) => String(t._id) === String(v));
+    })
     .filter(Boolean);
+}, [value, tags]);
+
+
+
+  console.log(selectedTags);
+  
+
+  /* -------------------------------- handlers -------------------------------- */
 
   const removeFromSelected = (tag) => {
-    // Only send ObjectIds back
     onChange(value.filter((id) => id !== tag._id));
   };
 
@@ -34,16 +62,13 @@ export default function TagField({ tags = [], value = [], onChange }) {
     try {
       setLoading(true);
       await fetchWithAuth(modifyTagApi(tag._id), { method: "DELETE" });
-      notifications.show("تگ از دیتابیس حذف شد.", {
-        severity: "success",
-        autoHideDuration: 3000,
-      });
+
+      setTags((prev) => prev.filter((t) => t._id !== tag._id));
       onChange(value.filter((id) => id !== tag._id));
-    } catch (err) {
-      notifications.show("خطا هنگام حذف تگ.", {
-        severity: "error",
-        autoHideDuration: 3000,
-      });
+
+      notifications.show("تگ حذف شد.", { severity: "success" });
+    } catch {
+      notifications.show("خطا هنگام حذف تگ.", { severity: "error" });
     } finally {
       setLoading(false);
     }
@@ -51,40 +76,41 @@ export default function TagField({ tags = [], value = [], onChange }) {
 
   const handleCreateTag = async (name) => {
     try {
-      const res = await fetchWithAuth(tagApi, {
+      const { data, message } = await fetchWithAuth(tagApi, {
         method: "POST",
         body: { name },
       });
 
-      notifications.show(res?.message || "برچسب ایجاد و انتخاب شد.", {
-        severity: "success",
-        autoHideDuration: 3000,
-      });
-      onChange([...value, res.data._id]); // add new tag as ObjectId
-    } catch (err) {
-      notifications.show("مشکلی پیش آمد.", {
-        severity: "error",
-        autoHideDuration: 3000,
-      });
+      const newTag = data;
+
+      setTags((prev) => [...prev, newTag]);
+      onChange([...value, newTag._id]);
+
+      notifications.show( message || "تگ ایجاد شد.", { severity: "success" });
+    } catch (error) {
+      notifications.show( error.message || "مشکلی پیش آمد.", { severity: "error" });
     }
   };
+
+  /* -------------------------------- render -------------------------------- */
 
   return (
     <Autocomplete
       multiple
       size="small"
-      options={tags || []}
+      options={tags}
       value={selectedTags}
-      filterSelectedOptions
       loading={loading}
+      filterSelectedOptions
       freeSolo
       getOptionLabel={(option) => option?.name || ""}
       onChange={(e, newValue, reason) => {
         const latest = newValue[newValue.length - 1];
+
         if (reason === "createOption" && typeof latest === "string") {
           handleCreateTag(latest);
         } else {
-          onChange(newValue.map((t) => t._id)); // send back only ObjectIds
+          onChange(newValue.map((t) => t._id));
         }
       }}
       renderTags={(selected, getTagProps) =>
@@ -127,8 +153,8 @@ export default function TagField({ tags = [], value = [], onChange }) {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="تگ ها"
-          placeholder="ساختن یا انتخاب از موارد موجود"
+          label="تگ‌ها"
+          placeholder="ساختن یا انتخاب"
         />
       )}
     />

@@ -14,7 +14,6 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import FileUpload from "../fields/FileUpload";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { setFilePath } from "@/lib/media";
 import { modifyMediaApi, uploadMediaApi } from "@/constants/api.routes";
 
 const MediaForm = ({ mode, data, onClose, onSuccess }) => {
@@ -41,7 +40,7 @@ const MediaForm = ({ mode, data, onClose, onSuccess }) => {
     }
 
     if (data?.path) {
-      setPreviewUrl(setFilePath(data.path));
+      setPreviewUrl((data.path));
     } else {
       setPreviewUrl(null);
     }

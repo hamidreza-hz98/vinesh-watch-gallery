@@ -6,7 +6,7 @@ import { ThemeProvider as MUIThemeProvider, CssBaseline, useMediaQuery } from "@
 import createAppTheme from "./theme";
 
 const ThemeModeContext = createContext({
-  themeMode: "light",
+  themeMode: "dark",
   setThemeMode: () => {},
 });
 
@@ -16,7 +16,7 @@ export function useThemeMode() {
 
 export default function AppThemeProvider({ children, mode = "system" }) {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const [themeMode, setThemeMode] = useState("light");
+  const [themeMode, setThemeMode] = useState("dark");
 
   // On mount, determine the initial theme
   useEffect(() => {

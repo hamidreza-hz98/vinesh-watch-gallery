@@ -50,7 +50,7 @@ exports.GET = async function (req) {
     const {orders, total} = await orderService.getAll(query);
 
     return NextResponse.json({
-      data: orders,
+      orders,
       total,
     });
   } catch (error) {

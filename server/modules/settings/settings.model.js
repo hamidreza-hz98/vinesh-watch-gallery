@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const timestamps = require("mongoose-timestamp");
-const SeoSchema = require("./SEO");
+const SeoSchema = require("../seo/seo.model");
 
 const ContactInfoSchema = new Schema(
   {

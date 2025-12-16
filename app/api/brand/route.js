@@ -43,7 +43,9 @@ exports.GET = async function (req) {
     const { brands, total } = await brandService.getAll(query);
 
     return NextResponse.json({
-      data: { brands, total, ...query },
+      brands,
+      total,
+      ...query,
     });
   } catch (error) {
     return NextResponse.json(

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useDispatch } from "react-redux";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { Controller, useForm } from "react-hook-form";
 import { seoSettingsDefaultValues } from "@/constants/default-form-values";

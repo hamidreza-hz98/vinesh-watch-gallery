@@ -2,41 +2,46 @@
 
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { purifyData } from "@/lib/request";
-import {
-  createOrder,
-  getOrderDetails,
-  updateOrder,
-} from "@/store/order/order.action";
-import { selectOrder } from "@/store/order/order.selector";
 import { useRouter } from "next/navigation";
 import QueryString from "qs";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import Loader from "../common/Loader";
 import PageContainer from "../common/PageContainer";
 import OrderForm from "../forms/OrderForm";
+import { fetchWithAuth } from "@/lib/fetch";
+import { modifyOrderApi } from "@/constants/api.routes";
 
-const OrderDetailsPageWrapper = ({_id}) => {
-  const dispatch = useDispatch();
+const OrderDetailsPageWrapper = ({ _id }) => {
+  const [orderDetails, setOrderDetails] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
+
   const router = useRouter();
-  const orderDetails = useSelector(selectOrder);
   const notifications = useNotifications();
 
   const loadData = React.useCallback(async () => {
-      await dispatch(getOrderDetails(_id)).unwrap();
-  }, [dispatch, _id]);
+    setLoading(true);
+
+    const { data } = await fetchWithAuth(modifyOrderApi(_id));
+
+    setOrderDetails(data);
+
+    setLoading(false);
+  }, [_id]);
 
   const handleCreateOrUpdateOrder = async (data) => {
     try {
-      const status = orderDetails?.shipmentTrackNumber ? "delivered" : data.shipmentTrackNumber ? "shipping" : data.status
+      const status = orderDetails?.shipmentTrackNumber
+        ? "delivered"
+        : data.shipmentTrackNumber
+        ? "shipping"
+        : data.status;
 
-      const body= {
+      const body = {
         shipmentTrackNumber: data.shipmentTrackNumber,
-        status
-      }
-      
+        status,
+      };
 
-      const message = await dispatch(updateOrder({ _id, body })).unwrap()
+      const message = await fetchWithAuth(modifyOrderApi(_id), { method: "PUT", body })
 
       notifications.show(message, {
         severity: "success",
@@ -52,14 +57,13 @@ const OrderDetailsPageWrapper = ({_id}) => {
     }
   };
 
-  if (!orderDetails) {
-    return <Loader />;
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   React.useEffect(() => {
     loadData();
   }, [loadData]);
+
+  if (loading || !orderDetails) {
+    return <Loader />;
+  }
 
   return (
     <PageContainer
@@ -70,7 +74,6 @@ const OrderDetailsPageWrapper = ({_id}) => {
         { name: "سفارش ها", path: "/dashboard/orders" },
         { name: _id ? "ویرایش سفارش" : "ساخت سفارش جدید" },
       ]}
-
     >
       <OrderForm
         onSubmit={handleCreateOrUpdateOrder}

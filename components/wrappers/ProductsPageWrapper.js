@@ -5,19 +5,21 @@ import QueryString from "qs";
 import Overview from "../common/overview/Overview";
 import { productColumns } from "@/constants/columns";
 import { transformGridQuery } from "@/lib/request";
-import { modifyProductApi, productApi } from "@/constants/api.routes";
+import {
+  getAllProductsApi,
+  modifyProductApi,
+} from "@/constants/api.routes";
 import { fetchWithAuth } from "@/lib/fetch";
 
 const ProductsPageWrapper = () => {
   // Fetch products from API
   const getProducts = async (params) => {
     try {
-      const dataGridQuery = transformGridQuery({ ...params });
-      const query = QueryString.stringify(dataGridQuery, { encodedValuesOnly: true });
+      const transformedQuery = transformGridQuery({ ...params });
+      const query = QueryString.stringify(transformedQuery);
 
-      const {data} = await fetchWithAuth(productApi, {
+      const { data } = await fetchWithAuth(getAllProductsApi(query), {
         method: "GET",
-        query
       });
 
       return {
