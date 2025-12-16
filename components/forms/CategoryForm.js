@@ -19,7 +19,7 @@ import RichTextEditor from "../fields/RichTextEditor";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import MediaPreview from "../common/MediaPreview";
 import TagField from "../fields/TagField";
-import MediaPageWrapper from "../wrappers/MediaPageWrapper";
+import MediaPageWrapper from "../dashboard-wrappers/MediaPageWrapper";
 import QueryString from "qs";
 import { fetchWithAuth } from "@/lib/fetch";
 import {
@@ -60,7 +60,7 @@ const CategoryForm = ({ data, mode = "create", onSubmit }) => {
         fetchWithAuth(tagApi, { query }),
       ]);
 
-      const { categories } = categoriesRes.data;
+      const { categories } = categoriesRes;
       const { tags } = tagsRes.data;
 
       setCategories(categories || []);
@@ -166,6 +166,7 @@ const CategoryForm = ({ data, mode = "create", onSubmit }) => {
                 const selectedCategories = (field.value || []).map((item) =>
                   categories?.find((c) => c._id === (item?._id || item))
                 );
+
                 return (
                   <Autocomplete
                     multiple

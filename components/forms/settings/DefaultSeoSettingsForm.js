@@ -7,7 +7,7 @@ import { seoSettingsDefaultValues } from "@/constants/default-form-values";
 import Loader from "@/components/common/Loader";
 import { Box, Button, Drawer, Grid, Stack, TextField, Typography } from "@mui/material";
 import MediaPreview from "@/components/common/MediaPreview";
-import MediaPageWrapper from "@/components/wrappers/MediaPageWrapper";
+import MediaPageWrapper from "@/components/dashboard-wrappers/MediaPageWrapper";
 
 const DefaultSeoSettingsForm = ({ data, onSubmit }) => {
   const [activeField, setActiveField] = React.useState(null);

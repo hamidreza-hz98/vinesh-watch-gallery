@@ -1,4 +1,3 @@
-import AppThemeProvider from "@/theme/theme-provider";
 import "./globals.css";
 import NotificationsProvider from "@/hooks/useNotifications/NotificationsProvider";
 import DialogsProvider from "@/hooks/useDialogs/DialogsProvider";
@@ -12,11 +11,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" dir="rtl">
       <body>
-        <AppThemeProvider>
-          <NotificationsProvider>
-            <DialogsProvider>{children}</DialogsProvider>
-          </NotificationsProvider>
-        </AppThemeProvider>
+        <NotificationsProvider>
+          <DialogsProvider>{children}</DialogsProvider>
+        </NotificationsProvider>
       </body>
     </html>
   );

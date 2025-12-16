@@ -1,7 +1,7 @@
 "use client";
 
 import Loader from "@/components/common/Loader";
-import MediaPageWrapper from "@/components/wrappers/MediaPageWrapper";
+import MediaPageWrapper from "@/components/dashboard-wrappers/MediaPageWrapper";
 import { defaultGeneralSettingsValues } from "@/constants/default-form-values";
 import {
   Box,

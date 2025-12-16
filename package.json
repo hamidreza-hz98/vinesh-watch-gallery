@@ -30,6 +30,7 @@
     "dayjs": "^1.11.19",
     "dayjs-jalali": "^0.0.2",
     "fs": "^0.0.1-security",
+    "iran-cities-json": "^2.0.0",
     "jalali-moment": "^3.3.11",
     "jsonwebtoken": "^9.0.3",
     "ldrs": "^1.1.9",
@@ -40,6 +41,7 @@
     "mongoose-timestamp": "^0.6.0",
     "multer": "^2.0.2",
     "next": "16.0.10",
+    "next-sitemap": "^4.2.3",
     "nookies": "^2.5.2",
     "path": "^0.12.7",
     "qs": "^6.14.0",
@@ -49,8 +51,11 @@
     "react-hook-form": "^7.68.0",
     "react-quill-new": "^3.6.0",
     "sanitize-html": "^2.17.0",
+    "styled-components": "^6.1.19",
     "stylis": "^4.3.6",
     "stylis-plugin-rtl": "^2.1.1",
+    "swiper": "^12.0.3",
+    "xmlbuilder2": "^4.0.3",
     "yup": "^1.7.1"
   },
   "devDependencies": {

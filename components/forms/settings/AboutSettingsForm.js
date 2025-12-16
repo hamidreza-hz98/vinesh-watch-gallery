@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Box, Button, Drawer, Grid, Stack, Typography } from "@mui/material";
 import MediaPreview from "@/components/common/MediaPreview";
 import RichTextEditor from "@/components/fields/RichTextEditor";
-import MediaPageWrapper from "@/components/wrappers/MediaPageWrapper";
+import MediaPageWrapper from "@/components/dashboard-wrappers/MediaPageWrapper";
 
 const AboutSettingsForm = ({ data, onSubmit }) => {
   const [activeField, setActiveField] = React.useState(null);

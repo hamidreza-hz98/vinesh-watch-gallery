@@ -40,12 +40,15 @@ exports.GET = async function (req) {
 
     const url = new URL(req.url);
     const objectedQuery = Object.fromEntries(url.searchParams.entries());
-    const query = QueryString.parse(objectedQuery)
+    const query = QueryString.parse(objectedQuery);
+
 
     const { categories, total } = await categoryService.getAll(query);
 
     return NextResponse.json({
-      data: { categories, total, ...query },
+      categories,
+      total,
+      ...query,
     });
   } catch (error) {
     return NextResponse.json(

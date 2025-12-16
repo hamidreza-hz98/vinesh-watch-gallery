@@ -59,6 +59,8 @@ export const getAllCustomersApi = (query) =>
 export const customerDetailsApi = (query) =>
   `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/details?${query}`;
 
+export const settingsApi =`${process.env.NEXT_PUBLIC_BASE_URL}/api/settings`;
+
 export const getSettingsApi = (section) =>
   `${process.env.NEXT_PUBLIC_BASE_URL}/api/settings/${section}`;
 
@@ -76,3 +78,18 @@ export const contactApi = (query) =>
   `${process.env.NEXT_PUBLIC_BASE_URL}/api/contact?${query}`;
 
 export const dashboardApi = "/api/dashboard";
+
+export const cartApi = `${process.env.NEXT_PUBLIC_BASE_URL}/api/cart`;
+
+export const modifyCartApi = (_id) =>
+  `${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/${_id}`;
+
+export const getCartApi = (_id) =>
+  `${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/${_id}`;
+
+export const getCustomerCartApi = (customerId) =>
+  `${process.env.NEXT_PUBLIC_BASE_URL}/api/ cart/customer/${customerId}`;
+
+export const customerLoginApi = `${process.env.NEXT_PUBLIC_BASE_URL}/customer/login`;
+
+export const customerSignupApi = `${process.env.NEXT_PUBLIC_BASE_URL}/customer/signup`;

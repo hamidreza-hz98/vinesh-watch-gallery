@@ -15,7 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { parseCookies } from "nookies";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import MediaPreview from "../common/MediaPreview";
-import MediaPageWrapper from "../wrappers/MediaPageWrapper";
+import MediaPageWrapper from "../dashboard-wrappers/MediaPageWrapper";
 import Loader from "../common/Loader";
 import RichTextEditor from "../fields/RichTextEditor";
 import { defaultBrandValues } from "@/constants/default-form-values";

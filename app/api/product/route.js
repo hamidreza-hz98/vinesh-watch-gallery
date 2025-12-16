@@ -27,7 +27,10 @@ exports.POST = async (req) => {
       data: product,
     });
   } catch (error) {
-    return NextResponse.json({ message: error.message }, { status: error.statusCode || 500 });
+    return NextResponse.json(
+      { message: error.message },
+      { status: error.statusCode || 500 }
+    );
   }
 };
 
@@ -38,13 +41,16 @@ exports.GET = async (req) => {
 
     const url = new URL(req.url);
     const objectedQuery = Object.fromEntries(url.searchParams.entries());
-    const query = QueryString.parse(objectedQuery)
+    const query = QueryString.parse(objectedQuery);
 
     const { products, total } = await productService.getAll(query);
 
-    return NextResponse.json({ data: { products, total, ...query } });
+    return NextResponse.json({ products, total, ...query });
   } catch (error) {
-    return NextResponse.json({ message: error.message }, { status: error.statusCode || 500 });
+    return NextResponse.json(
+      { message: error.message },
+      { status: error.statusCode || 500 }
+    );
   }
 };
 
@@ -59,7 +65,10 @@ exports.GET_SEO = async (req) => {
 
     return NextResponse.json({ data: seo });
   } catch (error) {
-    return NextResponse.json({ message: error.message }, { status: error.statusCode || 500 });
+    return NextResponse.json(
+      { message: error.message },
+      { status: error.statusCode || 500 }
+    );
   }
 };
 
@@ -71,6 +80,9 @@ exports.GET_SITEMAP = async () => {
 
     return NextResponse.json({ data: products });
   } catch (error) {
-    return NextResponse.json({ message: error.message }, { status: error.statusCode || 500 });
+    return NextResponse.json(
+      { message: error.message },
+      { status: error.statusCode || 500 }
+    );
   }
 };

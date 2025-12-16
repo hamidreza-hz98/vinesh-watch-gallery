@@ -1,4 +1,4 @@
-import AuthPageWrapper from "@/components/wrappers/AuthPageWrapper";
+import AuthPageWrapper from "@/components/dashboard-wrappers/AuthPageWrapper";
 import React from "react";
 
 export const metadata = {

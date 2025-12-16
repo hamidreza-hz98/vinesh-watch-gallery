@@ -22,7 +22,7 @@ import TagField from "../fields/TagField";
 import MediaPreview from "../common/MediaPreview";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SpecificationsField from "../fields/SpecificationsField";
-import MediaPageWrapper from "../wrappers/MediaPageWrapper";
+import MediaPageWrapper from "../dashboard-wrappers/MediaPageWrapper";
 import {
   brandApi,
   categoryApi,
