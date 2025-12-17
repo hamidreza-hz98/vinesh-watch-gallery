@@ -6,44 +6,40 @@ import Footer from "@/components/layout/landing/Footer";
 import MobileBottomNav from "@/components/layout/landing/MobileBottomNav";
 import { getLandingData } from "@/lib/landing-data";
 import LandingDataProvider from "@/providers/LandingDataProvider";
+import settingsService from "@/server/modules/settings/settings.service";
+import connectDB from "@/server/db";
 
 async function getDefaultSeo() {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/settings/seo`,
-      {
-        next: { revalidate: 60 },
-      }
-    );
+    await connectDB();
 
-    if (!res.ok) throw new Error("Failed to fetch SEO");
-    const { data } = await res.json();
+    const { data } = await settingsService.getDefaultSeo();
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
     return {
-      title: data.title || "امریان واچ",
-      description: data.description || "فروشگاه اینترنتی گالری ساعت Vinesh",
-      keywords: data.keywords || "",
+      title: data?.title || "امریان واچ",
+      description: data?.description || "فروشگاه اینترنتی گالری ساعت Vinesh",
+      keywords: data?.keywords || "",
       robots:
-        // data.robots ||
+        // data?.robots ||
         "noindex, nofollow",
-      canonical: data.canonical || baseUrl,
-      additionalMetaTags: data.additionalMetaTags || "",
+      canonical: data?.canonical || baseUrl,
+      additionalMetaTags: data?.additionalMetaTags || "",
       openGraph: {
-        title: data.ogTitle || data.title,
-        description: data.ogDescription || data.description,
-        url: data.canonical || baseUrl,
-        images: data.ogImage ? [`${baseUrl}${data.ogImage.path}`] : [],
+        title: data?.ogTitle || data?.title,
+        description: data?.ogDescription || data?.description,
+        url: data?.canonical || baseUrl,
+        images: data?.ogImage ? [`${baseUrl}${data?.ogImage.path}`] : [],
         siteName: "Your Site Name",
         type: "website",
       },
       twitter: {
         card: "summary_large_image",
-        title: data.twitterTitle || data.title,
-        description: data.twitterDescription || data.description,
-        images: data.twitterImage
-          ? [`${baseUrl}${data.twitterImage.path}`]
+        title: data?.twitterTitle || data?.title,
+        description: data?.twitterDescription || data?.description,
+        images: data?.twitterImage
+          ? [`${baseUrl}${data?.twitterImage.path}`]
           : [],
       },
     };

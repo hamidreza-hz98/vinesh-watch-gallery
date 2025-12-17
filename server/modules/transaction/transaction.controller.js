@@ -3,8 +3,8 @@ const orderService = require("../order/order.service");
 
 const { calculateFinalPrice } = require("../../lib/number");
 
-const APP_BASE = process.env.APP_BASE_URL; // e.g. https://your-backend
-const FRONTEND_BASE = process.env.FRONTEND_BASE_URL;
+const APP_BASE = process.env.NEXT_PUBLIC_BASE_URL; // e.g. https://your-backend
+const FRONTEND_BASE = process.env.NEXT_PUBLIC_BASE_URL;
 
 const transactionController = {
   async initiate(req, res) {

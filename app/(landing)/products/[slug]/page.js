@@ -1,17 +1,15 @@
 import ProductDetailsPageWrapper from "@/components/landing-wrappers/ProductDetailsPageWrapper";
+import connectDB from "@/server/db";
+import productService from "@/server/modules/product/product.service";
 import React from "react";
 
 let productSchema = {};
 
 async function fetchSeoData(slug) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/product/seo?slug=${decodeURIComponent(slug)}`, {
-      cache: "no-store",
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch SEO data");
-
-    const { seo, schema } = await res.json();
+    await connectDB()
+    
+    const { seo, schema } = await productService.getSeoData({ slug });
 
     productSchema = schema;
 
@@ -21,7 +19,7 @@ async function fetchSeoData(slug) {
       title: seo.title,
       description: seo.description,
       keywords: seo.keywords,
-      robots: "noindex, nofollow", 
+      robots: "noindex, nofollow",
       // seo.robots,
       canonical: seo.canonical,
       additionalMetaTags: seo.additionalMetaTags,
@@ -46,7 +44,7 @@ async function fetchSeoData(slug) {
 }
 
 export async function generateMetadata({ params }) {
-  const {slug} = await params
+  const { slug } = await params;
   return await fetchSeoData(slug);
 }
 
