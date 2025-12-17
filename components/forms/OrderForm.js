@@ -17,7 +17,6 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import Loader from "../common/Loader";
 import Image from "next/image";
-import { setFilePath } from "@/lib/media";
 
 const statusOptions = Object.entries(orderStatuses).map(([key, value]) => ({
   value: key,
@@ -276,7 +275,7 @@ const OrderForm = ({ order, onSubmit }) => {
                   </Typography>
 
                   <Typography fontSize={15} fontWeight="bold">
-                    {formatPrice(item.product.price)} تومان
+                    {formatPrice(item?.product?.price)} تومان
                   </Typography>
                 </Box>
                 
@@ -291,7 +290,7 @@ const OrderForm = ({ order, onSubmit }) => {
                   </Typography>
 
                   <Typography fontSize={15} fontWeight="bold">
-                    {formatPrice(item.product.discount)} تومان
+                    {formatPrice(item?.product?.discount)} تومان
                   </Typography>
                 </Box>
                
@@ -306,7 +305,7 @@ const OrderForm = ({ order, onSubmit }) => {
                   </Typography>
 
                   <Typography fontSize={15} fontWeight="bold">
-                    {formatPrice((item.product.price - item.product.discount) * item.quantity)} تومان
+                    {formatPrice((item?.product?.price - item?.product?.discount) * item?.quantity)} تومان
                   </Typography>
                 </Box>
               </Box>

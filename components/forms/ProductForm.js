@@ -1,7 +1,6 @@
 "use client";
 
 import { defaultProductValues } from "@/constants/default-form-values";
-import QueryString from "qs";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import Loader from "../common/Loader";
@@ -16,24 +15,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { formatPrice, toEnglish, toNumber } from "@/lib/number";
+import { formatPrice, toEnglish } from "@/lib/number";
 import RichTextEditor from "../fields/RichTextEditor";
 import TagField from "../fields/TagField";
 import MediaPreview from "../common/MediaPreview";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SpecificationsField from "../fields/SpecificationsField";
 import MediaPageWrapper from "../dashboard-wrappers/MediaPageWrapper";
-import {
-  brandApi,
-  categoryApi,
-  getAllBrandsApi,
-  getAllCategoriesApi,
-  getAllProductsApi,
-  getAlltagsApi,
-  productApi,
-  tagApi,
-} from "@/constants/api.routes";
-import { fetchWithAuth } from "@/lib/fetch";
+import { getAllProducts } from "@/app/actions/product";
+import { getAllBrands } from "@/app/actions/brand";
+import { getAllCategories } from "@/app/actions/category";
+import { getAllTags } from "@/app/actions/tag";
 
 const ProductForm = ({ data, mode = "create", onSubmit }) => {
   const [products, setProducts] = React.useState([]);
@@ -66,14 +58,14 @@ const ProductForm = ({ data, mode = "create", onSubmit }) => {
   React.useEffect(() => {
     const fetchDependencies = async () => {
       try {
-        const query = QueryString.stringify({ page_size: 5000 });
+        const query = { page_size: 5000 };
 
         const [productsRes, categoriesRes, tagsRes, brandsRes] =
           await Promise.all([
-            fetchWithAuth(getAllProductsApi(query)),
-            fetchWithAuth(getAllCategoriesApi(query)),
-            fetchWithAuth(getAlltagsApi(query)),
-            fetchWithAuth(getAllBrandsApi(query)),
+            getAllProducts(query),
+            getAllCategories(query),
+            getAllTags(query),
+            getAllBrands(query),
           ]);
 
         setProducts(productsRes.data.products || []);

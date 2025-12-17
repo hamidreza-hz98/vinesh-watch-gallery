@@ -15,6 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import FileUpload from "../fields/FileUpload";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { modifyMediaApi, uploadMediaApi } from "@/constants/api.routes";
+import { updateMedia, uploadMedia } from "@/app/actions/media";
 
 const MediaForm = ({ mode, data, onClose, onSuccess }) => {
   const [uploadProgress, setUploadProgress] = React.useState(0);
@@ -40,7 +41,7 @@ const MediaForm = ({ mode, data, onClose, onSuccess }) => {
     }
 
     if (data?.path) {
-      setPreviewUrl((data.path));
+      setPreviewUrl(data.path);
     } else {
       setPreviewUrl(null);
     }
@@ -53,76 +54,44 @@ const MediaForm = ({ mode, data, onClose, onSuccess }) => {
   /* ---------------------------------- */
   /* UPLOAD / UPDATE MEDIA */
   /* ---------------------------------- */
-  const handleUploadMedia = async (formData) => {
+  const handleUploadMedia = async (data) => {
     try {
       setUploadProgress(0);
 
-      const { file, ...rest } = formData;
-      const formDataToSend = new FormData();
+      const formData = new FormData();
 
-      if (file instanceof File) {
-        formDataToSend.append("file", file);
-      } else if (mode === "edit" && data?.path) {
-        formDataToSend.append("existingFile", data.path);
-      } else {
-        return;
-      }
+      Object.entries(data).forEach(([key, value]) => {
+        if (value === undefined || value === null) return;
 
-      Object.entries(rest).forEach(([key, value]) => {
-        formDataToSend.append(key, value ?? "");
+        if (key === "file" && value instanceof File) {
+          formData.append("file", value);
+        } else if (key === "file" && typeof value === "string") {
+          // This is an existing file path; send it as "existingFile"
+          formData.append("existingFile", value);
+        } else {
+          formData.append(key, value);
+        }
       });
 
-      const url = mode === "edit" ? modifyMediaApi(formData._id) : uploadMediaApi;
+      // Call the server action
+      const res =
+        mode === "edit"
+          ? await updateMedia(data._id, formData)
+          : await uploadMedia(formData);
 
-      const method = mode === "edit" ? "PUT" : "POST";
+      // Success handling
+      setUploadProgress(100);
+      onSuccess?.();
+      reset();
+      setSelectedFile(null);
+      setPreviewUrl(null);
 
-      /* XMLHttpRequest for upload progress */
-      const xhr = new XMLHttpRequest();
-      xhr.open(method, url);
+      setTimeout(() => setUploadProgress(0), 800);
 
-      // auth header
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
-
-      if (token) {
-        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-      }
-
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percent = Math.round((event.loaded / event.total) * 100);
-          setUploadProgress(percent);
-        }
-      };
-
-      xhr.onload = () => {
-        const res = JSON.parse(xhr.responseText);
-
-        if (xhr.status >= 200 && xhr.status < 300) {
-          setUploadProgress(100);
-          onSuccess?.();
-          reset();
-          setSelectedFile(null);
-          setPreviewUrl(null);
-
-          setTimeout(() => setUploadProgress(0), 800);
-
-          notifications.show(res.message, {
-            severity: "success",
-            autoHideDuration: 3000,
-          });
-        } else {
-          throw new Error(res.message);
-        }
-      };
-
-      xhr.onerror = () => {
-        throw new Error("Upload failed");
-      };
-
-      xhr.send(formDataToSend);
+      notifications.show(res.message, {
+        severity: "success",
+        autoHideDuration: 3000,
+      });
     } catch (error) {
       notifications.show(error.message || error, {
         severity: "error",

@@ -1,15 +1,14 @@
 "use client";
 
 import { defaultCustomerValues } from "@/constants/default-form-values";
-import {createCustomerSchema} from "@/validation/customer.validation";
+import { createCustomerSchema } from "@/validation/customer.validation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, TextField, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import CustomDatePicker from "../fields/CustomDatePicker";
-import { fetchWithAuth } from "@/lib/fetch";
-import { customerApi, modifyCustomerApi } from "@/constants/api.routes";
+import { createCustomer, updateCustomer } from "@/app/actions/customer";
 
 const CustomerForm = ({ mode, data, onClose, onSuccess, onError }) => {
   const {
@@ -32,11 +31,8 @@ const CustomerForm = ({ mode, data, onClose, onSuccess, onError }) => {
     try {
       const { message } =
         mode === "edit"
-          ? await fetchWithAuth(modifyCustomerApi(data._id), {
-              method: "PUT",
-              body,
-            })
-          : await fetchWithAuth(customerApi, { method: "POST", body });
+          ? await updateCustomer(data._id, body)
+          : await createCustomer(body);
 
       reset();
       onSuccess && onSuccess(message);

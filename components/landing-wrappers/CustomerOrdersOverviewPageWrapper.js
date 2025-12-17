@@ -12,6 +12,7 @@ import CustomPagination from "@/components/filter/CustomPagination";
 import { fetchWithAuth } from "@/lib/fetch";
 import { customerOrdersApi } from "@/constants/api.routes";
 import Loader from "../common/Loader";
+import { getCustomerOrders } from "@/app/actions/order";
 
 const CustomerOrdersOverviewPageWrapper = () => {
   const [orders, setOrders] = useState(null);
@@ -32,7 +33,7 @@ const CustomerOrdersOverviewPageWrapper = () => {
       try {
         setLoading(true);
 
-        const query = setRequestQuery({
+        const query = {
           filters:
             statusFilter === "all"
               ? {}
@@ -44,11 +45,12 @@ const CustomerOrdersOverviewPageWrapper = () => {
                 },
           page,
           page_size,
-        });
+        };
 
-        const { data } = await fetchWithAuth(
-          customerOrdersApi(customer, query)
-        );
+        const { data } = await getCustomerOrders(customer, query );
+
+        console.log(data);
+        
 
         setOrders(data);
       } catch (error) {

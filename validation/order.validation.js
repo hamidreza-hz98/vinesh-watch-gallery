@@ -26,8 +26,3 @@ export const updateOrderSchema = yup
       .oneOf(["pending_payment", "paid", "shipping", "delivered"]),
     shipmentTrackNumber: yup.string().nullable(),
   })
-  .test(
-    "at-least-one",
-    "At least one field must be updated",
-    (value) => value && Object.keys(value).length > 0
-  );

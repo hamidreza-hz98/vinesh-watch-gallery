@@ -27,6 +27,8 @@ import {
   getAllCategoriesApi,
   tagApi,
 } from "@/constants/api.routes";
+import { getAllCategories } from "@/app/actions/category";
+import { getAllTags } from "@/app/actions/tag";
 
 const CategoryForm = ({ data, mode = "create", onSubmit }) => {
   const [categories, setCategories] = React.useState([]);
@@ -53,14 +55,14 @@ const CategoryForm = ({ data, mode = "create", onSubmit }) => {
 
   React.useEffect(() => {
     const fetchDependencies = async () => {
-      const query = QueryString.stringify({ page_size: 5000 });
+      const query = { page_size: 5000 };
 
       const [categoriesRes, tagsRes] = await Promise.all([
-        fetchWithAuth(getAllCategoriesApi(query)),
-        fetchWithAuth(tagApi, { query }),
+        getAllCategories(query),
+        getAllTags(query),
       ]);
 
-      const { categories } = categoriesRes;
+      const { categories } = categoriesRes.data;
       const { tags } = tagsRes.data;
 
       setCategories(categories || []);

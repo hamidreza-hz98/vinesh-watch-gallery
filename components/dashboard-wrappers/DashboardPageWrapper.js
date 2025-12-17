@@ -9,8 +9,7 @@ import TopProducts from "../dashboard/TopProducts";
 import LatestOrders from "../dashboard/LatestOrders";
 import Loader from "../common/Loader";
 import { useSearchParams } from "next/navigation";
-import { dashboardApi } from "@/constants/api.routes";
-import { fetchWithAuth } from "@/lib/fetch";
+import { getDashboardData } from "@/app/actions/dashboard";
 
 const DashboardPageWrapper = () => {
   const searchParams = useSearchParams();
@@ -23,10 +22,12 @@ const DashboardPageWrapper = () => {
   useEffect(() => {
     const fetchDashboard = async () => {
       setLoading(true);
+
       setError(null);
       try {
-        const query = { status };
-        const data = await fetchWithAuth(dashboardApi, { query });
+        const { data } = await getDashboardData(status)
+
+        console.log(data)
 
         setDashboard(data);
       } catch (err) {
@@ -41,6 +42,7 @@ const DashboardPageWrapper = () => {
   }, [status, searchParams]);
 
   if (loading) return <Loader />;
+
   if (error)
     return (
       <PageContainer title="داشبورد مدیریت فروشگاه">

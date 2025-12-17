@@ -15,8 +15,9 @@ import ClearIcon from "@mui/icons-material/Clear";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { fetchWithAuth } from "@/lib/fetch";
 import { modifyTagApi, tagApi } from "@/constants/api.routes";
+import { createTag, deleteTag, getAllTags } from "@/app/actions/tag";
 
-export default function TagField({ initialTags= [], value = [], onChange }) {
+export default function TagField({ initialTags = [], value = [], onChange }) {
   const notifications = useNotifications();
   const [tags, setTags] = useState(initialTags);
   const [loading, setLoading] = useState(false);
@@ -25,7 +26,10 @@ export default function TagField({ initialTags= [], value = [], onChange }) {
 
   const fetchTags = useCallback(async () => {
     try {
-      const {data} = await fetchWithAuth(tagApi);
+      const query = { page_size: 1000 };
+
+      const { data } = await getAllTags(query);
+
       setTags(data?.tags || []);
     } catch {
       notifications.show("خطا در دریافت تگ‌ها.", { severity: "error" });
@@ -39,18 +43,13 @@ export default function TagField({ initialTags= [], value = [], onChange }) {
   /* -------------------- map ObjectIds → full tag objects -------------------- */
 
   const selectedTags = React.useMemo(() => {
-  return value
-    .map((v) => {
-      if (typeof v === "object") return v;
-      return tags.find((t) => String(t._id) === String(v));
-    })
-    .filter(Boolean);
-}, [value, tags]);
-
-
-
-  console.log(selectedTags);
-  
+    return value
+      .map((v) => {
+        if (typeof v === "object") return v;
+        return tags.find((t) => String(t._id) === String(v));
+      })
+      .filter(Boolean);
+  }, [value, tags]);
 
   /* -------------------------------- handlers -------------------------------- */
 
@@ -61,14 +60,22 @@ export default function TagField({ initialTags= [], value = [], onChange }) {
   const removeFromDatabase = async (tag) => {
     try {
       setLoading(true);
-      await fetchWithAuth(modifyTagApi(tag._id), { method: "DELETE" });
+      await deleteTag(tag._id);
 
       setTags((prev) => prev.filter((t) => t._id !== tag._id));
       onChange(value.filter((id) => id !== tag._id));
 
-      notifications.show("تگ حذف شد.", { severity: "success" });
-    } catch {
-      notifications.show("خطا هنگام حذف تگ.", { severity: "error" });
+      notifications.show("تگ حذف شد.", {
+        severity: "success",
+        autoHideDuration: 3000,
+      });
+    } catch (error) {
+      console.log(error);
+
+      notifications.show("خطا هنگام حذف تگ.", {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
     } finally {
       setLoading(false);
     }
@@ -76,19 +83,22 @@ export default function TagField({ initialTags= [], value = [], onChange }) {
 
   const handleCreateTag = async (name) => {
     try {
-      const { data, message } = await fetchWithAuth(tagApi, {
-        method: "POST",
-        body: { name },
-      });
+      const { data, message } = await createTag({ name });
 
       const newTag = data;
 
       setTags((prev) => [...prev, newTag]);
       onChange([...value, newTag._id]);
 
-      notifications.show( message || "تگ ایجاد شد.", { severity: "success" });
+      notifications.show(message || "تگ ایجاد شد.", {
+        severity: "success",
+        autoHideDuration: 3000,
+      });
     } catch (error) {
-      notifications.show( error.message || "مشکلی پیش آمد.", { severity: "error" });
+      notifications.show(error.message || "مشکلی پیش آمد.", {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
 
@@ -151,11 +161,7 @@ export default function TagField({ initialTags= [], value = [], onChange }) {
         </Box>
       )}
       renderInput={(params) => (
-        <TextField
-          {...params}
-          label="تگ‌ها"
-          placeholder="ساختن یا انتخاب"
-        />
+        <TextField {...params} label="تگ‌ها" placeholder="ساختن یا انتخاب" />
       )}
     />
   );

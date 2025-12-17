@@ -12,6 +12,7 @@ import { fetchWithAuth } from "@/lib/fetch";
 import { customerDetailsApi, modifyCustomerApi } from "@/constants/api.routes";
 import { setRequestQuery } from "@/lib/request";
 import QueryString from "qs";
+import { getCustomerDetails } from "@/app/actions/customer";
 
 const menuItems = [
   routes.profile,
@@ -33,7 +34,7 @@ const ProfileSidebar = () => {
       try {
         setLoading(true);
 
-        const { data } = await fetchWithAuth(modifyCustomerApi(customer));
+        const { data } = await getCustomerDetails(customer);
 
         setCustomerDetails(data);
       } catch (error) {

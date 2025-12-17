@@ -3,28 +3,23 @@
 import React from "react";
 import Overview from "../common/overview/Overview";
 import { transformGridQuery } from "@/lib/request";
-import QueryString from "qs";
 import { categoryColumns } from "@/constants/columns";
-import { fetchWithAuth } from "@/lib/fetch";
-import { getAllCategoriesApi, modifyCategoryApi } from "@/constants/api.routes";
+import { deleteCategory, getAllCategories } from "@/app/actions/category";
 
 const CategoriesPageWrapper = () => {
   const getCategories = async (params) => {
-    const transformedQuery = transformGridQuery({ ...params });
-    const query = QueryString.stringify(transformedQuery);
+    const query = transformGridQuery({ ...params });
 
-    const { categories, total } = await fetchWithAuth(getAllCategoriesApi(query));
+    const { data } = await getAllCategories(query);
 
     return {
-      items: categories,
-      rowCount: total,
+      items: data.categories,
+      rowCount: data.total,
     };
   };
 
   const handleDeleteCategory = async (_id) => {
-    const { message } = await fetchWithAuth(modifyCategoryApi(_id), {
-      method: "DELETE",
-    });
+    const { message } = await deleteCategory(_id);
 
     return { success: true, message };
   };

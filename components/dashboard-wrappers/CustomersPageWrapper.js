@@ -1,36 +1,31 @@
 "use client";
 
 import { transformGridQuery } from "@/lib/request";
-import QueryString from "qs";
 import React from "react";
 import Overview from "../common/overview/Overview";
 import { customerColumns } from "@/constants/columns";
 import CustomerForm from "../forms/CustomerForm";
-import { fetchWithAuth } from "@/lib/fetch";
-import { getAllCustomersApi, modifyCustomerApi } from "@/constants/api.routes";
+import { deleteCustomer, getAllCustomers } from "@/app/actions/customer";
 
 const CustomersPageWrapper = () => {
   const getCustomers = async (params) => {
-   try {
-     const transformedQuery = transformGridQuery(params);
-     const query = QueryString.stringify(transformedQuery);
- 
-     const data  = await fetchWithAuth(getAllCustomersApi(query));
+    try {
+      const query = transformGridQuery(params);
 
-     return { items: data.customers, rowCount: data.total };
-   } catch (error) {
-    console.error("Failed to fetch Customers:", error);
+      const { data } = await getAllCustomers(query);
+
+      return { items: data.customers, rowCount: data.total };
+    } catch (error) {
+      console.error("Failed to fetch Customers:", error);
       return {
         items: [],
         rowCount: 0,
       };
-   }
+    }
   };
 
   const handleDeleteCustomer = async (_id) => {
-    const { message } = await fetchWithAuth(modifyCustomerApi(_id), {
-      method: "DELETE",
-    });
+    const { message } = await deleteCustomer(_id);
 
     return { success: true, message };
   };

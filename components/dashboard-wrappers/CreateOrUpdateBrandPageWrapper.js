@@ -14,6 +14,7 @@ import {
   brandDetailsApi,
   modifyBrandApi,
 } from "@/constants/api.routes";
+import { createBrand, getBrandDetails, updateBrand } from "@/app/actions/brand";
 
 const CreateOrUpdateBrandPageWrapper = () => {
   const [brandDetails, setBrandDetails] = React.useState(null);
@@ -31,9 +32,7 @@ const CreateOrUpdateBrandPageWrapper = () => {
     try {
       setLoading(true);
 
-      const query = QueryString.stringify({ _id });
-
-      const { data } = await fetchWithAuth(brandDetailsApi(query));
+      const { data } = await getBrandDetails({ _id });
 
       setBrandDetails(data);
     } catch (error) {
@@ -48,11 +47,16 @@ const CreateOrUpdateBrandPageWrapper = () => {
 
   const handleCreateOrUpdateBrand = async (brand) => {
     try {
-      const body = purifyData(brand, ["tags", "logo", "seo.ogImage", "seo.twitterImage"]);
+      const body = purifyData(brand, [
+        "tags",
+        "logo",
+        "seo.ogImage",
+        "seo.twitterImage",
+      ]);
 
       const { message } = _id
-        ? await fetchWithAuth(modifyBrandApi(_id), { method: "PUT", body })
-        : await fetchWithAuth(brandApi, { method: "POST", body });
+        ? await updateBrand(_id, body)
+        : await createBrand(body);
 
       notifications.show(message, {
         severity: "success",

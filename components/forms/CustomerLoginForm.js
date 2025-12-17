@@ -20,6 +20,7 @@ import { fetchWithAuth } from "@/lib/fetch";
 import { customerLoginApi } from "@/constants/api.routes";
 import { setCookie } from "nookies";
 import { loginFormValidationSchema } from "@/validation/landing.validations";
+import { loginCustomer } from "@/app/actions/customer";
 
 const CustomerLoginForm = ({ onSwitch, onSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,7 +39,7 @@ const CustomerLoginForm = ({ onSwitch, onSuccess }) => {
 
   const onSubmit = async (body) => {
      try {
-      const {data, message} = await fetchWithAuth(customerLoginApi, { method: "POST", body })
+      const {data, message} = await loginCustomer(body)
 
       const { token, customer } = data;
 

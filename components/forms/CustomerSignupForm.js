@@ -19,6 +19,7 @@ import { fetchWithAuth } from "@/lib/fetch";
 import { customerSignupApi } from "@/constants/api.routes";
 import { setCookie } from "nookies";
 import { signupFormValidationSchema } from "@/validation/landing.validations";
+import { signupCustomer } from "@/app/actions/customer";
 
 const CustomerSignupForm = ({ onSwitch, onSuccess, onClose }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +37,7 @@ const CustomerSignupForm = ({ onSwitch, onSuccess, onClose }) => {
 
   const onSubmit = async (body) => {
     try {
-      const {data, message} = await fetchWithAuth(customerSignupApi, { method: "POST", body })
+      const {data, message} = await signupCustomer(body)
 
       const { token, customer } = data;
 

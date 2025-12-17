@@ -23,6 +23,7 @@ import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { userInformationSchema } from "@/validation/landing.validations";
 import { fetchWithAuth } from "@/lib/fetch";
 import { modifyCustomerApi } from "@/constants/api.routes";
+import { updateCustomer } from "@/app/actions/customer";
 
 const CustomerInformationForm = ({ data }) => {
   const notifications = useNotifications()
@@ -48,7 +49,7 @@ const CustomerInformationForm = ({ data }) => {
 
   const handleFormSubmit = async (body) => {
     try {
-      const {message} = await fetchWithAuth(modifyCustomerApi(data._id), { method: "PUT", body })
+      const {message} = await updateCustomer(body)
       
            notifications.show(message, {
         severity: "success",

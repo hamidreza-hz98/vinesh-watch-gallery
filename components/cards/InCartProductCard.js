@@ -19,6 +19,7 @@ import nookies from "nookies";
 import { useLandingData } from "@/providers/LandingDataProvider";
 import { fetchWithAuth } from "@/lib/fetch";
 import { modifyCartApi } from "@/constants/api.routes";
+import { updateCart } from "@/app/actions/cart";
 
 const InCartProductCard = ({ product, quantity, isFinalize = false }) => {
   const theme = useTheme();
@@ -34,13 +35,10 @@ const InCartProductCard = ({ product, quantity, isFinalize = false }) => {
 
   const handleAddToCart = async () => {
     try {
-      const { message, data } = await fetchWithAuth(modifyCartApi(cart._id), {
-        method: "PUT",
-        body: {
-          customerId: customer || null,
-          action: "add",
-          productId: product._id,
-        },
+      const { message, data } = await updateCart(cart._id, {
+        customerId: customer || null,
+        action: "add",
+        productId: product._id,
       });
 
       setCart(data);
@@ -59,13 +57,10 @@ const InCartProductCard = ({ product, quantity, isFinalize = false }) => {
 
   const handleRemoveFromcart = async () => {
     try {
-      const { message, data } = await await fetchWithAuth(modifyCartApi(cart._id), {
-        method: "PUT",
-        body: {
-          customerId: customer || null,
-          action: quantity > 1 ? "decrease" : "remove",
-          productId: product._id,
-        },
+      const { message, data } = await updateCart(cart._id, {
+        customerId: customer || null,
+        action: quantity > 1 ? "decrease" : "remove",
+        productId: product._id,
       });
 
       setCart(data);

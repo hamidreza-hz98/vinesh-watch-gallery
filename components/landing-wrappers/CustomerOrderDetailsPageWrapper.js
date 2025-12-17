@@ -29,6 +29,8 @@ import {
   initiateTransactionApi,
   retryTransactionApi,
 } from "@/constants/api.routes";
+import { getCustomerOrderDetails } from "@/app/actions/order";
+import { initiateTransaction } from "@/app/actions/transaction";
 
 const DetailItem = ({ label, value, copyable }) => {
   const notifications = useNotifications();
@@ -89,11 +91,9 @@ const CustomerOrderDetailsPageWrapper = ({ code }) => {
       try {
         setLoading(true);
 
-        const { order } = await fetchWithAuth(
-          customerOrderDetailsApi(code, customer)
-        );
+        const { data } = await getCustomerOrderDetails(code, { customerId: customer })
 
-        setOrder(order);
+        setOrder(data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -105,7 +105,7 @@ const CustomerOrderDetailsPageWrapper = ({ code }) => {
   }, [code, customer]);
 
   const handleRetryPayment = async () => {
-     if (!["pending_payment", "failed"].includes(order.status)) {
+     if (!["pending_payment", "failed"].includes(order?.status)) {
       return notifications.show("امکان پرداخت مجدد برای این سفارش وجود ندارد" || error.message, {
         severity: "error",
         autoHideDuration: 3000,
@@ -113,12 +113,7 @@ const CustomerOrderDetailsPageWrapper = ({ code }) => {
     }   
      
 
-    const { redirectUrl } = await fetchWithAuth(initiateTransactionApi, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: { orderId: order?._id },
-    });
+    const { redirectUrl } = await initiateTransaction({orderId: order?._id })
 
     if (redirectUrl) {
       window.location.href = redirectUrl;
@@ -145,7 +140,7 @@ const CustomerOrderDetailsPageWrapper = ({ code }) => {
         >
           <Typography> جزییات سفارش </Typography>
 
-          {["pending_payment", "failed"].includes(order.status) && (
+          {["pending_payment", "failed"].includes(order?.status) && (
             <Button
               loading={loading}
               variant="contained"
@@ -207,10 +202,10 @@ const CustomerOrderDetailsPageWrapper = ({ code }) => {
         </Typography>
 
         <Box display="flex" alignItems="center" gap={1}>
-          <Box display="flex">{orderStatuses[order.status].icon}</Box>
+          <Box display="flex">{orderStatuses[order?.status]?.icon}</Box>
 
           <Typography fontSize={15} fontWeight="bold">
-            {orderStatuses[order.status].name}
+            {orderStatuses[order?.status]?.name}
           </Typography>
         </Box>
       </Grid>

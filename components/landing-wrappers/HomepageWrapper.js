@@ -17,6 +17,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { useLandingData } from "@/providers/LandingDataProvider";
 import { fetchWithAuth } from "@/lib/fetch";
 import { getAllProductsApi } from "@/constants/api.routes";
+import { getAllProducts } from "@/app/actions/product";
 
 const HomepageWrapper = () => {
   const { categories, brands, settings } = useLandingData();
@@ -30,31 +31,23 @@ const HomepageWrapper = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const mostSoldResponse = await fetchWithAuth(
-          getAllProductsApi(
-            setRequestQuery({
+        const mostSoldResponse = await getAllProducts({
               page_size: 10,
               sort: [{ field: "soldNumber", order: "desc" }],
               filters: { stock: { type: "gt", value: 0 } },
             })
-          )
-        );
 
-        setMostSoldProducts(mostSoldResponse.products);
+        setMostSoldProducts(mostSoldResponse.data.products);
 
-        const discountResponse = await fetchWithAuth(
-          getAllProductsApi(
-            setRequestQuery({
+        const discountResponse = await getAllProducts({
               page_size: 10,
               filters: {
                 discount: { type: "gt", value: 0 },
                 stock: { type: "gt", value: 0 },
               },
             })
-          )
-        );
 
-        setProductsWithDiscount(discountResponse.products);
+        setProductsWithDiscount(discountResponse.data.products);
       } catch (error) {
         console.error(error.message || "");
       }

@@ -31,14 +31,15 @@ import routes from "@/constants/landing.routes";
 import { useLandingData } from "@/providers/LandingDataProvider";
 import { fetchWithAuth } from "@/lib/fetch";
 import { getAllProductsApi } from "@/constants/api.routes";
+import { getAllProducts } from "@/app/actions/product";
 
 const ProductsOverviewPageWrapper = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  
-  const { brands, categories } = useLandingData()
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(false)
+
+  const { brands, categories } = useLandingData();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
 
@@ -56,24 +57,21 @@ const ProductsOverviewPageWrapper = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true)
+        setLoading(true);
 
-        const queries = setRequestQuery({ filters, sort, page, page_size, search });
-        
-        const products = await fetchWithAuth(getAllProductsApi(queries))
+        const queries = { filters, sort, page, page_size, search };
 
-        setProducts(products)
+        const {data} = await getAllProducts(queries);
 
+        setProducts(data);
       } catch (error) {
         console.log(error);
-        
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    
+    };
 
-    fetchData()
+    fetchData();
   }, [searchParams]);
 
   if (!categories || !brands || !products) {

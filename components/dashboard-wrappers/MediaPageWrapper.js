@@ -26,6 +26,7 @@ import { useDialogs } from "@/hooks/useDialogs/useDialogs";
 import { setRequestQuery } from "@/lib/request";
 import { fetchWithAuth } from "@/lib/fetch";
 import { getAllMediaApi, modifyMediaApi } from "@/constants/api.routes";
+import { deleteMedia, getAllMedia } from "@/app/actions/media";
 
 const MediaPageWrapper = ({
   isOnForm = false,
@@ -53,8 +54,8 @@ const MediaPageWrapper = ({
     try {
       setLoading(true);
 
-      const query = setRequestQuery({ page_size: 1000 });
-      const res = await fetchWithAuth(getAllMediaApi, {query});
+      const query = { page_size: 1000 };
+      const res = await getAllMedia(query)
 
       setMedia(res.data);
     } catch (error) {
@@ -125,9 +126,7 @@ const MediaPageWrapper = ({
     if (!confirmed) return;
 
     try {
-      const res = await fetchWithAuth(modifyMediaApi(_id), {
-        method: "DELETE",
-      });
+      const res = await deleteMedia(_id)
 
       fetchMedia();
 

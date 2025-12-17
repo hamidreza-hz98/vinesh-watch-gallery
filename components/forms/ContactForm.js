@@ -3,12 +3,11 @@
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import ButtonLoader from "../common/ButtonLoader";
 import { contactSchema } from "@/validation/landing.validations";
-import { fetchWithAuth } from "@/lib/fetch";
-import { submitContactApi } from "@/constants/api.routes";
+import { submitContact } from "@/app/actions/contact";
 
 const ContactForm = () => {
   const notifications = useNotifications();
@@ -29,7 +28,7 @@ const ContactForm = () => {
 
   const handleSubmitForm = async (body) => {
     try {
-      const { message } = await fetchWithAuth(submitContactApi, {method: "POST", body})
+      const { message } = await submitContact(body)
 
       notifications.show(message, {
         severity: "success",

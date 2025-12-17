@@ -16,9 +16,9 @@ async function getSchema() {
   try {
     await connectDB();
 
-    const { data } = await settingsService.getFaqSchema();
+    const schema = await settingsService.getFaqSchema();
 
-    return data;
+    return schema;
   } catch (error) {
     console.error("Fetch Schema error:", err);
   }

@@ -9,15 +9,15 @@ import DeleteConfirmationDialog from "@/components/drawers/DeleteConfirmationDia
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import NoDataAvailable from "./NoDataAvailable";
 import AddressCard from "@/components/cards/AddressCard";
-import { fetchWithAuth } from "@/lib/fetch";
-import {
-  addressApi,
-  customerAddressApi,
-  modifyAddressApi,
-  modifyCartApi,
-} from "@/constants/api.routes";
 import { useLandingData } from "@/providers/LandingDataProvider";
 import Loader from "./Loader";
+import {
+  createAddress,
+  deleteAddress,
+  getCustomerAddresses,
+  updateAddress,
+} from "@/app/actions/address";
+import { updateCart } from "@/app/actions/cart";
 
 const Addresses = ({ isInCart = true, controls = true }) => {
   const { customer } = nookies.get();
@@ -30,9 +30,9 @@ const Addresses = ({ isInCart = true, controls = true }) => {
       try {
         setLoading(true);
 
-        const { addresses } = await fetchWithAuth(customerAddressApi(customer));
-
-        setAddresses(addresses);
+        const { data } = await getCustomerAddresses(customer);
+        
+        setAddresses(data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -97,14 +97,11 @@ const Addresses = ({ isInCart = true, controls = true }) => {
     if (!addressToDelete) return;
     try {
       setLoading(true);
-      const { message } = await fetchWithAuth(
-        modifyAddressApi(addressToDelete._id),
-        { method: "DELETE" }
-      );
+      const { message } = await deleteAddress(addressToDelete._id);
 
-      const { addresses } = await fetchWithAuth(customerAddressApi(customer));
+      const { data } = await getCustomerAddresses(customer);
 
-      setAddresses(addresses);
+      setAddresses(data);
 
       setDeleteDialogOpen(false);
       setAddressToDelete(null);
@@ -128,15 +125,12 @@ const Addresses = ({ isInCart = true, controls = true }) => {
       setLoading(true);
 
       const { message } = editingAddress
-        ? await fetchWithAuth(modifyAddressApi(editingAddress._id), {
-            method: "PUT",
-            body
-          })
-        : await fetchWithAuth(addressApi, { method: "POST", body: { ...body, customer } });
+        ? await updateAddress(editingAddress._id, body)
+        : await createAddress({ ...body, customer });
 
-      const { addresses } = await fetchWithAuth(customerAddressApi(customer));
+      const { data } = await getCustomerAddresses(customer);
 
-      setAddresses(addresses);
+      setAddresses(data);
 
       setOpenForm(false);
       setEditingAddress(null);
@@ -159,16 +153,13 @@ const Addresses = ({ isInCart = true, controls = true }) => {
     try {
       setLoading(true);
 
-      const { data } = await fetchWithAuth(modifyCartApi(cart._id), {
-        method: "PUT",
-        body: {
-          customerId: customer,
-          action: "setAddress",
-          addressId: address._id,
-        },
+      const { data } = await updateCart(cart._id, {
+        customerId: customer,
+        action: "setAddress",
+        addressId: address._id,
       });
 
-      setCart(data)
+      setCart(data);
 
       notifications.show("آدرس مورد نظر انتخاب شد!", {
         severity: "success",

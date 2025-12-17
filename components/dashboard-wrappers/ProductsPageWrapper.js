@@ -1,26 +1,18 @@
 "use client";
 
 import React from "react";
-import QueryString from "qs";
 import Overview from "../common/overview/Overview";
 import { productColumns } from "@/constants/columns";
 import { transformGridQuery } from "@/lib/request";
-import {
-  getAllProductsApi,
-  modifyProductApi,
-} from "@/constants/api.routes";
-import { fetchWithAuth } from "@/lib/fetch";
+import { deleteProduct, getAllProducts } from "@/app/actions/product";
 
 const ProductsPageWrapper = () => {
   // Fetch products from API
   const getProducts = async (params) => {
     try {
-      const transformedQuery = transformGridQuery({ ...params });
-      const query = QueryString.stringify(transformedQuery);
+      const query = transformGridQuery({ ...params });
 
-      const { data } = await fetchWithAuth(getAllProductsApi(query), {
-        method: "GET",
-      });
+      const { data } = await getAllProducts(query);
 
       return {
         items: data.products,
@@ -38,9 +30,7 @@ const ProductsPageWrapper = () => {
   // Delete a product
   const handleDeleteProduct = async (_id) => {
     try {
-      const data = await fetchWithAuth(modifyProductApi(_id), {
-        method: "DELETE",
-      });
+      const data = await deleteProduct(_id);
 
       return { success: true, message: data.message };
     } catch (err) {

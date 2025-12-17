@@ -20,36 +20,37 @@ import { setRequestQuery } from "@/lib/request";
 import Link from "next/link";
 import { fetchWithAuth } from "@/lib/fetch";
 import { getAllCategoriesApi, getAllProductsApi } from "@/constants/api.routes";
+import { getAllCategories } from "@/app/actions/category";
+import { getAllProducts } from "@/app/actions/product";
 
 export default function SearchDialog({ open, onClose }) {
-    const theme = useTheme();
+  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [query, setQuery] = useState("");
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (query.length > 3) {
       const fetchData = async () => {
         try {
-          setLoading(true)
+          setLoading(true);
 
-          const reqQuery = setRequestQuery({ search: query, page_size: 3 });
-          
-          const catResult = await fetchWithAuth(getAllCategoriesApi(reqQuery));
-          
-          const prodResult = await fetchWithAuth(getAllProductsApi(reqQuery));
-          
+          const reqQuery = { search: query, page_size: 3 };
+
+          const catResult = await getAllCategories(reqQuery);
+
+          const prodResult = await getAllProducts(reqQuery);
+
           setCategories(catResult.categories);
           setProducts(prodResult.products);
         } catch (error) {
           console.log(error);
-        } finally{
-          setLoading(false)
-
+        } finally {
+          setLoading(false);
         }
       };
 
@@ -83,7 +84,7 @@ export default function SearchDialog({ open, onClose }) {
           fullWidth
           autoFocus
           variant="outlined"
-          size={ isMobile ? "small" : "medium" }
+          size={isMobile ? "small" : "medium"}
           placeholder="جستجوی محصول یا دسته بندی..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -109,7 +110,7 @@ export default function SearchDialog({ open, onClose }) {
                     href={`/products?search=${query}`}
                     onClick={onClose}
                     variant="text"
-                    >
+                  >
                     مشاهده همه
                   </Button>
                 </Box>

@@ -16,7 +16,7 @@ import adminLoginSchema from "@/validation/admin-login.validation";
 import ButtonLoader from "../common/ButtonLoader";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { useRouter } from "next/navigation";
-import { setCookie } from "nookies";
+import { loginAdmin } from "@/app/actions/admin";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -36,32 +36,9 @@ export default function LoginForm() {
     try {
       setIsSubmitting(true);
 
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      await loginAdmin(body)
 
-      
-      const {data, message} = await res.json();
-
-      setCookie(null, "token", data.token, {
-       path: "/",
-       maxAge: 60 * 60 * 24 * 30,
-       sameSite: "lax",
-     });
-
-     setCookie(null, "_id", data.admin._id, {
-       path: "/",
-       maxAge: 60 * 60 * 24 * 30,
-       sameSite: "lax",
-     });
-
-      if (!res.ok) {
-        throw message || "مشکلی پیش آمد.";
-      }
-
-      notifications.show(message || "ورود موفقیت‌آمیز بود.", {
+      notifications.show("ورود موفقیت‌آمیز بود.", {
         severity: "success",
         autoHideDuration: 3000,
       });

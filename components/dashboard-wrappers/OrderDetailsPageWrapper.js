@@ -1,19 +1,16 @@
 "use client";
 
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { purifyData } from "@/lib/request";
 import { useRouter } from "next/navigation";
-import QueryString from "qs";
 import React from "react";
 import Loader from "../common/Loader";
 import PageContainer from "../common/PageContainer";
 import OrderForm from "../forms/OrderForm";
-import { fetchWithAuth } from "@/lib/fetch";
-import { modifyOrderApi } from "@/constants/api.routes";
+import { getOrderDetails, updateOrder } from "@/app/actions/order";
 
 const OrderDetailsPageWrapper = ({ _id }) => {
   const [orderDetails, setOrderDetails] = React.useState(null);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
 
   const router = useRouter();
   const notifications = useNotifications();
@@ -21,12 +18,16 @@ const OrderDetailsPageWrapper = ({ _id }) => {
   const loadData = React.useCallback(async () => {
     setLoading(true);
 
-    const { data } = await fetchWithAuth(modifyOrderApi(_id));
+    const { data } = await getOrderDetails(_id)
 
     setOrderDetails(data);
 
     setLoading(false);
   }, [_id]);
+
+    React.useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleCreateOrUpdateOrder = async (data) => {
     try {
@@ -41,7 +42,7 @@ const OrderDetailsPageWrapper = ({ _id }) => {
         status,
       };
 
-      const message = await fetchWithAuth(modifyOrderApi(_id), { method: "PUT", body })
+      const { message } = await updateOrder(_id, body)
 
       notifications.show(message, {
         severity: "success",
@@ -50,16 +51,12 @@ const OrderDetailsPageWrapper = ({ _id }) => {
 
       router.push("/dashboard/orders");
     } catch (error) {
-      notifications.show(error, {
+      notifications.show(error.message, {
         severity: "error",
         autoHideDuration: 3000,
       });
     }
   };
-
-  React.useEffect(() => {
-    loadData();
-  }, [loadData]);
 
   if (loading || !orderDetails) {
     return <Loader />;
@@ -77,7 +74,7 @@ const OrderDetailsPageWrapper = ({ _id }) => {
     >
       <OrderForm
         onSubmit={handleCreateOrUpdateOrder}
-        order={orderDetails || null}
+        order={orderDetails}
       />
     </PageContainer>
   );

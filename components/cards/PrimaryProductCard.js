@@ -22,6 +22,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useLandingData } from "@/providers/LandingDataProvider";
 import { fetchWithAuth } from "@/lib/fetch";
 import { modifyCartApi } from "@/constants/api.routes";
+import { updateCart } from "@/app/actions/cart";
 
 const PrimaryProductCard = ({ product }) => {
   const { cart, setCart } = useLandingData();
@@ -47,13 +48,10 @@ const PrimaryProductCard = ({ product }) => {
 
   const handleAddToCart = async () => {
     try {
-      const { message, data } = await fetchWithAuth(modifyCartApi(cart._id), {
-        method: "PUT",
-        body: {
-          customerId: customer || null,
-          action: "add",
-          productId: product._id,
-        },
+      const { message, data } = await updateCart(cart._id, {
+        customerId: customer || null,
+        action: "add",
+        productId: product._id,
       });
 
       setCart(data);
@@ -63,7 +61,7 @@ const PrimaryProductCard = ({ product }) => {
         autoHideDuration: 3000,
       });
     } catch (error) {
-      notifications.show(error || error.message, {
+      notifications.show(error.message || error.message, {
         severity: "error",
         autoHideDuration: 3000,
       });
@@ -72,13 +70,10 @@ const PrimaryProductCard = ({ product }) => {
 
   const handleRemoveFromcart = async () => {
     try {
-      const { message, data } = await fetchWithAuth(modifyCartApi(cart._id), {
-        method: "PUT",
-        body: {
-          customerId: customer || null,
-          action: isInCart.quantity > 1 ? "decrease" : "remove",
-          productId: product._id,
-        },
+      const { message, data } = await updateCart(cart._id, {
+        customerId: customer || null,
+        action: isInCart.quantity > 1 ? "decrease" : "remove",
+        productId: product._id,
       });
 
       setCart(data);
@@ -88,7 +83,7 @@ const PrimaryProductCard = ({ product }) => {
         autoHideDuration: 3000,
       });
     } catch (error) {
-      notifications.show(error, {
+      notifications.show(error.message, {
         severity: "error",
         autoHideDuration: 3000,
       });

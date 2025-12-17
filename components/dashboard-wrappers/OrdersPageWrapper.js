@@ -1,23 +1,18 @@
 "use client";
 
 import { transformGridQuery } from "@/lib/request";
-import QueryString from "qs";
 import React from "react";
 import Overview from "../common/overview/Overview";
 import { orderColumns } from "@/constants/columns";
-import { fetchWithAuth } from "@/lib/fetch";
-import { getAllOrdersApi } from "@/constants/api.routes";
+import { getAllOrders } from "@/app/actions/order";
 
 const OrdersPageWrapper = () => {
   const getOrders = async (params) => {
     try {
-      const transformedQuery = transformGridQuery({ ...params });
-      const query = QueryString.stringify(transformedQuery);
 
-      const data = await fetchWithAuth(getAllOrdersApi(query));
+      const query = transformGridQuery({ ...params });
 
-      console.log(data);
-      
+      const { data } = await getAllOrders(query)
 
       return {
         items: data.orders,

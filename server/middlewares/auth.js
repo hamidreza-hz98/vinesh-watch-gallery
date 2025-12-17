@@ -1,26 +1,30 @@
+const { cookies } = require("next/headers");
 const { verifyToken } = require("@/server/lib/token");
 const Admin = require("@/server/modules/admin/admin.model");
 const Customer = require("@/server/modules/customer/customer.model");
 
 /**
- * Extract Bearer token
+ * Extract token from cookies (no req anymore)
  */
-function getToken(req) {
-  const authHeader = req.headers.get("authorization");
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+async function getToken() {
+  const cookieStore = await cookies();
+
+  const token = cookieStore.get("token")?.value;
+  if (!token) {
     const err = new Error("توکن نامعتبر");
     err.statusCode = 401;
     throw err;
   }
-  return authHeader.split(" ")[1];
+
+  return token;
 }
 
 /**
  * Authenticate request and return auth context
- * @returns { type, user }
+ * @returns { type, user, token }
  */
-async function authenticate(req) {
-  const token = getToken(req);
+async function authenticate() {
+  const token = await getToken();
 
   const decoded = verifyToken(token);
   if (!decoded) {
@@ -63,7 +67,7 @@ async function authenticate(req) {
 }
 
 /**
- * Role guards
+ * Role guards (unchanged)
  */
 function requireAdmin(auth) {
   if (auth.type !== "admin") {

@@ -26,7 +26,7 @@ const addressService = {
   },
 
   async getCustomerAddresses(customerId) {
-    const addresses = await Address.find({ customer: customerId });
+    const addresses = await Address.find({ customer: customerId }).lean();
 
     return addresses;
   },

@@ -37,6 +37,8 @@ import { useLandingData } from "@/providers/LandingDataProvider";
 import { fetchWithAuth } from "@/lib/fetch";
 import { modifyCartApi, productDetailsApi } from "@/constants/api.routes";
 import sanitize from "sanitize-html";
+import { getProductDetails } from "@/app/actions/product";
+import { updateCart } from "@/app/actions/cart";
 
 function TabPanel({ children, value, index }) {
   return (
@@ -80,9 +82,7 @@ const ProductDetailsPageWrapper = ({ slug }) => {
       try {
         setLoading(true);
 
-        const query = QueryString.stringify({ slug }, { encode: false });
-
-        const { data } = await fetchWithAuth(productDetailsApi(query));
+        const { data } = await getProductDetails({ slug });
 
         setProduct(data);
       } catch (error) {
@@ -92,10 +92,9 @@ const ProductDetailsPageWrapper = ({ slug }) => {
       }
     };
 
-    fetchData()
+    fetchData();
   }, [slug]);
 
-  
   useEffect(() => {
     const updatedCart = cart?.products?.find(
       (item) => item.product._id === product?._id
@@ -120,7 +119,7 @@ const ProductDetailsPageWrapper = ({ slug }) => {
     slides: product?.media?.map((image, index) => (
       <Image
         key={index}
-        src={(image.path)}
+        src={image.path}
         alt={image.title}
         width={0}
         height={0}
@@ -154,17 +153,14 @@ const ProductDetailsPageWrapper = ({ slug }) => {
 
   const handleAddToCart = async () => {
     try {
-      const { message, data } = await fetchWithAuth(modifyCartApi(cart._id), {
-        method: "PUT",
-        body: {
-          customerId: customer || null,
-          action: "add",
-          productId: product._id,
-        },
+      const { message, data } = await updateCart(cart._id, {
+        customerId: customer || null,
+        action: "add",
+        productId: product._id,
       });
 
-      setCart(data)
-      
+      setCart(data);
+
       notifications.show(message || "سبد خرید با موفقیت ویرایش شد!", {
         severity: "success",
         autoHideDuration: 3000,
@@ -179,16 +175,13 @@ const ProductDetailsPageWrapper = ({ slug }) => {
 
   const handleRemoveFromcart = async () => {
     try {
-      const { message, data } = await fetchWithAuth(modifyCartApi(cart._id), {
-        method: "PUT",
-        body: {
-          customerId: customer || null,
-          action: isInCart.quantity > 1 ? "decrease" : "remove",
-          productId: product._id,
-        },
+      const { message, data } = await updateCart(cart._id, {
+        customerId: customer || null,
+        action: isInCart.quantity > 1 ? "decrease" : "remove",
+        productId: product._id,
       });
 
-      setCart(data)
+      setCart(data);
 
       notifications.show(message || "سبد خرید با موفقیت ویرایش شد!", {
         severity: "success",
@@ -201,7 +194,6 @@ const ProductDetailsPageWrapper = ({ slug }) => {
       });
     }
   };
-
 
   return (
     <PageContainer
@@ -420,7 +412,11 @@ const ProductDetailsPageWrapper = ({ slug }) => {
           </Tabs>
 
           <TabPanel value={tabsValue} index={0}>
-            <div dangerouslySetInnerHTML={{ __html: sanitize(product?.description) }} />
+            <div
+              dangerouslySetInnerHTML={{
+                __html: sanitize(product?.description),
+              }}
+            />
           </TabPanel>
 
           <TabPanel value={tabsValue} index={1}>

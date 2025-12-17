@@ -14,6 +14,7 @@ import {
   categoryDetailsApi,
   modifyCategoryApi,
 } from "@/constants/api.routes";
+import { createCategory, getCategoryDetails, updateCategory } from "@/app/actions/category";
 
 const CreateOrUpdateCategoryPageWrapper = () => {
   const [categoryDetails, setCategoryDetails] = React.useState(null);
@@ -31,9 +32,7 @@ const CreateOrUpdateCategoryPageWrapper = () => {
     try {
       setLoading(true);
 
-      const query = QueryString.stringify({ _id });
-
-      const { data } = await fetchWithAuth(categoryDetailsApi(query));
+      const { data } = await getCategoryDetails({_id})
 
       setCategoryDetails(data);
     } catch (error) {
@@ -59,8 +58,8 @@ const CreateOrUpdateCategoryPageWrapper = () => {
       ]);
 
       const { message } = _id
-        ? await fetchWithAuth(modifyCategoryApi(_id), { method: "PUT", body })
-        : await fetchWithAuth(categoryApi, { method: "POST", body });
+        ? await updateCategory(_id, body)
+        : await createCategory(body)
 
       notifications.show(message, {
         severity: "success",

@@ -6,16 +6,15 @@ import { brandColumns } from "@/constants/columns";
 import { transformGridQuery } from "@/lib/request";
 import QueryString from "qs";
 import { fetchWithAuth } from "@/lib/fetch";
-import { getAllBrandsApi, modifyBrandApi } from "@/constants/api.routes";
+import { deleteBrand, getAllBrands } from "@/app/actions/brand";
 
 const BrandsPageWrapper = () => {
   const getBrands = async (params) => {
     try {
-      const transformedQuery = transformGridQuery({ ...params });
-      const query = QueryString.stringify(transformedQuery);
-
-      const data = await fetchWithAuth(getAllBrandsApi(query));
-
+      const query = transformGridQuery({ ...params });
+      
+      const { data } = await getAllBrands(query)
+      
       return {
         items: data.brands,
         rowCount: data.total,
@@ -30,9 +29,7 @@ const BrandsPageWrapper = () => {
   };
 
   const handleDeleteBrand = async (_id) => {
-    const { message } = await fetchWithAuth(modifyBrandApi(_id), {
-      method: "DELETE",
-    });
+    const { message } = await deleteBrand(_id)
 
     return { success: true, message };
   };

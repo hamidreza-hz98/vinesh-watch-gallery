@@ -12,6 +12,11 @@ import PageContainer from "../common/PageContainer";
 import ProductForm from "../forms/ProductForm";
 import { fetchWithAuth } from "@/lib/fetch";
 import { productApi, productDetailsApi } from "@/constants/api.routes";
+import {
+  createProduct,
+  getProductDetails,
+  updateProduct,
+} from "@/app/actions/product";
 
 const CreateOrUpdateProductPageWrapper = () => {
   const searchParams = useSearchParams();
@@ -31,11 +36,9 @@ const CreateOrUpdateProductPageWrapper = () => {
     try {
       setLoading(true);
 
-      const query = QueryString.stringify({ _id });
+      const { data } = await getProductDetails({ _id });
 
-      const res = await fetchWithAuth(productDetailsApi(query));
-
-      setProductDetails(res.data);
+      setProductDetails(data);
     } catch (error) {
       notifications.show(error.message || "خطا در دریافت اطلاعات محصول", {
         severity: "error",
@@ -61,17 +64,11 @@ const CreateOrUpdateProductPageWrapper = () => {
         "seo.twitterImage",
       ]);
 
-      const res = _id
-        ? await fetchWithAuth(`/api/product/${_id}`, {
-            method: "PUT",
-            body,
-          })
-        : await fetchWithAuth("/api/product", {
-            method: "POST",
-            body,
-          });
+      const { message } = _id
+        ? await updateProduct(_id, body)
+        : await createProduct(body);
 
-      notifications.show(res.message, {
+      notifications.show(message, {
         severity: "success",
         autoHideDuration: 3000,
       });

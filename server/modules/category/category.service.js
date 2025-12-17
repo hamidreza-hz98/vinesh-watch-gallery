@@ -48,7 +48,7 @@ const categoryService = {
     const skip = (page - 1) * page_size;
 
     const [categories, total] = await Promise.all([
-      Category.find(query).sort(sortOption).skip(skip).limit(page_size).populate("children image").lean(),
+      Category.find(query).sort(sortOption).skip(skip).limit(page_size).populate("children image"),
       Category.countDocuments(query),
     ]);
 

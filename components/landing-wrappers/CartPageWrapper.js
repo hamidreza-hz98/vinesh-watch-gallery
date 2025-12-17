@@ -23,6 +23,8 @@ import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { useLandingData } from "@/providers/LandingDataProvider";
 import { fetchWithAuth } from "@/lib/fetch";
 import { initiateTransactionApi, orderApi } from "@/constants/api.routes";
+import { createOrder } from "@/app/actions/order";
+import { initiateTransaction } from "@/app/actions/transaction";
 
 const PersianStepIcon = (props) => {
   const { icon, active, completed } = props;
@@ -101,10 +103,7 @@ const CartPageWrapper = () => {
 
     if (activeStep === 2) {
       try {
-        const { data } = await fetchWithAuth(orderApi, {
-          method: "POST",
-          body: { cart, customer },
-        });
+        const { data } = await createOrder({ cart, customer })
 
         nookies.destroy(null, "cart", { path: "/" });
 
@@ -113,12 +112,7 @@ const CartPageWrapper = () => {
           autoHideDuration: 3000,
         });
 
-        const { redirectUrl } = await fetchWithAuth(initiateTransactionApi, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: { orderId: data._id },
-        });
+        const { redirectUrl } = await initiateTransaction({ orderId: data._id })
 
         if (redirectUrl) {
           window.location.href = redirectUrl;

@@ -279,7 +279,7 @@ export const orderColumns = [
     field: "customer",
     headerName: "مشتری",
     width: 150,
-    valueGetter: (customer) => toPersian(customer.phone),
+    valueGetter: (customer) => toPersian(customer?.phone),
   },
 
   {

@@ -16,6 +16,7 @@ const mediaService = {
 
     const media = new Media({
       filename: file.filename,
+      path: `/uploads/${file.filename}`,
       originalName: file.originalname,
       extension: path.extname(file.originalname).replace(".", ""),
       mimeType: file.mimetype,
@@ -26,27 +27,29 @@ const mediaService = {
     return await media.save();
   },
 
-  async update(_id, data) {
-    const existing = await this.exists({ _id });
-    if (!existing) {
-      throwError("مدیا وجود ندارد.", 404);
-    }
+ async update(_id, data) {
+  const existing = await this.exists({ _id });
+  if (!existing) {
+    throwError("مدیا وجود ندارد.", 404);
+  }
 
-    const updatedMedia = await Media.findByIdAndUpdate(
-      _id,
-      {
-        filename: data.file.filename,
-        originalName: data.file.originalname,
-        extension: path.extname(data.file.originalname).replace(".", ""),
-        mimeType: data.file.mimetype,
-        size: data.file.size,
-        ...data.body,
-      },
-      { new: true }
-    );
+  const updatedMedia = await Media.findByIdAndUpdate(
+    _id,
+    {
+      filename: data.file.filename,
+      path: data.file.path, // <-- use data.file.path instead of file.filename
+      originalName: data.file.originalname,
+      extension: path.extname(data.file.originalname).replace(".", ""),
+      mimeType: data.file.mimetype,
+      size: data.file.size,
+      ...data.body,
+    },
+    { new: true }
+  );
 
-    return updatedMedia;
-  },
+  return updatedMedia;
+},
+
 
   async getDetails(filter) {
     const existing = await this.exists(filter);
@@ -79,21 +82,20 @@ const mediaService = {
       throwError("مدیا وجود ندارد.", 404);
     }
 
-    const filePath = path.join(
-      __dirname,
-      "..",
-      "..",
-      "..",
-      "public",
-      "uploads",
-      existing.filename
-    );
+    if (existing.path) {
+      const filePath = path.join(
+        process.cwd(),
+        "public",
+        existing.path.replace(/^\//, "")
+      );
 
-    try {
-      fs.unlinkSync(filePath);
-    } catch (err) {
-      // log but don't crash if file is already gone
-      console.error("File delete error:", err.message);
+      try {
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      } catch (err) {
+        console.error("File delete error:", err.message);
+      }
     }
 
     return await Media.findByIdAndDelete(_id);

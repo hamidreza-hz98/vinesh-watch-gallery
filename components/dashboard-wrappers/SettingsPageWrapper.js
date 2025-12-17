@@ -14,6 +14,7 @@ import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { fetchWithAuth } from "@/lib/fetch";
 import { getSettingsApi, modifySettingsApi } from "@/constants/api.routes";
 import Loader from "../common/Loader";
+import { getSettingsSection, updateSettingsSection } from "@/app/actions/settings";
 
 const SettingsPageWrapper = () => {
   const [settings, setSettings] = React.useState(null);
@@ -26,7 +27,7 @@ const SettingsPageWrapper = () => {
     try {
       setLoading(true);
 
-      const { settings } = await fetchWithAuth(getSettingsApi(section));
+      const { settings } = await getSettingsSection(section);
 
       setSettings(settings);
     } catch (error) {
@@ -59,10 +60,8 @@ const SettingsPageWrapper = () => {
     try {
       const body = purifyData(data, settingsInfo[section].dataToPurify || []);
 
-      const { message } = await fetchWithAuth(modifySettingsApi(section), {
-        method: "PUT",
-        body: { [`${section}`]: body },
-      });
+      const { message } = await updateSettingsSection(section, { [`${section}`]: body } )
+      
 
       notifications.show(message, {
         severity: "success",
