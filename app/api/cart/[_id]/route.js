@@ -10,14 +10,11 @@ exports.runtime = "nodejs";
 exports.PUT = async function (req, { params }) {
   try {
     await connectDB();
-
-    const auth = await authenticate(req);
-    requireCustomer(auth);
-
+    const { _id } = await params
+    
     const body = await req.json();
-    const data = await validate(updateCartSchema, body);
 
-    const cart = await cartService.update(params._id, data);
+    const cart = await cartService.update(_id, body);
 
     return NextResponse.json({ data: cart });
   } catch (error) {
@@ -31,10 +28,11 @@ exports.PUT = async function (req, { params }) {
 exports.GET = async function (req, { params }) {
   try {
     await connectDB();
+    const { _id } = await params
 
-    const cart = await cartService.getCart(params._id);
+    const cart = await cartService.getCart(_id);
 
-    return NextResponse.json({ data: cart });
+    return NextResponse.json({ cart });
   } catch (error) {
     return NextResponse.json(
       { message: error.message },

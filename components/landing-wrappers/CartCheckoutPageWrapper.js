@@ -3,14 +3,13 @@
 import { Stack } from "@mui/material";
 import React from "react";
 import InCartProductCard from "../cards/InCartProductCard";
-import { useSelector } from "react-redux";
-import { selectCart } from "@/store/cart/cart.selector";
 import NoDataAvailable from "../common/NoDataAvailable";
 import { useRouter } from "next/navigation";
 import routes from "@/constants/landing.routes";
+import { useLandingData } from "@/providers/LandingDataProvider";
 
 const CartCheckoutPageWrapper = () => {
-  const cart = useSelector(selectCart)
+  const { cart } = useLandingData()
   const router = useRouter()
 
   return (

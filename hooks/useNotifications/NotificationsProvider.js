@@ -12,6 +12,7 @@ import SnackbarContent from '@mui/material/SnackbarContent';
 import CloseIcon from '@mui/icons-material/Close';
 import useSlotProps from '@mui/utils/useSlotProps';
 import NotificationsContext from './NotificationsContext';
+import LandingThemeProvider from '@/theme/providers/LandingThemeProvider';
 
 const RootPropsContext = React.createContext(null);
 
@@ -47,6 +48,7 @@ function Notification({ notificationKey, open, message, options, badge }) {
         title="Close"
         color="inherit"
         onClick={handleClose}
+        sx={{padding: "4px 16px 0 0 !important"}}
       >
         <CloseIcon fontSize="small" />
       </IconButton>

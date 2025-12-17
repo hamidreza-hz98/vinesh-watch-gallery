@@ -13,10 +13,9 @@ import React, { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useSelector } from "react-redux";
-import { selectCustomerAddresses } from "@/store/address/address.selector";
 
 const AddressCard = ({
+  addresses,
   address,
   selectedAddressId,
   onSelect,
@@ -31,8 +30,6 @@ const AddressCard = ({
   isInCart = true
 }) => {
   const theme = useTheme();
-
-  const addresses = useSelector(selectCustomerAddresses);
 
   return (
     <Paper

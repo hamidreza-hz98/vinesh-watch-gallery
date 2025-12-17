@@ -3,7 +3,7 @@ import { menuItemClasses } from "@mui/material/MenuItem";
 import { pickersDayClasses, yearCalendarClasses } from "@mui/x-date-pickers";
 
 // src/theme/mui/components.js
-export default function getComponents(theme) {
+export default function getLandingComponents(theme) {
   const { palette, typography, shape } = theme;
 
   return {
@@ -74,16 +74,13 @@ export default function getComponents(theme) {
       styleOverrides: {
         root: {
           backgroundColor: "#121212",
+          borderRadius: shape.borderRadius,
         },
       },
     },
 
     MuiDrawer: {
       styleOverrides: { paper: { direction: "rtl" } },
-    },
-
-    MuiPaper: {
-      styleOverrides: { root: { borderRadius: shape.borderRadius } },
     },
 
     MuiCard: { styleOverrides: { root: { borderRadius: shape.borderRadius } } },
@@ -163,8 +160,10 @@ export default function getComponents(theme) {
 
     MuiBreadcrumbs: {
       styleOverrides: {
-        li: {
-          "& + &": { marginRight: 8 },
+        root: {
+          "& .MuiBreadcrumbs-li + .MuiBreadcrumbs-li": {
+            marginRight: 8,
+          },
         },
       },
     },
@@ -197,7 +196,7 @@ export default function getComponents(theme) {
     MuiAlert: {
       styleOverrides: {
         root: { borderRadius: 10, textAlign: "right" },
-        action: { padding: "4px 16px 0 0" },
+        action: { padding: "4px 16px 0 0 !important" },
       },
     },
 
@@ -205,16 +204,13 @@ export default function getComponents(theme) {
 
     MuiAutocomplete: {
       styleOverrides: {
-        root: {
-          "&.MuiAutocomplete-hasPopupIcon .MuiOutlinedInput-root": {
-            paddingRight: 0,
-          },
-          "&.MuiAutocomplete-hasClearIcon .MuiOutlinedInput-root": {
-            paddingRight: 0,
+        inputRoot: {
+          "& .MuiInputBase-input": {
+            paddingRight: "8px",
           },
         },
         endAdornment: {
-          right: "unset !important",
+          right: "unset",
           left: 8,
         },
       },

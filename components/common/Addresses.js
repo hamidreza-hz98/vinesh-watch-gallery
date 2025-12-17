@@ -1,30 +1,48 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
-import { useSelector, useDispatch } from "react-redux";
-import AddressForm from "../forms/AddressForm";
-import { selectCustomerAddresses } from "@/store/address/address.selector";
-import {
-  createAddress,
-  getCustomerAddresses,
-  updateAddress,
-  deleteAddress,
-} from "@/store/address/address.actions";
-import nookies from "nookies";
-import DeleteConfirmationDialog from "../drawers/DeleteConfirmationDialog";
-import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { updateCart } from "@/store/cart/cart.action";
-import { selectCart } from "@/store/cart/cart.selector";
-import NoDataAvailable from "./NoDataAvailable";
-import AddressCard from "../cards/AddressCard";
+import AddressForm from "@/components/forms/AddressForm";
 
-const Addresses = ({ isInCart = true, controls=true }) => {
-  const addresses = useSelector(selectCustomerAddresses);
-  const dispatch = useDispatch();
+import nookies from "nookies";
+import DeleteConfirmationDialog from "@/components/drawers/DeleteConfirmationDialog";
+import useNotifications from "@/hooks/useNotifications/useNotifications";
+import NoDataAvailable from "./NoDataAvailable";
+import AddressCard from "@/components/cards/AddressCard";
+import { fetchWithAuth } from "@/lib/fetch";
+import {
+  addressApi,
+  customerAddressApi,
+  modifyAddressApi,
+  modifyCartApi,
+} from "@/constants/api.routes";
+import { useLandingData } from "@/providers/LandingDataProvider";
+import Loader from "./Loader";
+
+const Addresses = ({ isInCart = true, controls = true }) => {
   const { customer } = nookies.get();
-  const cart = useSelector(selectCart);
+  const [addresses, setAddresses] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { cart, setCart } = useLandingData();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        const { addresses } = await fetchWithAuth(customerAddressApi(customer));
+
+        setAddresses(addresses);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [customer]);
+
   const notifications = useNotifications();
 
   const [openForm, setOpenForm] = useState(false);
@@ -42,12 +60,11 @@ const Addresses = ({ isInCart = true, controls=true }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState(null);
 
-useEffect(() => {
-  if (cart?.address?._id) {
-    setSelectedAddressId(cart.address._id);
-  }
-}, [cart?.address?._id]);
-
+  useEffect(() => {
+    if (cart?.address?._id) {
+      setSelectedAddressId(cart.address._id);
+    }
+  }, [cart?.address?._id]);
 
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -79,11 +96,15 @@ useEffect(() => {
   const handleDeleteAddress = async () => {
     if (!addressToDelete) return;
     try {
-      const message = await dispatch(
-        deleteAddress(addressToDelete._id)
-      ).unwrap();
+      setLoading(true);
+      const { message } = await fetchWithAuth(
+        modifyAddressApi(addressToDelete._id),
+        { method: "DELETE" }
+      );
 
-      await dispatch(getCustomerAddresses(customer)).unwrap();
+      const { addresses } = await fetchWithAuth(customerAddressApi(customer));
+
+      setAddresses(addresses);
 
       setDeleteDialogOpen(false);
       setAddressToDelete(null);
@@ -97,16 +118,25 @@ useEffect(() => {
         severity: "error",
         autoHideDuration: 3000,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleCreateUpdate = async (body) => {
     try {
-      const message = editingAddress
-        ? await dispatch(updateAddress({ ...editingAddress, body })).unwrap()
-        : await dispatch(createAddress({ ...body, customer })).unwrap();
+      setLoading(true);
 
-      await dispatch(getCustomerAddresses(customer)).unwrap();
+      const { message } = editingAddress
+        ? await fetchWithAuth(modifyAddressApi(editingAddress._id), {
+            method: "PUT",
+            body
+          })
+        : await fetchWithAuth(addressApi, { method: "POST", body: { ...body, customer } });
+
+      const { addresses } = await fetchWithAuth(customerAddressApi(customer));
+
+      setAddresses(addresses);
 
       setOpenForm(false);
       setEditingAddress(null);
@@ -120,21 +150,25 @@ useEffect(() => {
         severity: "error",
         autoHideDuration: 3000,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSelectAddress = async (address) => {
     try {
-      dispatch(
-        updateCart({
-          _id: cart._id,
-          options: {
-            customerId: customer,
-            action: "setAddress",
-            addressId: address._id,
-          },
-        })
-      );
+      setLoading(true);
+
+      const { data } = await fetchWithAuth(modifyCartApi(cart._id), {
+        method: "PUT",
+        body: {
+          customerId: customer,
+          action: "setAddress",
+          addressId: address._id,
+        },
+      });
+
+      setCart(data)
 
       notifications.show("آدرس مورد نظر انتخاب شد!", {
         severity: "success",
@@ -145,10 +179,14 @@ useEffect(() => {
         severity: "error",
         autoHideDuration: 3000,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <Box display="flex" flexDirection="column" gap={2}>
@@ -173,6 +211,7 @@ useEffect(() => {
       {addresses && addresses.length !== 0 ? (
         addresses?.map((address, index) => (
           <AddressCard
+            addresses={addresses}
             address={address}
             selectedAddressId={selectedAddressId}
             key={index}

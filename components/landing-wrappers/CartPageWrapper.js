@@ -11,21 +11,18 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
-import PageContainer from "../common/PageContainer";
+import PageContainer from "@/components/common/PageContainer";
 import CartCheckoutPageWrapper from "./CartCheckoutPageWrapper";
 import CartShipmentPageWrapper from "./CartShipmentPageWrapper";
 import CartFinalizePageWrapper from "./CartFinalizePageWrapper";
 import { calculateFinalPrice, formatPrice, toPersian } from "@/lib/number";
-import { useDispatch, useSelector } from "react-redux";
-import { selectCart, selectCartLoading } from "@/store/cart/cart.selector";
-import Loader from "../common/Loader";
-import AuthenticationDrawer from "../drawers/AuthenticationDrawer";
+import Loader from "@/components/common/Loader";
+import AuthenticationDrawer from "@/components/drawers/AuthenticationDrawer";
 import nookies from "nookies";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { createOrder } from "@/store/order/order.action";
-import { useRouter } from "next/navigation";
-import routes from "@/constants/landing.routes";
-import { createPaymentGateway } from "@/store/transaction/transaction.action";
+import { useLandingData } from "@/providers/LandingDataProvider";
+import { fetchWithAuth } from "@/lib/fetch";
+import { initiateTransactionApi, orderApi } from "@/constants/api.routes";
 
 const PersianStepIcon = (props) => {
   const { icon, active, completed } = props;
@@ -53,21 +50,18 @@ const PersianStepIcon = (props) => {
 };
 
 const CartPageWrapper = () => {
+  const { cart } = useLandingData();
+
   const [activeStep, setActiveStep] = useState(0);
   const [openAuth, setOpenAuth] = useState(false);
   const [authCompleted, setAuthCompleted] = useState(false);
 
   const theme = useTheme();
-  const loading = useSelector(selectCartLoading);
   const { customer } = nookies.get();
 
-  const dispatch = useDispatch();
   const notifications = useNotifications();
-  const router = useRouter();
 
-  const cart = useSelector(selectCart);
-
-  if (!cart || loading) {
+  if (!cart) {
     return <Loader />;
   }
 
@@ -77,6 +71,7 @@ const CartPageWrapper = () => {
     "نهایی سازی سفارش",
     "پرداخت سفارش",
   ];
+
   const StepComponents = [
     <CartCheckoutPageWrapper key={0} />,
     <CartShipmentPageWrapper key={1} />,
@@ -106,24 +101,31 @@ const CartPageWrapper = () => {
 
     if (activeStep === 2) {
       try {
-        const { message, order } = await dispatch(
-          createOrder({ cart, customer })
-        ).unwrap();
+        const { data } = await fetchWithAuth(orderApi, {
+          method: "POST",
+          body: { cart, customer },
+        });
 
-        // notifications.show(message, {
-        //   severity: "success",
-        //   autoHideDuration: 3000,
-        // });
+        nookies.destroy(null, "cart", { path: "/" });
 
+        notifications.show("در حال انتقال به درگاه...", {
+          severity: "success",
+          autoHideDuration: 3000,
+        });
 
-        await dispatch(createPaymentGateway({ orderId: order._id })).unwrap()
+        const { redirectUrl } = await fetchWithAuth(initiateTransactionApi, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: { orderId: data._id },
+        });
 
-        // return router.push(
-        //   `${routes.paymentResult.link}?order=${order.code}&result=successful`
-        // );
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+        }
       } catch (error) {
         console.log(error);
-        
+
         // notifications.show(error, {
         //   severity: "error",
         //   autoHideDuration: 3000,

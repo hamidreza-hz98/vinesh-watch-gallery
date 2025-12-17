@@ -6,20 +6,22 @@ const orderService = require("@/server/modules/order/order.service");
 const { authenticate } = require("@/server/middlewares/auth");
 const { calculateFinalPrice } = require("@/server/lib/number");
 
-const APP_BASE = process.env.APP_BASE_URL;
+const APP_BASE = process.env.NEXT_PUBLIC_BASE_URL;
 
 exports.runtime = "nodejs";
 
 exports.POST = async (req) => {
   try {
     await connectDB();
-
+    
+    
     const auth = await authenticate(req);
-
+    
     const { orderId, mobile = "", email = "" } = await req.json();
-
+    
     const order = await orderService.getDetails(orderId);
     const amount = calculateFinalPrice(order.price);
+    
 
     const txn = await transactionService.create({
       orderId: order._id,

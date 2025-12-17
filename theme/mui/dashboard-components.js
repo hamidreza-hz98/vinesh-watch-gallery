@@ -3,7 +3,7 @@ import { menuItemClasses } from "@mui/material/MenuItem";
 import { pickersDayClasses, yearCalendarClasses } from "@mui/x-date-pickers";
 
 // src/theme/mui/components.js
-export default function getComponents(theme) {
+export default function getDashboardComponents(theme) {
   const { palette, typography, shape } = theme;
 
   return {
@@ -168,7 +168,7 @@ export default function getComponents(theme) {
     MuiAlert: {
       styleOverrides: {
         root: { borderRadius: 10, textAlign: "right" },
-        action: { padding: "4px 16px 0 0" },
+        action: { padding: "4px 16px 0 0 !important" },
       },
     },
 

@@ -10,12 +10,12 @@ exports.POST = async function (req) {
   try {
     await connectDB();
 
-    const body = await req.json();
+    const body = { products: [], price: {} }
     const data = await validate(createCartSchema, body);
-
+    
     const cart = await cartService.create(data);
-
-    return NextResponse.json({ data: cart });
+    
+    return NextResponse.json({ cart });
   } catch (error) {
     return NextResponse.json(
       { message: error.message },
@@ -23,4 +23,3 @@ exports.POST = async function (req) {
     );
   }
 };
-

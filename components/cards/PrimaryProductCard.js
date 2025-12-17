@@ -11,31 +11,26 @@ import {
   IconButton,
   useTheme,
 } from "@mui/material";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { setFilePath } from "@/lib/media";
 import Image from "next/image";
 import { formatPrice, toPersian } from "@/lib/number";
 import Link from "next/link";
-import { useDispatch, useSelector } from "react-redux";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { updateCart } from "@/store/cart/cart.action";
-import { selectCart } from "@/store/cart/cart.selector";
 import nookies from "nookies";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { useLandingData } from "@/providers/LandingDataProvider";
+import { fetchWithAuth } from "@/lib/fetch";
+import { modifyCartApi } from "@/constants/api.routes";
 
 const PrimaryProductCard = ({ product }) => {
+  const { cart, setCart } = useLandingData();
   const theme = useTheme();
 
-  const dispatch = useDispatch();
   const notifications = useNotifications();
   const { customer } = nookies.get();
-  const cart = useSelector(selectCart);
 
   const [isInCart, setIsInCart] = useState(null);
-
-  
 
   const hasDiscount = product.discount > 0;
   const inStock = product.stock > 0;
@@ -47,28 +42,27 @@ const PrimaryProductCard = ({ product }) => {
 
   // sample image fallback
   const imagePath =
-    (product.media?.[0]?.path) ||
+    product.media?.[0]?.path ||
     "https://via.placeholder.com/400x400?text=No+Image";
 
   const handleAddToCart = async () => {
     try {
-      const { message } = await dispatch(
-        updateCart({
-          _id: cart._id || null,
-          options: {
-            customerId: customer || null,
-            action: "add",
-            productId: product._id,
-          },
-        })
-      ).unwrap();
+      const { message, data } = await fetchWithAuth(modifyCartApi(cart._id), {
+        method: "PUT",
+        body: {
+          customerId: customer || null,
+          action: "add",
+          productId: product._id,
+        },
+      });
+
+      setCart(data);
 
       notifications.show(message || "سبد خرید با موفقیت ویرایش شد!", {
         severity: "success",
         autoHideDuration: 3000,
       });
     } catch (error) {
-      
       notifications.show(error || error.message, {
         severity: "error",
         autoHideDuration: 3000,
@@ -78,16 +72,16 @@ const PrimaryProductCard = ({ product }) => {
 
   const handleRemoveFromcart = async () => {
     try {
-      const { message } = await dispatch(
-        updateCart({
-          _id: cart._id,
-          options: {
-            customerId: customer || null,
-            action: isInCart.quantity > 1 ? "decrease" : "remove",
-            productId: product._id,
-          },
-        })
-      ).unwrap();
+      const { message, data } = await fetchWithAuth(modifyCartApi(cart._id), {
+        method: "PUT",
+        body: {
+          customerId: customer || null,
+          action: isInCart.quantity > 1 ? "decrease" : "remove",
+          productId: product._id,
+        },
+      });
+
+      setCart(data);
 
       notifications.show(message || "سبد خرید با موفقیت ویرایش شد!", {
         severity: "success",
@@ -101,14 +95,13 @@ const PrimaryProductCard = ({ product }) => {
     }
   };
 
-    useEffect(() => {
-      const updatedCart = cart?.products?.find(
-        (item) => item.product._id === product?._id
-      );
+  useEffect(() => {
+    const updatedCart = cart?.products?.find(
+      (item) => item.product._id === product?._id
+    );
 
-      setIsInCart(updatedCart);
-    }, [cart, product?._id]);
-  
+    setIsInCart(updatedCart);
+  }, [cart, product?._id]);
 
   return (
     <Card
@@ -118,6 +111,7 @@ const PrimaryProductCard = ({ product }) => {
         position: "relative",
         display: "flex",
         flexDirection: "column",
+        height: 450,
         gap: 2,
         borderRadius: 3,
         overflow: "hidden",
@@ -166,10 +160,10 @@ const PrimaryProductCard = ({ product }) => {
           aspectRatio: "1 / 1",
           width: "100%",
           height: "100%",
-          borderRadius: 2,
+          borderRadius: 8,
           overflow: "hidden",
           backgroundImage: `url(${imagePath})`,
-          backgroundSize: "cover",
+          backgroundSize: "contain",
           backgroundPosition: "center",
           transition: "transform 0.4s ease",
           "&:hover": { transform: "scale(1.05)" },
@@ -262,92 +256,87 @@ const PrimaryProductCard = ({ product }) => {
             {formatPrice(product.price)} تومان
           </Typography>
         )}
-
       </CardContent>
 
       {/* 🛒 Action Buttons */}
-        {isInCart ? (
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            mt={2}
-          >
-            <Typography variant="caption">تعداد در سبد خرید شما:</Typography>
+      {isInCart ? (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={2}
+        >
+          <Typography variant="caption">تعداد در سبد خرید شما:</Typography>
 
-            <Box display="flex" alignItems="center" justifyContent="flex-end">
-              <IconButton
-                sx={{
-                  color: theme.palette.primary.contrastText,
-                  backgroundColor: theme.palette.primary.main,
-                  mx: 1,
-                  "&:hover": {
-                    color: theme.palette.primary.main,
-                  },
-                }}
-                size="small"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  e.nativeEvent.stopImmediatePropagation();
-                  handleAddToCart();
-                }}
-              >
-                <AddIcon />
-              </IconButton>
+          <Box display="flex" alignItems="center" justifyContent="flex-end">
+            <IconButton
+              sx={{
+                color: theme.palette.primary.contrastText,
+                backgroundColor: theme.palette.primary.main,
+                mx: 1,
+                "&:hover": {
+                  color: theme.palette.primary.main,
+                },
+              }}
+              size="small"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
+                handleAddToCart();
+              }}
+            >
+              <AddIcon />
+            </IconButton>
 
-              <Typography mx={1}>{toPersian(isInCart.quantity)}</Typography>
+            <Typography mx={1}>{toPersian(isInCart.quantity)}</Typography>
 
-              <IconButton
-                sx={{
-                  color: theme.palette.primary.contrastText,
-                  backgroundColor: theme.palette.primary.main,
-                  mx: 1,
-                  "&:hover": {
-                    color: theme.palette.primary.main,
-                  },
-                }}
-                size="small"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  e.nativeEvent.stopImmediatePropagation();
-                  handleRemoveFromcart();
-                }}
-              >
-                {isInCart.quantity === 1 ? (
-                  <DeleteOutlineIcon />
-                ) : (
-                  <RemoveIcon />
-                )}
-              </IconButton>
-            </Box>
+            <IconButton
+              sx={{
+                color: theme.palette.primary.contrastText,
+                backgroundColor: theme.palette.primary.main,
+                mx: 1,
+                "&:hover": {
+                  color: theme.palette.primary.main,
+                },
+              }}
+              size="small"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
+                handleRemoveFromcart();
+              }}
+            >
+              {isInCart.quantity === 1 ? <DeleteOutlineIcon /> : <RemoveIcon />}
+            </IconButton>
           </Box>
-        ) : (
-          <Button
-            fullWidth
-            variant="contained"
-            color={inStock ? "primary" : "inherit"}
-            disabled={!inStock}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              e.nativeEvent.stopImmediatePropagation();
-              handleAddToCart();
-            }}
-            sx={{
-              color: inStock
-                ? theme.palette.primary.contrastText
-                : theme.palette.text.disabled,
-              fontWeight: 700,
-              borderRadius: 2,
-              py: 1,
-              mt: 2,
-            }}
-          >
-            افزودن به سبد
-          </Button>
-        )}
+        </Box>
+      ) : (
+        <Button
+          fullWidth
+          variant="contained"
+          color={inStock ? "primary" : "inherit"}
+          disabled={!inStock}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.nativeEvent.stopImmediatePropagation();
+            handleAddToCart();
+          }}
+          sx={{
+            color: inStock
+              ? theme.palette.primary.contrastText
+              : theme.palette.text.disabled,
+            fontWeight: 700,
+            borderRadius: 2,
+            py: 1,
+            mt: 2,
+          }}
+        >
+          افزودن به سبد
+        </Button>
+      )}
     </Card>
   );
 };

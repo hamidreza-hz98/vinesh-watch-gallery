@@ -8,10 +8,7 @@ import { Box } from "@mui/material";
 import { setFilePath } from "@/lib/media";
 import Image from "next/image";
 
-export default function HeroSlider({
-  slides = [],
-  height = "83vh",
-}) {
+export default function HeroSlider({ slides = [], height = "83vh" }) {
   return (
     <Box sx={{ width: "100%", height }}>
       <Swiper
@@ -30,7 +27,7 @@ export default function HeroSlider({
               }}
             >
               <Image
-                src={setFilePath(slide.path)}
+                src={slide.path}
                 width={0}
                 height={0}
                 sizes="100vw"
@@ -41,7 +38,7 @@ export default function HeroSlider({
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  borderRadius: "16px"
+                  borderRadius: "16px",
                 }}
               />
             </Box>

@@ -8,13 +8,14 @@ exports.runtime = "nodejs";
 exports.GET = async function (req, { params }) {
   try {
     await connectDB();
+    const { customerId } = await params
 
     const auth = await authenticate(req);
     requireCustomer(auth);
 
-    const addresses = await addressService.getCustomerAddresses(params.customerId);
+    const addresses = await addressService.getCustomerAddresses(customerId);
 
-    return NextResponse.json({ data: addresses });
+    return NextResponse.json({ addresses });
   } catch (error) {
     return NextResponse.json(
       { message: error.message },

@@ -11,15 +11,16 @@ exports.runtime = "nodejs";
 exports.PUT = async function (req, { params }) {
   try {
     await connectDB();
-
+    const { _id } = await params
+    
     const auth = await authenticate(req);
     requireCustomer(auth);
 
     const body = await req.json();
     const data = await validate(updateAddressSchema, body);
 
-    const address = await addressService.update(data, params._id);
-
+    const address = await addressService.update(data, _id);
+    
     return NextResponse.json({
       message: "آدرس با موفقیت ویرایش شد.",
       data: address,
@@ -36,11 +37,12 @@ exports.PUT = async function (req, { params }) {
 exports.DELETE = async function (req, { params }) {
   try {
     await connectDB();
+    const { _id } = await params
 
     const auth = await authenticate(req);
     requireCustomer(auth);
 
-    const address = await addressService.delete(params._id);
+    const address = await addressService.delete(_id);
 
     return NextResponse.json({
       message: "آدرس با موفقیت حذف شد.",

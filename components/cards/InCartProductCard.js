@@ -3,34 +3,29 @@
 import React from "react";
 import {
   Card,
-  CardMedia,
   CardContent,
   Typography,
   Box,
   IconButton,
-  Stack,
-  Button,
   useTheme,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { formatPrice, toPersian } from "@/lib/number";
 import Image from "next/image";
-import { setFilePath } from "@/lib/media";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { useDispatch, useSelector } from "react-redux";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { updateCart } from "@/store/cart/cart.action";
-import { selectCart, selectCartLoading } from "@/store/cart/cart.selector";
 import nookies from "nookies";
+import { useLandingData } from "@/providers/LandingDataProvider";
+import { fetchWithAuth } from "@/lib/fetch";
+import { modifyCartApi } from "@/constants/api.routes";
 
 const InCartProductCard = ({ product, quantity, isFinalize = false }) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
   const notifications = useNotifications();
 
   const { customer } = nookies.get();
-  const cart = useSelector(selectCart);
+  const { cart, setCart } = useLandingData();
 
   const hasDiscount = product.discount > 0;
   const finalPrice = hasDiscount
@@ -39,23 +34,23 @@ const InCartProductCard = ({ product, quantity, isFinalize = false }) => {
 
   const handleAddToCart = async () => {
     try {
-      const { message } = await dispatch(
-        updateCart({
-          _id: cart._id,
-          options: {
-            customerId: customer || null,
-            action: "add",
-            productId: product._id,
-          },
-        })
-      ).unwrap();
+      const { message, data } = await fetchWithAuth(modifyCartApi(cart._id), {
+        method: "PUT",
+        body: {
+          customerId: customer || null,
+          action: "add",
+          productId: product._id,
+        },
+      });
+
+      setCart(data);
 
       notifications.show(message || "سبد خرید با موفقیت ویرایش شد!", {
         severity: "success",
         autoHideDuration: 3000,
       });
     } catch (error) {
-      notifications.show(error || "مشکلی پیش آمد!", {
+      notifications.show(error.message || "مشکلی پیش آمد!", {
         severity: "error",
         autoHideDuration: 3000,
       });
@@ -64,23 +59,23 @@ const InCartProductCard = ({ product, quantity, isFinalize = false }) => {
 
   const handleRemoveFromcart = async () => {
     try {
-      const { message } = await dispatch(
-        updateCart({
-          _id: cart._id,
-          options: {
-            customerId: customer || null,
-            action: quantity > 1 ? "decrease" : "remove",
-            productId: product._id,
-          },
-        })
-      ).unwrap();
+      const { message, data } = await await fetchWithAuth(modifyCartApi(cart._id), {
+        method: "PUT",
+        body: {
+          customerId: customer || null,
+          action: quantity > 1 ? "decrease" : "remove",
+          productId: product._id,
+        },
+      });
+
+      setCart(data);
 
       notifications.show(message || "سبد خرید با موفقیت ویرایش شد!", {
         severity: "success",
         autoHideDuration: 3000,
       });
     } catch (error) {
-      notifications.show(error || "مشکلی پیش آمد!", {
+      notifications.show(error.message || "مشکلی پیش آمد!", {
         severity: "error",
         autoHideDuration: 3000,
       });
@@ -110,7 +105,7 @@ const InCartProductCard = ({ product, quantity, isFinalize = false }) => {
         }}
       >
         <Image
-          src={(product?.media?.[0].path)}
+          src={product?.media?.[0].path}
           alt={product?.title}
           width={0}
           height={0}

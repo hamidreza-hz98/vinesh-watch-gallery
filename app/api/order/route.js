@@ -22,7 +22,7 @@ exports.POST = async function (req) {
     const body = await req.json();
     const data = await validate(createOrderSchema, body);
 
-    const order = await orderService.create(auth.user.id, data);
+    const order = await orderService.create(data);
 
     return NextResponse.json({
       message: "سفارش با موفقیت ایجاد شد.",

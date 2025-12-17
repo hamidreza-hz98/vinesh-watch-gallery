@@ -1,16 +1,38 @@
 "use client"
 
 import { Box, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomerInformationForm from '../forms/CustomerInformationForm'
-import { useSelector } from 'react-redux'
-import { selectCustomer } from '@/store/customer/customer.selector'
 import Loader from '../common/Loader'
+import nookies from "nookies"
+import { fetchWithAuth } from '@/lib/fetch'
+import { modifyCustomerApi } from '@/constants/api.routes'
 
 const CustomerInformationPageWrapper = () => {
-  const customer = useSelector(selectCustomer)
+  const { customer } = nookies.get()
+  const [customerInfo, setCustomerInfo] = useState(null)
+  const [ loading , setLoading ] = useState(false)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+
+        const {data} = await fetchWithAuth(modifyCustomerApi(customer))
+        
+        setCustomerInfo(data)
+      } catch (error) {
+        console.log(error);
+        
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData
+  }, [customer])
   
-  if(!customer) {
+  if(loading) {
     return <Loader />
   }
 
@@ -18,7 +40,7 @@ const CustomerInformationPageWrapper = () => {
     <Box>
       <Typography variant='h3'>
         
-        <CustomerInformationForm data={customer} />
+        <CustomerInformationForm data={customerInfo} />
       </Typography>
     </Box>
   )

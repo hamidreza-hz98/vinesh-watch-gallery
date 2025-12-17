@@ -2,9 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import PageContainer from "../common/PageContainer";
-import { useDispatch, useSelector } from "react-redux";
-import { selectCategories } from "@/store/category/category.selector";
-import { selectBrands } from "@/store/brand/brand.selector";
 import Loader from "../common/Loader";
 import {
   Box,
@@ -18,7 +15,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getAllProducts } from "@/store/product/product.action";
 import { setRequestQuery } from "@/lib/request";
 import Sort from "../filter/Sort";
 import {
@@ -26,24 +22,25 @@ import {
   sortProductOptions,
 } from "@/constants/filter-data";
 import PrimaryProductCard from "../cards/PrimaryProductCard";
-import { selectProducts } from "@/store/product/product.selector";
 import Filter from "../filter/Filter";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SortIcon from "@mui/icons-material/Sort";
 import CustomPagination from "../filter/CustomPagination";
 import NoDataAvailable from "../common/NoDataAvailable";
 import routes from "@/constants/landing.routes";
+import { useLandingData } from "@/providers/LandingDataProvider";
+import { fetchWithAuth } from "@/lib/fetch";
+import { getAllProductsApi } from "@/constants/api.routes";
 
 const ProductsOverviewPageWrapper = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+  
+  const { brands, categories } = useLandingData()
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(false)
   const [filterOpen, setFilterOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
-
-  const { categories } = useSelector(selectCategories);
-  const { brands } = useSelector(selectBrands);
-  const products = useSelector(selectProducts);
 
   const router = useRouter();
 
@@ -56,13 +53,28 @@ const ProductsOverviewPageWrapper = () => {
   const page_size = searchParams.get("page_size") || 12;
   const search = searchParams.get("search") || "";
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
-    const queries = setRequestQuery({ filters, sort, page, page_size, search });
+    const fetchData = async () => {
+      try {
+        setLoading(true)
 
-    dispatch(getAllProducts(queries));
-  }, [dispatch, searchParams]);
+        const queries = setRequestQuery({ filters, sort, page, page_size, search });
+        
+        const products = await fetchWithAuth(getAllProductsApi(queries))
+
+        setProducts(products)
+
+      } catch (error) {
+        console.log(error);
+        
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+
+    fetchData()
+  }, [searchParams]);
 
   if (!categories || !brands || !products) {
     return <Loader />;

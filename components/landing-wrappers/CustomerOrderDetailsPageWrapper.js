@@ -1,11 +1,8 @@
 "use client";
 
-import React, { useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useCallback, useEffect, useState } from "react";
 import nookies from "nookies";
-import { getCustomerOrderDetails } from "@/store/order/order.action";
-import { selectOrder, selectOrderLoading } from "@/store/order/order.selector";
-import Loader from "../common/Loader";
+import Loader from "@/components/common/Loader";
 import {
   Box,
   Button,
@@ -26,8 +23,12 @@ import { formatDateAndTime } from "@/lib/date";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import InfoIcon from "@mui/icons-material/Info";
-import { retryPayment } from "@/store/transaction/transaction.action";
-import { selectTransactionLoading } from "@/store/transaction/transaction.selector";
+import { fetchWithAuth } from "@/lib/fetch";
+import {
+  customerOrderDetailsApi,
+  initiateTransactionApi,
+  retryTransactionApi,
+} from "@/constants/api.routes";
 
 const DetailItem = ({ label, value, copyable }) => {
   const notifications = useNotifications();
@@ -76,25 +77,55 @@ const SectionTitle = ({ title }) => (
 
 const CustomerOrderDetailsPageWrapper = ({ code }) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
   const { customer } = nookies.get();
-  const order = useSelector(selectOrder);
-  const loading = useSelector(selectOrderLoading);
-  const paymentLoading = useSelector(selectTransactionLoading);
 
-  const loadData = useCallback(async () => {
-    await dispatch(getCustomerOrderDetails({ code, customer })).unwrap();
-  }, [dispatch, customer, code]);
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const notifications = useNotifications()
 
   useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+
+        const { order } = await fetchWithAuth(
+          customerOrderDetailsApi(code, customer)
+        );
+
+        setOrder(order);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadData();
-  }, [loadData]);
+  }, [code, customer]);
 
   const handleRetryPayment = async () => {
-    await dispatch(retryPayment({ orderId: order?._id })).unwrap();
+     if (!["pending_payment", "failed"].includes(order.status)) {
+      return notifications.show("امکان پرداخت مجدد برای این سفارش وجود ندارد" || error.message, {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
+    }   
+     
+
+    const { redirectUrl } = await fetchWithAuth(initiateTransactionApi, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: { orderId: order?._id },
+    });
+
+    if (redirectUrl) {
+      window.location.href = redirectUrl;
+    }
   };
 
-  if (!order || Object.keys(order).length === 0 || loading) {
+  if (loading) {
     return <Loader />;
   }
 
@@ -116,7 +147,7 @@ const CustomerOrderDetailsPageWrapper = ({ code }) => {
 
           {["pending_payment", "failed"].includes(order.status) && (
             <Button
-              loading={paymentLoading}
+              loading={loading}
               variant="contained"
               onClick={handleRetryPayment}
             >
@@ -273,7 +304,7 @@ const CustomerOrderDetailsPageWrapper = ({ code }) => {
             >
               <Box display="flex" justifyContent="start" gap={2}>
                 <Image
-                  src={setFilePath(item?.product?.media?.[0].path)}
+                  src={item?.product?.media?.[0].path}
                   alt={item?.product?.title}
                   width={0}
                   height={0}

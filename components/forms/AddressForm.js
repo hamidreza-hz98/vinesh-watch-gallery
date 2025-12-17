@@ -18,8 +18,8 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toPersian } from "@/lib/number";
 import { shahr, ostan } from "iran-cities-json";
-import { addressFormValidationSchema } from "@/constants/validation";
 import { CloseOutlined } from "@mui/icons-material";
+import { addressFormValidationSchema } from "@/validation/landing.validations";
 
 const AddressForm = ({
   open,

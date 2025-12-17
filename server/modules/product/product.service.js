@@ -37,7 +37,6 @@ const productService = {
     page_size = 10,
     filters = {},
   }) {
-    
     const query = buildMongoFindQuery(filters, search, [
       "title",
       "excerpt",

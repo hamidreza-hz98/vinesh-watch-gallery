@@ -11,11 +11,12 @@ exports.runtime = "nodejs";
 exports.GET = async function (req, { params }) {
   try {
     await connectDB();
+    const { _id } = await params
 
     const auth = await authenticate(req);
-    allowCustomerOrAdmin(auth, params._id);
+    allowCustomerOrAdmin(auth, _id);
 
-    const customer = await customerService.getDetails(params._id);
+    const customer = await customerService.getDetails(_id);
 
     return NextResponse.json({ data: customer });
   } catch (error) {

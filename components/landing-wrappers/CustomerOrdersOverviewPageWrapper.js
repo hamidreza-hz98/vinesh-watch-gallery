@@ -1,49 +1,65 @@
 "use client";
 
-import { getCustomerOrders } from "@/store/order/order.action";
-import { selectOrder, selectOrders } from "@/store/order/order.selector";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import nookies from "nookies";
 import { useSearchParams } from "next/navigation";
 import { setRequestQuery } from "@/lib/request";
 import { Box, Tab, Tabs, useTheme } from "@mui/material";
 import { orderStatuses } from "@/constants/general";
-import NoDataAvailable from "../common/NoDataAvailable";
-import OrderCard from "../cards/OrderCard";
-import CustomPagination from "../filter/CustomPagination";
+import NoDataAvailable from "@/components/common/NoDataAvailable";
+import OrderCard from "@/components/cards/OrderCard";
+import CustomPagination from "@/components/filter/CustomPagination";
+import { fetchWithAuth } from "@/lib/fetch";
+import { customerOrdersApi } from "@/constants/api.routes";
+import Loader from "../common/Loader";
 
 const CustomerOrdersOverviewPageWrapper = () => {
-  const theme = useTheme();
+  const [orders, setOrders] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const dispatch = useDispatch();
+  const theme = useTheme();
 
   const searchParams = useSearchParams();
   const page = searchParams.get("page") || 1;
   const page_size = searchParams.get("page_size") || 12;
 
-  const orders = useSelector(selectOrders);
   const { customer } = nookies.get();
 
   const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
-    const query = setRequestQuery({
-      filters:
-        statusFilter === "all"
-          ? {}
-          : {
-              status: {
-                value: statusFilter,
-                type: "eq",
-              },
-            },
-      page,
-      page_size,
-    });
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-    dispatch(getCustomerOrders({ _id: customer, query })).unwrap();
-  }, [dispatch, customer, searchParams, statusFilter, page, page_size]);
+        const query = setRequestQuery({
+          filters:
+            statusFilter === "all"
+              ? {}
+              : {
+                  status: {
+                    value: statusFilter,
+                    type: "eq",
+                  },
+                },
+          page,
+          page_size,
+        });
+
+        const { data } = await fetchWithAuth(
+          customerOrdersApi(customer, query)
+        );
+
+        setOrders(data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [customer, searchParams, statusFilter, page, page_size]);
 
   const statusOptions = [
     { key: "all", label: "همه سفارش‌ها" },
@@ -54,6 +70,10 @@ const CustomerOrdersOverviewPageWrapper = () => {
       icon: value.icon,
     })),
   ];
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <Box>

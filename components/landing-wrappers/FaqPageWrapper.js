@@ -1,8 +1,6 @@
 "use client";
 
-import { selectSettings } from "@/store/settings/settings.selector";
 import React from "react";
-import { useSelector } from "react-redux";
 import PageContainer from "../common/PageContainer";
 import routes from "@/constants/landing.routes";
 import {
@@ -16,12 +14,13 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Loader from "../common/Loader";
+import { useLandingData } from "@/providers/LandingDataProvider";
 
 const FaqPageWrapper = () => {
   const theme = useTheme();
-  const { faq } = useSelector(selectSettings);
+  const { settings } = useLandingData()
 
-  if (!faq) {
+  if (!settings) {
     return <Loader />;
   }
 
@@ -41,7 +40,7 @@ const FaqPageWrapper = () => {
      
         <Typography my={2} variant="h1">سوالات متداول گالری ساعت Vinesh</Typography>
 
-        {faq.map((item, index) => (
+        {settings.faq.map((item, index) => (
           <Accordion
             key={index}
             sx={{

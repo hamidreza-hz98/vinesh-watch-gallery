@@ -1,7 +1,6 @@
 "use client";
 
 import { userInformationDefaultValues } from "@/constants/forms";
-import { userInformationSchema } from "@/constants/validation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Box,
@@ -14,18 +13,18 @@ import {
 } from "@mui/material";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import CustomDatePicker from "../fields/CustomDatePicker";
+import CustomDatePicker from "@/components/fields/CustomDatePicker";
 import LockIcon from "@mui/icons-material/Lock";
 import { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { toPersian } from "@/lib/number";
-import { useDispatch } from "react-redux";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { updateCustomer } from "@/store/customer/customer.action";
+import { userInformationSchema } from "@/validation/landing.validations";
+import { fetchWithAuth } from "@/lib/fetch";
+import { modifyCustomerApi } from "@/constants/api.routes";
 
 const CustomerInformationForm = ({ data }) => {
-  const dispatch = useDispatch()
   const notifications = useNotifications()
 
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -49,16 +48,14 @@ const CustomerInformationForm = ({ data }) => {
 
   const handleFormSubmit = async (body) => {
     try {
-      const message = await dispatch(
-          updateCustomer({ _id: data?._id, body })
-        ).unwrap();
-
+      const {message} = await fetchWithAuth(modifyCustomerApi(data._id), { method: "PUT", body })
+      
            notifications.show(message, {
         severity: "success",
         autoHideDuration: 3000,
       });
     } catch (error) {
-        notifications.show(error, {
+        notifications.show(error.message, {
         severity: "error",
         autoHideDuration: 3000,
       });

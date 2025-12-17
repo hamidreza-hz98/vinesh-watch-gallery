@@ -2,6 +2,7 @@ const { NextResponse } = require("next/server");
 const connectDB = require("@/server/db");
 const orderService = require("@/server/modules/order/order.service");
 const { authenticate, requireCustomer } = require("@/server/middlewares/auth");
+const QueryString = require("qs");
 
 exports.runtime = "nodejs";
 
@@ -9,22 +10,22 @@ exports.runtime = "nodejs";
 exports.GET = async function (req, { params }) {
   try {
     await connectDB();
+    const { customerId } = await params;
 
     const auth = await authenticate(req);
     requireCustomer(auth);
 
-    const { search, sort, page, page_size, filters } = Object.fromEntries(req.nextUrl.searchParams);
+    const url = new URL(req.url);
+    const objectedQuery = Object.fromEntries(url.searchParams.entries());
+    const query = QueryString.parse(objectedQuery);
 
-    const result = await orderService.getCustomerOrders(params._id, {
-      search,
-      sort: sort ? JSON.parse(sort) : undefined,
-      page: page ? parseInt(page) : undefined,
-      page_size: page_size ? parseInt(page_size) : undefined,
-      filters: filters ? JSON.parse(filters) : undefined,
-    });
+    const { orders, total } = await orderService.getCustomerOrders(customerId, query);
 
-    return NextResponse.json({ data: result });
+    return NextResponse.json({ data: { orders, total, ...query } });
   } catch (error) {
-    return NextResponse.json({ message: error.message }, { status: error.statusCode || 500 });
+    return NextResponse.json(
+      { message: error.message },
+      { status: error.statusCode || 500 }
+    );
   }
 };

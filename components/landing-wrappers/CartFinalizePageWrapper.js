@@ -1,15 +1,14 @@
 "use client";
 
-import { selectCart } from "@/store/cart/cart.selector";
 import React from "react";
-import { useSelector } from "react-redux";
 import nookies from "nookies";
 import { Box, Stack, Typography } from "@mui/material";
 import InCartProductCard from "../cards/InCartProductCard";
 import AddressCard from "../cards/AddressCard";
+import { useLandingData } from "@/providers/LandingDataProvider";
 
 const CartFinalizePageWrapper = () => {
-  const cart = useSelector(selectCart);
+  const { cart } = useLandingData()
   const { customer } = nookies.get();
 
   return (

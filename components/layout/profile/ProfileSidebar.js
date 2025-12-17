@@ -5,12 +5,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import Link from "next/link";
 import { usePathname, customer, useRouter } from "next/navigation";
 import nookies from "nookies";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { getCustomerInformation } from "@/store/customer/customer.action";
+import { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
-import { selectCustomer } from "@/store/customer/customer.selector";
 import routes from "@/constants/landing.routes";
+import { fetchWithAuth } from "@/lib/fetch";
+import { customerDetailsApi, modifyCustomerApi } from "@/constants/api.routes";
+import { setRequestQuery } from "@/lib/request";
+import QueryString from "qs";
 
 const menuItems = [
   routes.profile,
@@ -19,24 +20,38 @@ const menuItems = [
 ];
 
 const ProfileSidebar = () => {
+  const [customerDetails, setCustomerDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const { customer } = nookies.get();
-  const dispatch = useDispatch();
 
   const pathname = usePathname();
   const router = useRouter();
 
-  const customerDetails = useSelector(selectCustomer);
-
   useEffect(() => {
-    dispatch(getCustomerInformation(customer));
-  }, [dispatch, customer]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        const { data } = await fetchWithAuth(modifyCustomerApi(customer));
+
+        setCustomerDetails(data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [customer]);
 
   const handleLogout = () => {
     // Your logout logic
     router.push("/");
   };
 
-  if (!customer) {
+  if (loading) {
     return <Loader />;
   }
 

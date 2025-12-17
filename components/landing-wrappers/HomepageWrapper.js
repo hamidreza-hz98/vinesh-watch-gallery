@@ -3,26 +3,23 @@
 
 import React, { useEffect, useState } from "react";
 import PageContainer from "../common/PageContainer";
-import { useDispatch, useSelector } from "react-redux";
-import { selectSettings } from "@/store/settings/settings.selector";
 import Loader from "../common/Loader";
 import HeroSlider from "../common/HeroSlider";
-import { selectCategories } from "@/store/category/category.selector";
 import { Box, Button, Grid, Typography, useTheme } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
-import { setFilePath } from "@/lib/media";
-import { selectBrands } from "@/store/brand/brand.selector";
-import { getAllProducts } from "@/store/product/product.action";
 import { paramifyLink, setRequestQuery } from "@/lib/request";
 import PrimaryProductCard from "../cards/PrimaryProductCard";
 import { productsSliderOptions } from "@/constants/slider-options";
 import Slider from "../common/Slider";
 import { useSearchParams } from "next/navigation";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { useLandingData } from "@/providers/LandingDataProvider";
+import { fetchWithAuth } from "@/lib/fetch";
+import { getAllProductsApi } from "@/constants/api.routes";
 
 const HomepageWrapper = () => {
-  const dispatch = useDispatch();
+  const { categories, brands, settings } = useLandingData();
   const searchParams = useSearchParams();
 
   const theme = useTheme();
@@ -30,44 +27,44 @@ const HomepageWrapper = () => {
   const [mostSoldProducts, setMostSoldProducts] = useState([]);
   const [productsWithDiscount, setProductsWithDiscount] = useState([]);
 
-  const { general } = useSelector(selectSettings) || {};
-  const { categories } = useSelector(selectCategories);
-  const { brands } = useSelector(selectBrands);
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const mostSoldResponse = await dispatch(
-          getAllProducts(
+        const mostSoldResponse = await fetchWithAuth(
+          getAllProductsApi(
             setRequestQuery({
               page_size: 10,
               sort: [{ field: "soldNumber", order: "desc" }],
-              filters: { stock: { type: "gt", value: 0 } }
+              filters: { stock: { type: "gt", value: 0 } },
             })
           )
-        ).unwrap();
+        );
 
         setMostSoldProducts(mostSoldResponse.products);
 
-        const discountResponse = await dispatch(
-          getAllProducts(
+        const discountResponse = await fetchWithAuth(
+          getAllProductsApi(
             setRequestQuery({
               page_size: 10,
-              filters: { discount: { type: "gt", value: 0 }, stock: { type: "gt", value: 0 } },
+              filters: {
+                discount: { type: "gt", value: 0 },
+                stock: { type: "gt", value: 0 },
+              },
             })
           )
-        ).unwrap();
+        );
+
         setProductsWithDiscount(discountResponse.products);
-      } catch (err) {
+      } catch (error) {
         console.error(error.message || "");
       }
     };
 
     fetchProducts();
-  }, [dispatch]);
+  }, []);
 
   if (
-    !general ||
+    !settings ||
     !categories ||
     !brands ||
     mostSoldProducts.length === 0 ||
@@ -84,7 +81,7 @@ const HomepageWrapper = () => {
 
   return (
     <PageContainer>
-      <HeroSlider slides={general?.homepageSlider} />
+      <HeroSlider slides={settings?.general?.homepageSlider} />
 
       <Grid container mt={6} spacing={4}>
         <Grid size={{ xs: 12 }}>
@@ -117,7 +114,7 @@ const HomepageWrapper = () => {
                 }}
               >
                 <Image
-                  src={setFilePath(cat.image.path)}
+                  src={cat.image.path}
                   alt={cat.name}
                   width={0}
                   height={0}
@@ -179,7 +176,7 @@ const HomepageWrapper = () => {
               }}
             >
               <Image
-                src={setFilePath(item.logo.path)}
+                src={item.logo.path}
                 alt={item.name}
                 width={0}
                 height={0}

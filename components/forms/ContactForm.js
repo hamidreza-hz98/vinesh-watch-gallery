@@ -1,17 +1,16 @@
 "use client";
 
-import { contactSchema } from "@/constants/validation";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { submitContact } from "@/store/contact/contact.action";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import ButtonLoader from "../common/ButtonLoader";
+import { contactSchema } from "@/validation/landing.validations";
+import { fetchWithAuth } from "@/lib/fetch";
+import { submitContactApi } from "@/constants/api.routes";
 
 const ContactForm = () => {
-  const dispatch = useDispatch();
   const notifications = useNotifications();
 
   const {
@@ -30,7 +29,7 @@ const ContactForm = () => {
 
   const handleSubmitForm = async (body) => {
     try {
-      const message = await dispatch(submitContact(body)).unwrap();
+      const { message } = await fetchWithAuth(submitContactApi, {method: "POST", body})
 
       notifications.show(message, {
         severity: "success",
@@ -39,7 +38,7 @@ const ContactForm = () => {
 
       reset();
     } catch (error) {
-      notifications.show(error, {
+      notifications.show(error.message, {
         severity: "error",
         autoHideDuration: 3000,
       });

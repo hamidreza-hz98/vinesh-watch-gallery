@@ -15,11 +15,10 @@ import {
   useMediaQuery,
   Autocomplete,
 } from "@mui/material";
-import { useSelector } from "react-redux";
-import { selectCategories } from "@/store/category/category.selector";
-import { selectBrands } from "@/store/brand/brand.selector";
 import { useRouter, useSearchParams } from "next/navigation";
 import { formatPrice } from "@/lib/number";
+import { useLandingData } from "@/providers/LandingDataProvider";
+import LandingThemeProvider from "@/theme/providers/LandingThemeProvider";
 
 const SidebarFilter = ({ onChange, onClose }) => {
   const theme = useTheme();
@@ -28,8 +27,7 @@ const SidebarFilter = ({ onChange, onClose }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const { categories } = useSelector(selectCategories);
-  const { brands } = useSelector(selectBrands);
+  const { categories, brands } = useLandingData();
 
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
@@ -198,6 +196,7 @@ const SidebarFilter = ({ onChange, onClose }) => {
   };
 
   return (
+        <LandingThemeProvider>
     <Box
       sx={{
         position: "sticky",
@@ -252,9 +251,20 @@ const SidebarFilter = ({ onChange, onClose }) => {
           value={
             categories?.filter((c) => selectedCategories.includes(c._id)) || []
           }
-          onChange={(e, newValue) =>
-            setSelectedCategories(newValue.map((v) => v._id))
-          }
+          onChange={(e, newValue) => {
+              const updated = newValue.map((v) => v._id);
+    setSelectedCategories(updated);
+
+    pushFiltersToUrl({
+      categories: updated,
+      brands: selectedBrands,
+      price: priceRange,
+      inStock: inStockOnly,
+      discount: discountOnly,
+    });
+
+    onChange();
+          }}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -275,9 +285,20 @@ const SidebarFilter = ({ onChange, onClose }) => {
           options={brands || []}
           getOptionLabel={(option) => option.name}
           value={brands?.filter((b) => selectedBrands.includes(b._id)) || []}
-          onChange={(e, newValue) =>
-            setSelectedBrands(newValue.map((v) => v._id))
-          }
+          onChange={(e, newValue) => {
+            const updated = newValue.map((v) => v._id);
+    setSelectedBrands(updated);
+           
+           pushFiltersToUrl({
+      categories: selectedCategories,
+      brands: updated,
+      price: priceRange,
+      inStock: inStockOnly,
+      discount: discountOnly,
+    });
+
+    onChange();
+          }}
           renderInput={(params) => (
             <TextField {...params} size="small" placeholder="انتخاب برند" />
           )}
@@ -345,6 +366,8 @@ const SidebarFilter = ({ onChange, onClose }) => {
         />
       </Box>
     </Box>
+        </LandingThemeProvider>
+
   );
 };
 

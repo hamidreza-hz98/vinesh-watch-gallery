@@ -11,8 +11,9 @@ exports.runtime = "nodejs";
 exports.POST = async (req) => {
   try {
     await connectDB();
+    
     const auth = await authenticate(req);
-
+    
     const { orderId } = await req.json();
     const order = await orderService.getDetails(orderId);
 

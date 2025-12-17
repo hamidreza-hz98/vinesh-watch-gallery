@@ -1,20 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import nookies from "nookies";
-import { getCustomerAddresses } from "@/store/address/address.actions";
+import React from "react";
 import { Box, Stack } from "@mui/material";
-import Addresses from "../common/Addresses";
-import Payments from "../Payments";
+import Addresses from "@/components/common/Addresses";
 
 const CartShipmentPageWrapper = () => {
-  const dispatch = useDispatch();
-  const { customer } = nookies.get();
-  
-  useEffect(() => {
-    dispatch(getCustomerAddresses(customer));
-  }, [dispatch, customer]);
 
   return <Stack>
     <Box>

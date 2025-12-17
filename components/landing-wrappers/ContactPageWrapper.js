@@ -1,8 +1,6 @@
 "use client";
 
-import { selectSettings } from "@/store/settings/settings.selector";
 import React from "react";
-import { useSelector } from "react-redux";
 import PageContainer from "../common/PageContainer";
 import routes from "@/constants/landing.routes";
 import { Box, Divider, Grid, Typography, useTheme } from "@mui/material";
@@ -20,15 +18,17 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import { toPersian } from "@/lib/number";
 import ContactRow from "../common/ContactRow";
 import ContactForm from "../forms/ContactForm";
+import { useLandingData } from "@/providers/LandingDataProvider";
 
 const ContactPageWrapper = () => {
   const theme = useTheme();
-  const { general } = useSelector(selectSettings);
+  const { settings } = useLandingData()
 
-  if (!general) {
+  if (!settings) {
     return <Loader />;
   }
 
+  const { general } = settings
   const { contactInfo, social } = general;
 
   return (

@@ -18,10 +18,20 @@ import { toPersian } from "@/lib/number";
 import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
 import { Instagram } from "@mui/icons-material";
 import { useLandingData } from "@/providers/LandingDataProvider";
+import { createCartCookie } from "@/app/actions";
 
 export default function Footer() {
-  const { categories, settings } = useLandingData() 
+  const { categories, settings, cart } = useLandingData() 
   const searchParams = useSearchParams();
+  
+  useEffect(() => {
+    const cookies = nookies.get("cart")
+
+    if(!cookies.cart){
+      createCartCookie(cart)
+    }
+  },[])
+
 
   if (!settings || !categories) {
     return <Loader />;

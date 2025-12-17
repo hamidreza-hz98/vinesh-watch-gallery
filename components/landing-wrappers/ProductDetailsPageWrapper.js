@@ -1,13 +1,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import { getProductDetails } from "@/store/product/product.action";
-import { selectProduct } from "@/store/product/product.selector";
 import QueryString from "qs";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Loader from "../common/Loader";
-import PageContainer from "../common/PageContainer";
+import Loader from "@/components/common/Loader";
+import PageContainer from "@/components/common/PageContainer";
 import {
   Box,
   Button,
@@ -21,17 +18,14 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import Slider from "../common/Slider";
+import Slider from "@/components/common/Slider";
 import { setFilePath, setFullscreenImages } from "@/lib/media";
 import Image from "next/image";
-import FullscreenImage from "../common/FullScreenImage";
+import FullscreenImage from "@/components/common/FullScreenImage";
 import { formatPrice, toPersian } from "@/lib/number";
-import { InsertEmoticon } from "@mui/icons-material";
 import Link from "next/link";
 import { productsSliderOptions } from "@/constants/slider-options";
-import PrimaryProductCard from "../cards/PrimaryProductCard";
-import { updateCart } from "@/store/cart/cart.action";
-import { selectCart } from "@/store/cart/cart.selector";
+import PrimaryProductCard from "@/components/cards/PrimaryProductCard";
 import nookies from "nookies";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import AddIcon from "@mui/icons-material/Add";
@@ -39,6 +33,10 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { paramifyLink } from "@/lib/request";
 import { useSearchParams } from "next/navigation";
+import { useLandingData } from "@/providers/LandingDataProvider";
+import { fetchWithAuth } from "@/lib/fetch";
+import { modifyCartApi, productDetailsApi } from "@/constants/api.routes";
+import sanitize from "sanitize-html";
 
 function TabPanel({ children, value, index }) {
   return (
@@ -49,15 +47,17 @@ function TabPanel({ children, value, index }) {
 }
 
 const ProductDetailsPageWrapper = ({ slug }) => {
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const searchParams = useSearchParams();
 
-  const dispatch = useDispatch();
   const notifications = useNotifications();
   const { customer } = nookies.get();
-  const cart = useSelector(selectCart);
+  const { cart, setCart } = useLandingData();
 
   const [fullscreenData, setFullscreenData] = useState({
     open: false,
@@ -71,17 +71,38 @@ const ProductDetailsPageWrapper = ({ slug }) => {
     setTabsValue(newValue);
   };
 
-  const product = useSelector(selectProduct);
-
   const openFullscreen = (slides, index) => {
     setFullscreenData({ open: true, slides, initialIndex: index });
   };
 
   useEffect(() => {
-    const query = QueryString.stringify({ slug }, { encode: false });
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-    dispatch(getProductDetails(query));
-  }, [dispatch, slug]);
+        const query = QueryString.stringify({ slug }, { encode: false });
+
+        const { data } = await fetchWithAuth(productDetailsApi(query));
+
+        setProduct(data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData()
+  }, [slug]);
+
+  
+  useEffect(() => {
+    const updatedCart = cart?.products?.find(
+      (item) => item.product._id === product?._id
+    );
+
+    setIsInCart(updatedCart);
+  }, [cart, product]);
 
   if (!product) {
     return <Loader />;
@@ -99,7 +120,7 @@ const ProductDetailsPageWrapper = ({ slug }) => {
     slides: product?.media?.map((image, index) => (
       <Image
         key={index}
-        src={setFilePath(image.path)}
+        src={(image.path)}
         alt={image.title}
         width={0}
         height={0}
@@ -133,17 +154,17 @@ const ProductDetailsPageWrapper = ({ slug }) => {
 
   const handleAddToCart = async () => {
     try {
-      const { message } = await dispatch(
-        updateCart({
-          _id: cart._id,
-          options: {
-            customerId: customer || null,
-            action: "add",
-            productId: product._id,
-          },
-        })
-      ).unwrap();
+      const { message, data } = await fetchWithAuth(modifyCartApi(cart._id), {
+        method: "PUT",
+        body: {
+          customerId: customer || null,
+          action: "add",
+          productId: product._id,
+        },
+      });
 
+      setCart(data)
+      
       notifications.show(message || "سبد خرید با موفقیت ویرایش شد!", {
         severity: "success",
         autoHideDuration: 3000,
@@ -158,16 +179,16 @@ const ProductDetailsPageWrapper = ({ slug }) => {
 
   const handleRemoveFromcart = async () => {
     try {
-      const { message } = await dispatch(
-        updateCart({
-          _id: cart._id,
-          options: {
-            customerId: customer || null,
-            action: isInCart.quantity > 1 ? "decrease" : "remove",
-            productId: product._id,
-          },
-        })
-      ).unwrap();
+      const { message, data } = await fetchWithAuth(modifyCartApi(cart._id), {
+        method: "PUT",
+        body: {
+          customerId: customer || null,
+          action: isInCart.quantity > 1 ? "decrease" : "remove",
+          productId: product._id,
+        },
+      });
+
+      setCart(data)
 
       notifications.show(message || "سبد خرید با موفقیت ویرایش شد!", {
         severity: "success",
@@ -181,13 +202,6 @@ const ProductDetailsPageWrapper = ({ slug }) => {
     }
   };
 
-  useEffect(() => {
-    const updatedCart = cart?.products?.find(
-      (item) => item.product._id === product?._id
-    );
-
-    setIsInCart(updatedCart);
-  }, [cart, product]);
 
   return (
     <PageContainer
@@ -406,7 +420,7 @@ const ProductDetailsPageWrapper = ({ slug }) => {
           </Tabs>
 
           <TabPanel value={tabsValue} index={0}>
-            <div dangerouslySetInnerHTML={{ __html: product?.description }} />
+            <div dangerouslySetInnerHTML={{ __html: sanitize(product?.description) }} />
           </TabPanel>
 
           <TabPanel value={tabsValue} index={1}>

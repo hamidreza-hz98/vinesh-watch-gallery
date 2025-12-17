@@ -92,6 +92,7 @@ const orderService = {
   },
 
   async getCustomerOrders(customerId, data) {
+    
     const { orders, total } = await this.getAll({
       ...data,
       filters: {
@@ -106,7 +107,7 @@ const orderService = {
     return { orders, total };
   },
 
-  async getCustomerOrderDetails(code, customerId) {
+  async getCustomerOrderDetails(code, {customerId}) {
     const order = await Order.findOne({ code })
       .populate({
         path: "products",

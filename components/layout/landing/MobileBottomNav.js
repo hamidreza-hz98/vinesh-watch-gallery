@@ -78,7 +78,7 @@ export default function MobileBottomNav() {
         showLabels
         value={value}
         onChange={handleChange}
-        sx={{ "& .Mui-selected": { color: "primary.main", fontSize: "12px" }, color: "grey.400" }}
+        sx={{ "& .Mui-selected": { color: "primary.main", fontSize: "11px" }, color: "grey.400" }}
       >
         {[routes.home, routes.products, routes.cart, routes.profile].map(
           (item, index) => {

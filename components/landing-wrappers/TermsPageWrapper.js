@@ -13,14 +13,13 @@ import {
   useTheme,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useSelector } from "react-redux";
-import { selectSettings } from "@/store/settings/settings.selector";
+import { useLandingData } from "@/providers/LandingDataProvider";
 
 const TermsPageWrapper = () => {
   const theme = useTheme();
-  const { terms } = useSelector(selectSettings);
+  const { settings } = useLandingData()
 
-  if (!terms) {
+  if (!settings) {
     return <Loader />;
   }
   return (
@@ -41,7 +40,7 @@ const TermsPageWrapper = () => {
           شرایط استفاده از گالری ساعت Vinesh
         </Typography>
 
-        {terms.map((item, index) => (
+        {settings.terms.map((item, index) => (
           <Accordion
             key={index}
             sx={{

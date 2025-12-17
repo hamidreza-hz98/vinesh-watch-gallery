@@ -4,7 +4,7 @@ const connectDB = require("@/server/db");
 const transactionService = require("@/server/modules/transaction/transaction.service");
 const orderService = require("@/server/modules/order/order.service");
 
-const FRONTEND_BASE = process.env.FRONTEND_BASE_URL;
+const FRONTEND_BASE = process.env.NEXT_PUBLIC_BASE_URL;
 
 exports.runtime = "nodejs";
 

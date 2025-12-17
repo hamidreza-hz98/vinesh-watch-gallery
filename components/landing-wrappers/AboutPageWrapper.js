@@ -1,21 +1,20 @@
 "use client";
 
 import { setFilePath } from "@/lib/media";
-import { selectSettings } from "@/store/settings/settings.selector";
 import { Typography } from "@mui/material";
 import { Box, useTheme } from "@mui/system";
 import Image from "next/image";
 import React from "react";
-import { useSelector } from "react-redux";
 import Loader from "../common/Loader";
 import PageContainer from "../common/PageContainer";
 import routes from "@/constants/landing.routes";
+import { useLandingData } from "@/providers/LandingDataProvider";
 
 const AboutPageWrapper = () => {
   const theme = useTheme();
-  const { about } = useSelector(selectSettings);
+  const { settings } = useLandingData()
 
-  if (!about) return <Loader />;
+  if (!settings) return <Loader />;
 
   return (
     <PageContainer breadcrumbs={[
@@ -46,8 +45,8 @@ const AboutPageWrapper = () => {
           }}
         >
           <Image
-            src={setFilePath(about.image.path)}
-            alt={about.image.mediaAlt}
+            src={(settings.about.image.path)}
+            alt={settings.about.image.mediaAlt}
             crossOrigin="anonymous"
             unoptimized
             width={0}
@@ -71,7 +70,7 @@ const AboutPageWrapper = () => {
           درباره ی فروشگاه گالری ساعت Vinesh
         </Typography>
 
-        <div dangerouslySetInnerHTML={{ __html: about.description }} />
+        <div dangerouslySetInnerHTML={{ __html: settings.about.description }} />
       </Box>
     </PageContainer>
   );
