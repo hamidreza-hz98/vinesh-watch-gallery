@@ -32,6 +32,7 @@ const ProductForm = ({ data, mode = "create", onSubmit }) => {
   const [tags, setTags] = React.useState([]);
   const [brands, setBrands] = React.useState([]);
   const [categories, setCategories] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
   const [activeField, setActiveField] = React.useState(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -58,6 +59,8 @@ const ProductForm = ({ data, mode = "create", onSubmit }) => {
   React.useEffect(() => {
     const fetchDependencies = async () => {
       try {
+        setLoading(true);
+
         const query = { page_size: 5000 };
 
         const [productsRes, categoriesRes, tagsRes, brandsRes] =
@@ -74,6 +77,8 @@ const ProductForm = ({ data, mode = "create", onSubmit }) => {
         setBrands(brandsRes.data.brands || []);
       } catch (error) {
         console.error("Failed to load product dependencies", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -163,13 +168,7 @@ const ProductForm = ({ data, mode = "create", onSubmit }) => {
     setDrawerOpen(false);
   };
 
-  if (
-    (mode === "edit" && !data) ||
-    !categories.length ||
-    !products.length ||
-    !tags.length ||
-    !brands.length
-  ) {
+  if ((mode === "edit" && !data) || loading) {
     return <Loader />;
   }
 
