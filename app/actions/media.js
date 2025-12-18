@@ -8,6 +8,48 @@ import { uploadSchema, updateSchema } from "@/validation/media.validation";
 import { serialize } from "@/lib/request";
 import fs from "fs";
 import path from "path";
+import { uploadToB2 } from "@/lib/b2";
+
+import B2 from "backblaze-b2";
+
+const b2 = new B2({
+  applicationKeyId: process.env.B2_KEY_ID,
+  applicationKey: process.env.B2_APPLICATION_KEY,
+});
+
+let authorized = false;
+async function authorize() {
+  if (!authorized) {
+    await b2.authorize();
+    authorized = true;
+  }
+}
+
+/**
+ * Fetch file from B2 and return buffer + content type
+ */
+export async function serveMediaBuffer(fileName) {
+  await authorize();
+
+  const { data } = await b2.getDownloadAuthorization({
+    bucketId: process.env.B2_BUCKET_ID,
+    fileNamePrefix: fileName,
+    validDurationInSeconds: 3600,
+  });
+
+  const downloadUrl = `https://f003.backblazeb2.com/file/${process.env.B2_BUCKET_NAME}/${fileName}?Authorization=${data.authorizationToken}`;
+  
+  const res = await fetch(downloadUrl);
+  if (!res.ok) {
+    throw new Error("Failed to fetch file from B2");
+  }
+  
+  const buffer = Buffer.from(await res.arrayBuffer());
+  const contentType = res.headers.get("content-type");
+
+  return { buffer, contentType };
+}
+
 
 /* -------------------- */
 /* GET ALL MEDIA         */
@@ -49,23 +91,25 @@ export async function uploadMedia(formData) {
     let savedFile;
 
     if (file && file.arrayBuffer) {
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-      if (!fs.existsSync(uploadsDir))
-        fs.mkdirSync(uploadsDir, { recursive: true });
-
       const ext = path.extname(file.name);
       const baseName = path.basename(file.name, ext);
-      const fileName = `${Date.now()}-${baseName}${ext}`;
-      const filePath = path.join(uploadsDir, fileName);
+      const fileName = `uploads/${Date.now()}-${baseName}${ext}`;
 
       const buffer = Buffer.from(await file.arrayBuffer());
-      fs.writeFileSync(filePath, buffer);
+
+      const publicUrl = await uploadToB2({
+        buffer,
+        fileName,
+        mimeType: file.type || "application/octet-stream",
+      });
+
+      console.log(publicUrl)
 
       savedFile = {
-        path: `/uploads/${fileName}`,
-        filename: fileName, // this is important for your service
-        originalname: file.name, // match multer property
-        mimetype: file.type || "application/octet-stream",
+        path: publicUrl, // 🔥 FULL URL
+        filename: fileName, // used for delete
+        originalname: file.name,
+        mimetype: file.type,
         size: file.size,
       };
     } else if (existingFile) {
@@ -84,6 +128,7 @@ export async function uploadMedia(formData) {
 
     return { message: "مدیا با موفقیت بارگزاری شد." };
   } catch (error) {
+    console.log(error)
     return { message: error.message, status: error.statusCode || 500 };
   }
 }
@@ -110,27 +155,39 @@ export async function updateMedia(id, formData) {
 
     let savedFile;
 
-    if (file && file.arrayBuffer) {
-      // New file upload
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-      if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+   if (file && file.arrayBuffer) {
+  const ext = path.extname(file.name);
+  const baseName = path.basename(file.name, ext);
+  const fileName = `uploads/${Date.now()}-${baseName}${ext}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
 
-      const ext = path.extname(file.name);
-      const baseName = path.basename(file.name, ext);
-      const fileName = `${Date.now()}-${baseName}${ext}`;
-      const filePath = path.join(uploadsDir, fileName);
+  // Upload new file to B2
+  const { publicUrl, fileId } = await uploadToB2({
+    buffer,
+    fileName,
+    mimeType: file.type || "application/octet-stream",
+  });
 
-      const buffer = Buffer.from(await file.arrayBuffer());
-      fs.writeFileSync(filePath, buffer);
+  // Delete old file from B2
+  const existingMedia = await mediaService.getDetails({ _id: id });
+  if (existingMedia?.fileId) {
+    try {
+      await deleteFromB2(existingMedia.filename, existingMedia.fileId);
+    } catch (err) {
+      console.error("Failed to delete old file:", err.message);
+    }
+  }
 
-      savedFile = {
-        path: `/uploads/${fileName}`,
-        filename: fileName,
-        originalname: file.name,
-        mimetype: file.type || "application/octet-stream",
-        size: file.size,
-      };
-    } else if (existingFile) {
+  savedFile = {
+    path: publicUrl,
+    filename: fileName,
+    fileId,          // save fileId for future deletes
+    originalname: file.name,
+    mimetype: file.type,
+    size: file.size,
+  };
+}
+ else if (existingFile) {
       // Use existing file
       const baseName = path.basename(existingFile);
       savedFile = {
@@ -153,7 +210,6 @@ export async function updateMedia(id, formData) {
     return { message: error.message, status: error.statusCode || 500 };
   }
 }
-
 
 /* -------------------- */
 /* DELETE MEDIA          */

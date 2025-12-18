@@ -25,6 +25,7 @@
     "@mui/x-date-pickers-pro": "^8.22.0",
     "@mui/x-tree-view": "^8.22.0",
     "axios": "^1.13.2",
+    "backblaze-b2": "^1.7.1",
     "bcrypt": "^6.0.0",
     "date-fns-jalali": "^4.0.0-0",
     "dayjs": "^1.11.19",

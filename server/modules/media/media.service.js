@@ -3,6 +3,7 @@ const path = require("path");
 const throwError = require("../../middlewares/throw-error");
 const Media = require("./media.model");
 const { buildMongoSort } = require("@/server/lib/filter");
+const { deleteFromB2 } = require("@/lib/b2");
 
 const mediaService = {
   async exists(filter) {
@@ -10,13 +11,11 @@ const mediaService = {
   },
 
   async upload({ file, body }) {
-    if (!file) {
-      throwError("فایل الزامی است.", 400);
-    }
+    if (!file) throwError("فایل الزامی است.", 400);
 
     const media = new Media({
       filename: file.filename,
-      path: `/uploads/${file.filename}`,
+      path: file.path, // 🔥 FULL URL
       originalName: file.originalname,
       extension: path.extname(file.originalname).replace(".", ""),
       mimeType: file.mimetype,
@@ -27,29 +26,28 @@ const mediaService = {
     return await media.save();
   },
 
- async update(_id, data) {
-  const existing = await this.exists({ _id });
-  if (!existing) {
-    throwError("مدیا وجود ندارد.", 404);
-  }
+  async update(_id, data) {
+    const existing = await this.exists({ _id });
+    if (!existing) {
+      throwError("مدیا وجود ندارد.", 404);
+    }
 
-  const updatedMedia = await Media.findByIdAndUpdate(
-    _id,
-    {
-      filename: data.file.filename,
-      path: data.file.path, // <-- use data.file.path instead of file.filename
-      originalName: data.file.originalname,
-      extension: path.extname(data.file.originalname).replace(".", ""),
-      mimeType: data.file.mimetype,
-      size: data.file.size,
-      ...data.body,
-    },
-    { new: true }
-  );
+    const updatedMedia = await Media.findByIdAndUpdate(
+      _id,
+      {
+        filename: data.file.filename,
+        path: data.file.path, // <-- use data.file.path instead of file.filename
+        originalName: data.file.originalname,
+        extension: path.extname(data.file.originalname).replace(".", ""),
+        mimeType: data.file.mimetype,
+        size: data.file.size,
+        ...data.body,
+      },
+      { new: true }
+    );
 
-  return updatedMedia;
-},
-
+    return updatedMedia;
+  },
 
   async getDetails(filter) {
     const existing = await this.exists(filter);
@@ -78,23 +76,13 @@ const mediaService = {
 
   async delete(_id) {
     const existing = await this.exists({ _id });
-    if (!existing) {
-      throwError("مدیا وجود ندارد.", 404);
-    }
+    if (!existing) throwError("مدیا وجود ندارد.", 404);
 
-    if (existing.path) {
-      const filePath = path.join(
-        process.cwd(),
-        "public",
-        existing.path.replace(/^\//, "")
-      );
-
+    if (existing.filename && existing.fileId) {
       try {
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
+        await deleteFromB2(existing.filename, existing.fileId);
       } catch (err) {
-        console.error("File delete error:", err.message);
+        console.error("B2 delete error:", err.message);
       }
     }
 
