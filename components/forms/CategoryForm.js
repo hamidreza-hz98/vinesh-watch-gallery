@@ -20,13 +20,6 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import MediaPreview from "../common/MediaPreview";
 import TagField from "../fields/TagField";
 import MediaPageWrapper from "../dashboard-wrappers/MediaPageWrapper";
-import QueryString from "qs";
-import { fetchWithAuth } from "@/lib/fetch";
-import {
-  categoryApi,
-  getAllCategoriesApi,
-  tagApi,
-} from "@/constants/api.routes";
 import { getAllCategories } from "@/app/actions/category";
 import { getAllTags } from "@/app/actions/tag";
 

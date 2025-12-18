@@ -23,9 +23,6 @@ import Loader from "../common/Loader";
 
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { useDialogs } from "@/hooks/useDialogs/useDialogs";
-import { setRequestQuery } from "@/lib/request";
-import { fetchWithAuth } from "@/lib/fetch";
-import { getAllMediaApi, modifyMediaApi } from "@/constants/api.routes";
 import { deleteMedia, getAllMedia } from "@/app/actions/media";
 
 const MediaPageWrapper = ({

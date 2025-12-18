@@ -15,8 +15,6 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { toPersian } from "@/lib/number";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import Link from "next/link";
-import { fetchWithAuth } from "@/lib/fetch";
-import { customerSignupApi } from "@/constants/api.routes";
 import { setCookie } from "nookies";
 import { signupFormValidationSchema } from "@/validation/landing.validations";
 import { signupCustomer } from "@/app/actions/customer";

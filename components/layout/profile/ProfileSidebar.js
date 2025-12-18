@@ -8,10 +8,6 @@ import nookies from "nookies";
 import { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
 import routes from "@/constants/landing.routes";
-import { fetchWithAuth } from "@/lib/fetch";
-import { customerDetailsApi, modifyCustomerApi } from "@/constants/api.routes";
-import { setRequestQuery } from "@/lib/request";
-import QueryString from "qs";
 import { getCustomerDetails } from "@/app/actions/customer";
 
 const menuItems = [

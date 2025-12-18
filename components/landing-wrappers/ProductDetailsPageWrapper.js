@@ -19,7 +19,7 @@ import {
   useTheme,
 } from "@mui/material";
 import Slider from "@/components/common/Slider";
-import { setFilePath, setFullscreenImages } from "@/lib/media";
+import { setFullscreenImages } from "@/lib/media";
 import Image from "next/image";
 import FullscreenImage from "@/components/common/FullScreenImage";
 import { formatPrice, toPersian } from "@/lib/number";
@@ -34,8 +34,6 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { paramifyLink } from "@/lib/request";
 import { useSearchParams } from "next/navigation";
 import { useLandingData } from "@/providers/LandingDataProvider";
-import { fetchWithAuth } from "@/lib/fetch";
-import { modifyCartApi, productDetailsApi } from "@/constants/api.routes";
 import sanitize from "sanitize-html";
 import { getProductDetails } from "@/app/actions/product";
 import { updateCart } from "@/app/actions/cart";

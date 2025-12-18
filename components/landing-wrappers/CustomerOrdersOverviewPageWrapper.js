@@ -3,14 +3,11 @@
 import React, { useEffect, useState } from "react";
 import nookies from "nookies";
 import { useSearchParams } from "next/navigation";
-import { setRequestQuery } from "@/lib/request";
 import { Box, Tab, Tabs, useTheme } from "@mui/material";
 import { orderStatuses } from "@/constants/general";
 import NoDataAvailable from "@/components/common/NoDataAvailable";
 import OrderCard from "@/components/cards/OrderCard";
 import CustomPagination from "@/components/filter/CustomPagination";
-import { fetchWithAuth } from "@/lib/fetch";
-import { customerOrdersApi } from "@/constants/api.routes";
 import Loader from "../common/Loader";
 import { getCustomerOrders } from "@/app/actions/order";
 

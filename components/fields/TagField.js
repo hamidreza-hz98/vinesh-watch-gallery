@@ -13,8 +13,6 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { fetchWithAuth } from "@/lib/fetch";
-import { modifyTagApi, tagApi } from "@/constants/api.routes";
 import { createTag, deleteTag, getAllTags } from "@/app/actions/tag";
 
 export default function TagField({ initialTags = [], value = [], onChange }) {

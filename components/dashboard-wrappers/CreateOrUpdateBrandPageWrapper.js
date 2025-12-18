@@ -8,12 +8,6 @@ import React from "react";
 import Loader from "../common/Loader";
 import PageContainer from "../common/PageContainer";
 import BrandForm from "../forms/BrandForm";
-import { fetchWithAuth } from "@/lib/fetch";
-import {
-  brandApi,
-  brandDetailsApi,
-  modifyBrandApi,
-} from "@/constants/api.routes";
 import { createBrand, getBrandDetails, updateBrand } from "@/app/actions/brand";
 
 const CreateOrUpdateBrandPageWrapper = () => {

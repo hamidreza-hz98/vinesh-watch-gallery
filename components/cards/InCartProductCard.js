@@ -17,8 +17,6 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import nookies from "nookies";
 import { useLandingData } from "@/providers/LandingDataProvider";
-import { fetchWithAuth } from "@/lib/fetch";
-import { modifyCartApi } from "@/constants/api.routes";
 import { updateCart } from "@/app/actions/cart";
 
 const InCartProductCard = ({ product, quantity, isFinalize = false }) => {

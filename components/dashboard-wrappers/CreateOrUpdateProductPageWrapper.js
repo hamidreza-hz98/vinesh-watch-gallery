@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import QueryString from "qs";
 
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { purifyData } from "@/lib/request";
@@ -10,8 +9,6 @@ import { purifyData } from "@/lib/request";
 import Loader from "../common/Loader";
 import PageContainer from "../common/PageContainer";
 import ProductForm from "../forms/ProductForm";
-import { fetchWithAuth } from "@/lib/fetch";
-import { productApi, productDetailsApi } from "@/constants/api.routes";
 import {
   createProduct,
   getProductDetails,

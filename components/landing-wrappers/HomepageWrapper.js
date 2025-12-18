@@ -8,15 +8,13 @@ import HeroSlider from "../common/HeroSlider";
 import { Box, Button, Grid, Typography, useTheme } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
-import { paramifyLink, setRequestQuery } from "@/lib/request";
+import { paramifyLink } from "@/lib/request";
 import PrimaryProductCard from "../cards/PrimaryProductCard";
 import { productsSliderOptions } from "@/constants/slider-options";
 import Slider from "../common/Slider";
 import { useSearchParams } from "next/navigation";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { useLandingData } from "@/providers/LandingDataProvider";
-import { fetchWithAuth } from "@/lib/fetch";
-import { getAllProductsApi } from "@/constants/api.routes";
 import { getAllProducts } from "@/app/actions/product";
 
 const HomepageWrapper = () => {

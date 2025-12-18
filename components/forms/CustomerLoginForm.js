@@ -14,10 +14,7 @@ import {
 import { toPersian } from "@/lib/number";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import routes from "@/constants/landing.routes";
 import { useRouter } from "next/navigation";
-import { fetchWithAuth } from "@/lib/fetch";
-import { customerLoginApi } from "@/constants/api.routes";
 import { setCookie } from "nookies";
 import { loginFormValidationSchema } from "@/validation/landing.validations";
 import { loginCustomer } from "@/app/actions/customer";

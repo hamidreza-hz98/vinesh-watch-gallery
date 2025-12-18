@@ -8,12 +8,6 @@ import React from "react";
 import Loader from "../common/Loader";
 import PageContainer from "../common/PageContainer";
 import CategoryForm from "../forms/CategoryForm";
-import { fetchWithAuth } from "@/lib/fetch";
-import {
-  categoryApi,
-  categoryDetailsApi,
-  modifyCategoryApi,
-} from "@/constants/api.routes";
 import { createCategory, getCategoryDetails, updateCategory } from "@/app/actions/category";
 
 const CreateOrUpdateCategoryPageWrapper = () => {

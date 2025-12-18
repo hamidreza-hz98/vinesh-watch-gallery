@@ -21,8 +21,6 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { toPersian } from "@/lib/number";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { userInformationSchema } from "@/validation/landing.validations";
-import { fetchWithAuth } from "@/lib/fetch";
-import { modifyCustomerApi } from "@/constants/api.routes";
 import { updateCustomer } from "@/app/actions/customer";
 
 const CustomerInformationForm = ({ data }) => {

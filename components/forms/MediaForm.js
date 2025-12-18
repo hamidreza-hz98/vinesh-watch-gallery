@@ -14,7 +14,6 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import FileUpload from "../fields/FileUpload";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { modifyMediaApi, uploadMediaApi } from "@/constants/api.routes";
 import { updateMedia, uploadMedia } from "@/app/actions/media";
 
 const MediaForm = ({ mode, data, onClose, onSuccess }) => {

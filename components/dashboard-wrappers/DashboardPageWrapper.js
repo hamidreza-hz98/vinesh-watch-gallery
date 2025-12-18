@@ -27,8 +27,6 @@ const DashboardPageWrapper = () => {
       try {
         const { data } = await getDashboardData(status)
 
-        console.log(data)
-
         setDashboard(data);
       } catch (err) {
         console.error("Dashboard fetch error:", err);

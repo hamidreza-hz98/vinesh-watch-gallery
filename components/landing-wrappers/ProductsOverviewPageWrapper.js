@@ -15,7 +15,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import { setRequestQuery } from "@/lib/request";
 import Sort from "../filter/Sort";
 import {
   filterProductsOptions,
@@ -29,8 +28,6 @@ import CustomPagination from "../filter/CustomPagination";
 import NoDataAvailable from "../common/NoDataAvailable";
 import routes from "@/constants/landing.routes";
 import { useLandingData } from "@/providers/LandingDataProvider";
-import { fetchWithAuth } from "@/lib/fetch";
-import { getAllProductsApi } from "@/constants/api.routes";
 import { getAllProducts } from "@/app/actions/product";
 
 const ProductsOverviewPageWrapper = () => {

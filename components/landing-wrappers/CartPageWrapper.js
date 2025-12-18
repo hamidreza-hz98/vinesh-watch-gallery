@@ -21,8 +21,6 @@ import AuthenticationDrawer from "@/components/drawers/AuthenticationDrawer";
 import nookies from "nookies";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { useLandingData } from "@/providers/LandingDataProvider";
-import { fetchWithAuth } from "@/lib/fetch";
-import { initiateTransactionApi, orderApi } from "@/constants/api.routes";
 import { createOrder } from "@/app/actions/order";
 import { initiateTransaction } from "@/app/actions/transaction";
 

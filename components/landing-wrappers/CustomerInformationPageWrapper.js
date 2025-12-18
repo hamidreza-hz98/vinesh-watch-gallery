@@ -5,8 +5,6 @@ import React, { useEffect, useState } from 'react'
 import CustomerInformationForm from '../forms/CustomerInformationForm'
 import Loader from '../common/Loader'
 import nookies from "nookies"
-import { fetchWithAuth } from '@/lib/fetch'
-import { modifyCustomerApi } from '@/constants/api.routes'
 import { getCustomerDetails } from '@/app/actions/customer'
 
 const CustomerInformationPageWrapper = () => {

@@ -16,10 +16,7 @@ import {
 } from "@mui/material";
 import SearchResultCard from "../cards/SearchResultCard";
 import CloseIcon from "@mui/icons-material/Close";
-import { setRequestQuery } from "@/lib/request";
 import Link from "next/link";
-import { fetchWithAuth } from "@/lib/fetch";
-import { getAllCategoriesApi, getAllProductsApi } from "@/constants/api.routes";
 import { getAllCategories } from "@/app/actions/category";
 import { getAllProducts } from "@/app/actions/product";
 

@@ -16,19 +16,12 @@ import Link from "next/link";
 import routes from "@/constants/landing.routes";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { orderStatuses } from "@/constants/general";
-import { calculateFinalPrice, formatPrice, toPersian } from "@/lib/number";
+import { calculateFinalPrice, formatPrice } from "@/lib/number";
 import Image from "next/image";
-import { setFilePath } from "@/lib/media";
 import { formatDateAndTime } from "@/lib/date";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import InfoIcon from "@mui/icons-material/Info";
-import { fetchWithAuth } from "@/lib/fetch";
-import {
-  customerOrderDetailsApi,
-  initiateTransactionApi,
-  retryTransactionApi,
-} from "@/constants/api.routes";
 import { getCustomerOrderDetails } from "@/app/actions/order";
 import { initiateTransaction } from "@/app/actions/transaction";
 

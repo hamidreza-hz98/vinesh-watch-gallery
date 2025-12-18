@@ -11,8 +11,6 @@ import FaqSettingsForm from "../forms/settings/FaqSettingsForm";
 import AboutSettingsForm from "../forms/settings/AboutSettingsForm";
 import { purifyData } from "@/lib/request";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { fetchWithAuth } from "@/lib/fetch";
-import { getSettingsApi, modifySettingsApi } from "@/constants/api.routes";
 import Loader from "../common/Loader";
 import { getSettingsSection, updateSettingsSection } from "@/app/actions/settings";
 

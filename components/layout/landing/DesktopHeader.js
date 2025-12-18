@@ -16,7 +16,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import React, { useState } from "react";
 import Loader from "../../common/Loader";
 import Image from "next/image";
-import { setFilePath } from "@/lib/media";
 import routes from "@/constants/landing.routes";
 import SearchDialog from "@/components/drawers/SearchDialog";
 import { useRouter, useSearchParams } from "next/navigation";
