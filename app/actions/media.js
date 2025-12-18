@@ -38,18 +38,17 @@ export async function serveMediaBuffer(fileName) {
   });
 
   const downloadUrl = `https://f003.backblazeb2.com/file/${process.env.B2_BUCKET_NAME}/${fileName}?Authorization=${data.authorizationToken}`;
-  
+
   const res = await fetch(downloadUrl);
   if (!res.ok) {
     throw new Error("Failed to fetch file from B2");
   }
-  
+
   const buffer = Buffer.from(await res.arrayBuffer());
   const contentType = res.headers.get("content-type");
 
   return { buffer, contentType };
 }
-
 
 /* -------------------- */
 /* GET ALL MEDIA         */
@@ -97,13 +96,11 @@ export async function uploadMedia(formData) {
 
       const buffer = Buffer.from(await file.arrayBuffer());
 
-      const publicUrl = await uploadToB2({
+      const { publicUrl, fileId } = await uploadToB2({
         buffer,
         fileName,
         mimeType: file.type || "application/octet-stream",
       });
-
-      console.log(publicUrl)
 
       savedFile = {
         path: publicUrl, // 🔥 FULL URL
@@ -128,7 +125,7 @@ export async function uploadMedia(formData) {
 
     return { message: "مدیا با موفقیت بارگزاری شد." };
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return { message: error.message, status: error.statusCode || 500 };
   }
 }
@@ -155,39 +152,38 @@ export async function updateMedia(id, formData) {
 
     let savedFile;
 
-   if (file && file.arrayBuffer) {
-  const ext = path.extname(file.name);
-  const baseName = path.basename(file.name, ext);
-  const fileName = `uploads/${Date.now()}-${baseName}${ext}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
+    if (file && file.arrayBuffer) {
+      const ext = path.extname(file.name);
+      const baseName = path.basename(file.name, ext);
+      const fileName = `uploads/${Date.now()}-${baseName}${ext}`;
+      const buffer = Buffer.from(await file.arrayBuffer());
 
-  // Upload new file to B2
-  const { publicUrl, fileId } = await uploadToB2({
-    buffer,
-    fileName,
-    mimeType: file.type || "application/octet-stream",
-  });
+      // Upload new file to B2
+      const { publicUrl, fileId } = await uploadToB2({
+        buffer,
+        fileName,
+        mimeType: file.type || "application/octet-stream",
+      });
 
-  // Delete old file from B2
-  const existingMedia = await mediaService.getDetails({ _id: id });
-  if (existingMedia?.fileId) {
-    try {
-      await deleteFromB2(existingMedia.filename, existingMedia.fileId);
-    } catch (err) {
-      console.error("Failed to delete old file:", err.message);
-    }
-  }
+      // Delete old file from B2
+      const existingMedia = await mediaService.getDetails({ _id: id });
+      if (existingMedia?.fileId) {
+        try {
+          await deleteFromB2(existingMedia.filename, existingMedia.fileId);
+        } catch (err) {
+          console.error("Failed to delete old file:", err.message);
+        }
+      }
 
-  savedFile = {
-    path: publicUrl,
-    filename: fileName,
-    fileId,          // save fileId for future deletes
-    originalname: file.name,
-    mimetype: file.type,
-    size: file.size,
-  };
-}
- else if (existingFile) {
+      savedFile = {
+        path: publicUrl,
+        filename: fileName,
+        fileId, // save fileId for future deletes
+        originalname: file.name,
+        mimetype: file.type,
+        size: file.size,
+      };
+    } else if (existingFile) {
       // Use existing file
       const baseName = path.basename(existingFile);
       savedFile = {

@@ -10,7 +10,7 @@ import { setFilePath } from "@/lib/media";
 const MediaPreview = ({ file, size = 96 }) => {
   if (!file) return null;
 
-  const src = file.path;
+  const src = `/media/${encodeURIComponent(file.filename)}`;
   const mime = file.mimeType || "";
   const isImage = mime.startsWith("image/");
   const isVideo = mime.startsWith("video/");

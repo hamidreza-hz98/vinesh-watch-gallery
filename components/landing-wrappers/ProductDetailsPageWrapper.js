@@ -117,7 +117,7 @@ const ProductDetailsPageWrapper = ({ slug }) => {
     slides: product?.media?.map((image, index) => (
       <Image
         key={index}
-        src={image.path}
+        src={`/media/${encodeURIComponent(image.filename)}`}
         alt={image.title}
         width={0}
         height={0}

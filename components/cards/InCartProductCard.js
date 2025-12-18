@@ -98,7 +98,7 @@ const InCartProductCard = ({ product, quantity, isFinalize = false }) => {
         }}
       >
         <Image
-          src={product?.media?.[0].path}
+          src={`/media/${encodeURIComponent(product?.media?.[0].filename)}`}
           alt={product?.title}
           width={0}
           height={0}

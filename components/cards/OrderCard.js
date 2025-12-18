@@ -85,7 +85,7 @@ const OrderCard = ({ order }) => {
         {order.products.map(({product}, index) => (
           <Image
             key={index}
-            src={(product?.media?.[0].path)}
+            src={`/media/${encodeURIComponent(product?.media?.[0].filename)}`}
             alt={product?.title}
             width={0}
             height={0}

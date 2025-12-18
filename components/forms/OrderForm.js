@@ -239,7 +239,7 @@ const OrderForm = ({ order, onSubmit }) => {
             <Box display="flex" justifyContent="space-between" flexDirection={{xs: "column", sm: "row"}} gap={2}>
               <Box display="flex" justifyContent="start" gap={2}>
                 <Image
-                  src={(item?.product?.media?.[0].path)}
+                  src={`/media/${encodeURIComponent(item?.product?.media?.[0].filename)}`}
                   alt={item?.product?.title}
                   width={0}
                   height={0}

@@ -22,9 +22,12 @@ const SearchResultCard = ({ entity }) => {
         "&:hover": { boxShadow: 3 },
       }}
     >
-      <Box height={80} >
+      <Box height={80}>
         <Image
-          src={(entity?.media?.[0].path || entity.image.path)}
+          src={
+            `/media/${encodeURIComponent(entity?.media?.[0].filename)}` ||
+            `/media/${encodeURIComponent(entity.image.filename)}`
+          }
           alt={entity?.title || entity.name}
           width={0}
           height={0}

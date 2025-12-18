@@ -105,7 +105,7 @@ const HomepageWrapper = () => {
                 }}
               >
                 <Image
-                  src={cat.image.path}
+                  src={`/media/${encodeURIComponent(cat.image.filename)}`}
                   alt={cat.name}
                   width={0}
                   height={0}
@@ -167,7 +167,7 @@ const HomepageWrapper = () => {
               }}
             >
               <Image
-                src={item.logo.path}
+                src={`/media/${encodeURIComponent(item.logo.filename)}`}
                 alt={item.name}
                 width={0}
                 height={0}

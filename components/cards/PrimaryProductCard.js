@@ -41,7 +41,7 @@ const PrimaryProductCard = ({ product }) => {
 
   // sample image fallback
   const imagePath =
-    product.media?.[0]?.path ||
+    `/media/${encodeURIComponent(product.media?.[0].filename)}` ||
     "https://via.placeholder.com/400x400?text=No+Image";
 
   const handleAddToCart = async () => {

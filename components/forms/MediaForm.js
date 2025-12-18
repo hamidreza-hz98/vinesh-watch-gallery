@@ -39,12 +39,12 @@ const MediaForm = ({ mode, data, onClose, onSuccess }) => {
       return () => URL.revokeObjectURL(url);
     }
 
-    if (data?.path) {
-      setPreviewUrl(data.path);
+    if (data?.filename) {
+      setPreviewUrl(`/media/${encodeURIComponent(data.filename)}`);
     } else {
       setPreviewUrl(null);
     }
-  }, [selectedFile, data?.path]);
+  }, [selectedFile, data?.filename]);
 
   React.useEffect(() => {
     reset(mediaDefaultValues(data));

@@ -65,7 +65,7 @@ export default function Footer() {
                 }}
               >
                 <Image
-                  src={(settings?.general?.logo?.path)}
+                  src={`/media/${encodeURIComponent(settings?.general?.logo?.filename)}`}
                   alt={settings?.general?.name}
                   width={64}
                   height={64}
