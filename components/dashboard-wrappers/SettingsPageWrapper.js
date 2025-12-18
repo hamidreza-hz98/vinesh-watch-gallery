@@ -25,9 +25,9 @@ const SettingsPageWrapper = () => {
     try {
       setLoading(true);
 
-      const { settings } = await getSettingsSection(section);
+      const { data } = await getSettingsSection(section);
 
-      setSettings(settings);
+      setSettings(data);
     } catch (error) {
       notifications.show("خطا در بارگذاری تنظیمات", {
         severity: "error",
