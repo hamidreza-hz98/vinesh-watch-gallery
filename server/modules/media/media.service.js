@@ -3,7 +3,7 @@ const path = require("path");
 const throwError = require("../../middlewares/throw-error");
 const Media = require("./media.model");
 const { buildMongoSort } = require("@/server/lib/filter");
-const { deleteFromB2 } = require("@/lib/b2");
+const { deleteFromB2, deleteFromMinio } = require("@/lib/minio");
 
 const mediaService = {
   async exists(filter) {
@@ -78,11 +78,11 @@ const mediaService = {
     const existing = await this.exists({ _id });
     if (!existing) throwError("مدیا وجود ندارد.", 404);
 
-    if (existing.filename && existing.fileId) {
+    if (existing.filename) {
       try {
-        await deleteFromB2(existing.filename, existing.fileId);
+        await deleteFromMinio(existing.filename);
       } catch (err) {
-        console.error("B2 delete error:", err.message);
+        console.error("MinIO delete error:", err.message);
       }
     }
 

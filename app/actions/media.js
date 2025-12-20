@@ -6,49 +6,8 @@ import { authenticate, requireAdmin } from "@/server/middlewares/auth";
 import validate from "@/server/middlewares/validate";
 import { uploadSchema, updateSchema } from "@/validation/media.validation";
 import { serialize } from "@/lib/request";
-import fs from "fs";
 import path from "path";
-import { uploadToB2 } from "@/lib/b2";
-
-import B2 from "backblaze-b2";
-
-const b2 = new B2({
-  applicationKeyId: process.env.B2_KEY_ID,
-  applicationKey: process.env.B2_APPLICATION_KEY,
-});
-
-let authorized = false;
-async function authorize() {
-  if (!authorized) {
-    await b2.authorize();
-    authorized = true;
-  }
-}
-
-/**
- * Fetch file from B2 and return buffer + content type
- */
-export async function serveMediaBuffer(fileName) {
-  await authorize();
-
-  const { data } = await b2.getDownloadAuthorization({
-    bucketId: process.env.B2_BUCKET_ID,
-    fileNamePrefix: fileName,
-    validDurationInSeconds: 3600,
-  });
-
-  const downloadUrl = `https://f003.backblazeb2.com/file/${process.env.B2_BUCKET_NAME}/${fileName}?Authorization=${data.authorizationToken}`;
-
-  const res = await fetch(downloadUrl);
-  if (!res.ok) {
-    throw new Error("Failed to fetch file from B2");
-  }
-
-  const buffer = Buffer.from(await res.arrayBuffer());
-  const contentType = res.headers.get("content-type");
-
-  return { buffer, contentType };
-}
+import { updateMinioFile, uploadToMinio } from "@/lib/minio";
 
 /* -------------------- */
 /* GET ALL MEDIA         */
@@ -92,30 +51,22 @@ export async function uploadMedia(formData) {
     if (file && file.arrayBuffer) {
       const ext = path.extname(file.name);
       const baseName = path.basename(file.name, ext);
-      const fileName = `uploads/${Date.now()}-${baseName}${ext}`;
+      const fileName = `${Date.now()}-${baseName}${ext}`;
 
       const buffer = Buffer.from(await file.arrayBuffer());
 
-      const { publicUrl, fileId } = await uploadToB2({
+      const { publicUrl } = await uploadToMinio({
         buffer,
         fileName,
         mimeType: file.type || "application/octet-stream",
       });
 
       savedFile = {
-        path: publicUrl, // 🔥 FULL URL
-        filename: fileName, // used for delete
+        path: publicUrl, // 🔥 URL مستقیم
+        filename: fileName, // برای delete
         originalname: file.name,
         mimetype: file.type,
         size: file.size,
-      };
-    } else if (existingFile) {
-      savedFile = {
-        path: existingFile,
-        filename: path.basename(existingFile),
-        originalname: path.basename(existingFile),
-        mimetype: "application/octet-stream",
-        size: 0,
       };
     } else {
       throw Object.assign(new Error("فایل الزامی است."), { statusCode: 400 });
@@ -153,32 +104,21 @@ export async function updateMedia(id, formData) {
     let savedFile;
 
     if (file && file.arrayBuffer) {
-      const ext = path.extname(file.name);
+       const ext = path.extname(file.name);
       const baseName = path.basename(file.name, ext);
-      const fileName = `uploads/${Date.now()}-${baseName}${ext}`;
+      const fileName = `${Date.now()}-${baseName}${ext}`;
+
       const buffer = Buffer.from(await file.arrayBuffer());
 
-      // Upload new file to B2
-      const { publicUrl, fileId } = await uploadToB2({
+      const { publicUrl } = await updateMinioFile({
         buffer,
         fileName,
         mimeType: file.type || "application/octet-stream",
       });
 
-      // Delete old file from B2
-      const existingMedia = await mediaService.getDetails({ _id: id });
-      if (existingMedia?.fileId) {
-        try {
-          await deleteFromB2(existingMedia.filename, existingMedia.fileId);
-        } catch (err) {
-          console.error("Failed to delete old file:", err.message);
-        }
-      }
-
       savedFile = {
-        path: publicUrl,
-        filename: fileName,
-        fileId, // save fileId for future deletes
+        path: publicUrl, // 🔥 URL مستقیم
+        filename: fileName, // برای delete
         originalname: file.name,
         mimetype: file.type,
         size: file.size,

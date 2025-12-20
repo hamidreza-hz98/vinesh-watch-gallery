@@ -89,7 +89,7 @@ export default function MediaMasonry({
               {item?.mimeType?.includes("image") && (
                 <Image
                   onClick={() => handleSelectItem(item)}
-                  src={`/media/${encodeURIComponent(item.filename)}`}
+                  src={item.path}
                   alt={item?.title}
                   crossOrigin="anonymous"
                   unoptimized
