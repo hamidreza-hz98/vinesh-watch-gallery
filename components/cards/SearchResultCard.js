@@ -1,13 +1,16 @@
 "use client";
 
-import { setFilePath } from "@/lib/media";
 import { Box, Typography } from "@mui/material";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
-const SearchResultCard = ({ entity }) => {
+const SearchResultCard = ({ entity, href,onClick }) => {
   return (
     <Box
+      component={Link}
+      href={href}
+      onClick={onClick}
       sx={{
         borderRadius: 2,
         p: 2,
@@ -24,10 +27,7 @@ const SearchResultCard = ({ entity }) => {
     >
       <Box height={80}>
         <Image
-          src={
-            entity?.media?.[0].path ||
-            entity.image.path
-          }
+          src={entity?.media?.[0].path || entity.image.path}
           alt={entity?.title || entity.name}
           width={0}
           height={0}

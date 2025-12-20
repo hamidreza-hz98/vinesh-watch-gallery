@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { toPersian } from "@/lib/number";
+import { toEnglish, toPersian } from "@/lib/number";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,6 @@ const CustomerLoginForm = ({ onSwitch, onSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
 
     const notifications = useNotifications();
-    const router = useRouter()
 
   const {
     control,
@@ -36,7 +35,7 @@ const CustomerLoginForm = ({ onSwitch, onSuccess }) => {
 
   const onSubmit = async (body) => {
      try {
-      const {data, message} = await loginCustomer(body)
+      const {data, message} = await loginCustomer({...body, phone: toEnglish(body.phone)})
 
       const { token, customer } = data;
 

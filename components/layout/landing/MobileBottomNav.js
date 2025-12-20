@@ -68,7 +68,7 @@ export default function MobileBottomNav() {
         width: "100%",
         zIndex: 10,
         display: { xs: "block", md: "none" },
-        bgcolor: "rgba(34,30,16,0.8)",
+        bgcolor: "rgba(18,18,18,0.8)",
         backdropFilter: "blur(8px)",
         borderTop: "1px solid rgba(255,255,255,0.1)",
       }}
@@ -78,7 +78,7 @@ export default function MobileBottomNav() {
         showLabels
         value={value}
         onChange={handleChange}
-        sx={{ "& .Mui-selected": { color: "primary.main", fontSize: "11px" }, color: "grey.400" }}
+        sx={{ bgcolor: "transparent" , "& .Mui-selected": { color: "primary.main", fontSize: "11px" }, color: "grey.400" }}
       >
         {[routes.home, routes.products, routes.cart, routes.profile].map(
           (item, index) => {

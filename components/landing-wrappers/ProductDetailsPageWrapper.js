@@ -75,6 +75,10 @@ const ProductDetailsPageWrapper = ({ slug }) => {
   };
 
   useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -398,7 +402,7 @@ const ProductDetailsPageWrapper = ({ slug }) => {
           <Tabs
             value={tabsValue}
             onChange={handleTabChange}
-            centered
+            
             textColor="primary"
             indicatorColor="primary"
           >
@@ -417,20 +421,39 @@ const ProductDetailsPageWrapper = ({ slug }) => {
           <TabPanel value={tabsValue} index={1}>
             {product?.specifications?.map((spec, index) => (
               <Box
-                mt={2}
-                // bgcolor={index % 2 === 1 && theme.palette.background.paper}
                 key={index}
+                mt={2}
                 display="flex"
                 alignItems="center"
                 justifyContent="start"
+                sx={{
+                  flexDirection: { xs: "column", sm: "row" },
+                }}
               >
-                <Typography width="50%" variant="caption">
-                  {" "}
-                  {spec.key}{" "}
+                <Typography
+                  sx={{
+                    width: { xs: "100%", sm: "50%" },
+                    mb: { xs: 1, sm: 0 },
+                    p: { xs: 2, sm: 0 },
+                    borderRadius: { xs: 1, sm: 0 },
+                    bgcolor: { xs: "primary.contrastText", sm: "transparent" },
+                    fontWeight: "bold",
+                  }}
+                  variant="caption"
+                >
+                  {spec.key}:
                 </Typography>
-                <Typography width="50%" variant="caption">
-                  {" "}
-                  {spec.value}{" "}
+
+                <Typography
+                  sx={{
+                    width: { xs: "100%", sm: "50%" },
+                    p: { xs: 2, sm: 0 },
+                    borderRadius: { xs: 1, sm: 0 },
+                    bgcolor: { xs: "background.paper", sm: "transparent" },
+                  }}
+                  variant="caption"
+                >
+                  {spec.value}
                 </Typography>
               </Box>
             ))}

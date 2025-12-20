@@ -99,6 +99,7 @@ const PrimaryProductCard = ({ product }) => {
   return (
     <Card
       component={Link}
+      scroll={false}
       href={`/products/${product.slug}`}
       sx={{
         position: "relative",

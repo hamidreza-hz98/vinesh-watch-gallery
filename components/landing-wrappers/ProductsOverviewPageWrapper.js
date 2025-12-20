@@ -58,7 +58,7 @@ const ProductsOverviewPageWrapper = () => {
 
         const queries = { filters, sort, page, page_size, search };
 
-        const {data} = await getAllProducts(queries);
+        const { data } = await getAllProducts(queries);
 
         setProducts(data);
       } catch (error) {
@@ -76,7 +76,12 @@ const ProductsOverviewPageWrapper = () => {
   }
 
   return (
-    <LandingPageContainer>
+    <LandingPageContainer
+      breadcrumbs={[
+        { name: "گالری ساعت Vinesh", path: "/" },
+        { name: "همه محصولات", path: "/products" },
+      ]}
+    >
       <Grid container spacing={4}>
         {/* ✅ LEFT COLUMN — FILTER (only visible on desktop) */}
         {!isMobile && (
@@ -182,7 +187,7 @@ const ProductsOverviewPageWrapper = () => {
             sx: { p: 2 },
           }}
         >
-          <Box>
+          <Box onClick={() => setSortOpen(false)}>
             <Select
               fullWidth
               open

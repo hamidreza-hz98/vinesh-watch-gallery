@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { toPersian } from "@/lib/number";
+import { toEnglish, toPersian } from "@/lib/number";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import Link from "next/link";
 import { setCookie } from "nookies";
@@ -35,7 +35,7 @@ const CustomerSignupForm = ({ onSwitch, onSuccess, onClose }) => {
 
   const onSubmit = async (body) => {
     try {
-      const {data, message} = await signupCustomer(body)
+      const {data, message} = await signupCustomer({...body, phone: toEnglish(body.phone)})
 
       const { token, customer } = data;
 

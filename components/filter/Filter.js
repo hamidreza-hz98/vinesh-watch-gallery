@@ -200,7 +200,7 @@ const SidebarFilter = ({ onChange, onClose }) => {
       <Box
         sx={{
           position: "sticky",
-          top: 80,
+          top: 96,
           p: 2,
           backgroundColor: theme.palette.background.paper,
           borderRadius: 2,

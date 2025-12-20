@@ -35,16 +35,15 @@ const OrderCard = ({ order }) => {
           <Typography variant="body2" color={orderStatuses[order.status].color}>
             {orderStatuses[order.status].name}
           </Typography>
-
         </Stack>
 
         <ArrowBackIosNewIcon fontSize="small" />
       </Stack>
 
       <Stack
-        direction={{xs: "column" , sm:"row"}}
+        direction={{ xs: "column", sm: "row" }}
         justifyContent="flex-start"
-        alignItems={{xs: "start", sm:"center"}}
+        alignItems={{ xs: "start", sm: "center" }}
         sx={{ mt: 1, borderBottom: "1px solid", borderColor: "divider", pb: 1 }}
       >
         <Typography variant="body2" color="text.secondary">
@@ -52,7 +51,7 @@ const OrderCard = ({ order }) => {
         </Typography>
 
         <Typography
-          sx={{ mx: `16px !important`, display: {xs: "none", sm: "block"} }}
+          sx={{ mx: `16px !important`, display: { xs: "none", sm: "block" } }}
           variant="body2"
           color="text.secondary"
         >
@@ -64,7 +63,7 @@ const OrderCard = ({ order }) => {
         </Typography>
 
         <Typography
-          sx={{ mx: `16px !important`, display: {xs: "none", sm: "block"} }}
+          sx={{ mx: `16px !important`, display: { xs: "none", sm: "block" } }}
           variant="body2"
           color="text.secondary"
         >
@@ -78,23 +77,31 @@ const OrderCard = ({ order }) => {
 
       <Stack
         direction="row"
-        justifyContent="flex-start"
-        gap={2}
-        sx={{ mt: 2 }}
+        spacing={2}
+        sx={{
+          mt: 2,
+          overflowX: "auto",
+          overflowY: "hidden",
+          flexWrap: "nowrap",
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        }}
       >
-        {order.products.map(({product}, index) => (
+        {order.products.map(({ product }, index) => (
           <Image
             key={index}
-            src={product?.media?.[0].path}
+            src={product?.media?.[0]?.path}
             alt={product?.title}
-            width={0}
-            height={0}
-            sizes="100vw"
+            width={64}
+            height={64}
             style={{
-              width: 64,
-              height: 64,
               borderRadius: 8,
               objectFit: "cover",
+              flexShrink: 0,
+              marginLeft: 8
             }}
           />
         ))}

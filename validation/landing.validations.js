@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-const iranPhoneRegex = /^09\d{9}$/;
+const iranPhoneRegex = /^(09|۰۹)[0-9۰-۹]{9}$/;
 
 export const loginFormValidationSchema = yup.object({
   phone: yup

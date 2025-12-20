@@ -19,10 +19,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import Link from "next/link";
 import { getAllCategories } from "@/app/actions/category";
 import { getAllProducts } from "@/app/actions/product";
+import { useSearchParams } from "next/navigation";
+import { paramifyLink } from "@/lib/request";
 
 export default function SearchDialog({ open, onClose }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const searchParams = useSearchParams();
 
   const [query, setQuery] = useState("");
 
@@ -42,8 +46,8 @@ export default function SearchDialog({ open, onClose }) {
 
           const prodResult = await getAllProducts(reqQuery);
 
-          setCategories(catResult.categories);
-          setProducts(prodResult.products);
+          setCategories(catResult.data.categories);
+          setProducts(prodResult.data.products);
         } catch (error) {
           console.log(error);
         } finally {
@@ -115,7 +119,17 @@ export default function SearchDialog({ open, onClose }) {
                 <Grid container spacing={2}>
                   {categories.map((cat, i) => (
                     <Grid size={{ xs: 12, sm: "auto" }} key={i}>
-                      <SearchResultCard entity={cat} />
+                      <SearchResultCard
+                        entity={cat}
+                        onClick={onClose}
+                        href={`/products${paramifyLink(
+                          searchParams,
+                          "filters",
+                          {
+                            categories: { type: "in", value: [cat._id] },
+                          }
+                        )}`}
+                      />
                     </Grid>
                   ))}
                 </Grid>
@@ -141,7 +155,11 @@ export default function SearchDialog({ open, onClose }) {
                 <Grid container spacing={2}>
                   {products.map((prod, i) => (
                     <Grid size={{ xs: 12, sm: "auto" }} key={i}>
-                      <SearchResultCard entity={prod} />
+                      <SearchResultCard
+                        onClick={onClose}
+                        entity={prod}
+                        href={`/products/${prod.slug}`}
+                      />
                     </Grid>
                   ))}
                 </Grid>

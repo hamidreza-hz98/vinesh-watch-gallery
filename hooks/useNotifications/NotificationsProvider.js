@@ -47,7 +47,7 @@ function Notification({ notificationKey, open, message, options, badge }) {
         title="Close"
         color="inherit"
         onClick={handleClose}
-        sx={{padding: "4px 16px 0 0 !important"}}
+        sx={{padding: "4px 16px 0 0px !important"}}
       >
         <CloseIcon fontSize="small" />
       </IconButton>

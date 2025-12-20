@@ -18,7 +18,7 @@ const CustomerInformationPageWrapper = () => {
         setLoading(true)
 
         const {data} = await getCustomerDetails(customer)
-        
+
         setCustomerInfo(data)
       } catch (error) {
         console.log(error);
@@ -28,7 +28,7 @@ const CustomerInformationPageWrapper = () => {
       }
     }
 
-    fetchData
+    fetchData()
   }, [customer])
   
   if(loading) {
