@@ -122,8 +122,6 @@ const ProductDetailsPageWrapper = ({ slug }) => {
         width={0}
         height={0}
         sizes="100vw"
-        unoptimized
-        crossOrigin="anonymous"
         onClick={() =>
           openFullscreen(setFullscreenImages(product?.media), index)
         }

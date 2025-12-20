@@ -86,8 +86,6 @@ export default function MobileHeader() {
             alt={settings?.general?.name}
             width={48}
             height={48}
-            unoptimized
-            crossOrigin="anonymous"
             sizes="100vw"
             style={{ borderRadius: "50%" }}
           />

@@ -22,7 +22,7 @@ export async function createCustomer(body) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const data = await validate(createCustomerSchema, body);
@@ -81,7 +81,7 @@ export async function getAllCustomers(query = {}) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const { customers, total } = await customerService.getAll(query);
@@ -138,7 +138,7 @@ export async function deleteCustomer(customerId) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const customer = await customerService.delete(customerId);

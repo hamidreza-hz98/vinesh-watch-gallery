@@ -12,13 +12,16 @@ export async function getDashboardData(status) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const dashboard = await dashboardService.getDashboardData(status);
 
     return { data: serialize(dashboard) };
   } catch (error) {
-    return { message: error.message || "مشکلی پیش آمد", status: error.statusCode || 500 };
+    return {
+      message: error.message || "مشکلی پیش آمد",
+      status: error.statusCode || 500,
+    };
   }
 }

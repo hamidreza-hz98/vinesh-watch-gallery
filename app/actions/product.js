@@ -18,7 +18,7 @@ export async function createProduct(body) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const data = await validate(createProductSchema, body);
@@ -87,7 +87,7 @@ export async function updateProduct(productId, body) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const data = await validate(updateProductSchema, body);
@@ -111,7 +111,7 @@ export async function deleteProduct(productId) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const product = await productService.delete(productId);

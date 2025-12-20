@@ -87,8 +87,6 @@ export default function DesktopHeader() {
                 alt={settings?.general?.name}
                 width={64}
                 height={64}
-                unoptimized
-                crossOrigin="anonymous"
                 sizes="100vw"
                 style={{ borderRadius: "50%" }}
               />

@@ -18,7 +18,7 @@ export async function createCategory(body) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const data = await validate(createCategorySchema, body);
@@ -81,7 +81,7 @@ export async function updateCategory(categoryId, body) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const data = await validate(updateCategorySchema, body);
@@ -102,7 +102,7 @@ export async function deleteCategory(categoryId) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const category = await categoryService.delete(categoryId);

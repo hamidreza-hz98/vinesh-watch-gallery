@@ -16,10 +16,14 @@ import { useSearchParams } from "next/navigation";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { useLandingData } from "@/providers/LandingDataProvider";
 import { getAllProducts } from "@/app/actions/product";
+import useNotifications from "@/hooks/useNotifications/useNotifications";
 
 const HomepageWrapper = () => {
   const { categories, brands, settings } = useLandingData();
   const searchParams = useSearchParams();
+
+  const notifications = useNotifications();
+  const auth = searchParams.get("auth");
 
   const theme = useTheme();
 
@@ -30,20 +34,20 @@ const HomepageWrapper = () => {
     const fetchProducts = async () => {
       try {
         const mostSoldResponse = await getAllProducts({
-              page_size: 10,
-              sort: [{ field: "soldNumber", order: "desc" }],
-              filters: { stock: { type: "gt", value: 0 } },
-            })
+          page_size: 10,
+          sort: [{ field: "soldNumber", order: "desc" }],
+          filters: { stock: { type: "gt", value: 0 } },
+        });
 
         setMostSoldProducts(mostSoldResponse.data.products);
 
         const discountResponse = await getAllProducts({
-              page_size: 10,
-              filters: {
-                discount: { type: "gt", value: 0 },
-                stock: { type: "gt", value: 0 },
-              },
-            })
+          page_size: 10,
+          filters: {
+            discount: { type: "gt", value: 0 },
+            stock: { type: "gt", value: 0 },
+          },
+        });
 
         setProductsWithDiscount(discountResponse.data.products);
       } catch (error) {
@@ -53,6 +57,15 @@ const HomepageWrapper = () => {
 
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    if (auth && auth === "required") {
+      notifications.show("لطفا مجددا وارد حساب کاربری شوید.", {
+        severity: "info",
+        autoHideDuration: 7000,
+      });
+    }
+  }, [auth]);
 
   if (
     !settings ||
@@ -110,8 +123,6 @@ const HomepageWrapper = () => {
                   width={0}
                   height={0}
                   sizes="100vw"
-                  unoptimized
-                  crossOrigin="anonymous"
                   style={{
                     width: "100%",
                     height: "100%",
@@ -172,8 +183,6 @@ const HomepageWrapper = () => {
                 width={0}
                 height={0}
                 sizes="100vw"
-                unoptimized
-                crossOrigin="anonymous"
                 style={{
                   width: "100%",
                   height: 100,

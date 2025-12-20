@@ -14,10 +14,11 @@ export async function createTag(body) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const data = await validate(createTagSchema, body);
+
     const tag = await tagService.create(data);
 
     return {
@@ -79,7 +80,7 @@ export async function updateTag(tagId, body) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const data = await validate(updateTagSchema, body);
@@ -103,7 +104,7 @@ export async function deleteTag(tagId) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const tag = await tagService.delete(tagId);

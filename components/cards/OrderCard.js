@@ -90,8 +90,6 @@ const OrderCard = ({ order }) => {
             width={0}
             height={0}
             sizes="100vw"
-            unoptimized
-            crossOrigin="anonymous"
             style={{
               width: 64,
               height: 64,

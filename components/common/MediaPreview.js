@@ -34,8 +34,6 @@ const MediaPreview = ({ file, size = 96 }) => {
         <Image
           src={src}
           alt={altText}
-          unoptimized
-          crossOrigin="anonymous"
           fill
           style={{ objectFit: "cover" }}
           sizes={`${size}px`}

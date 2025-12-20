@@ -13,12 +13,12 @@ async function getDefaultSeo() {
   try {
     await connectDB();
 
-    const { data } = await settingsService.getDefaultSeo();
+    const data  = await settingsService.getDefaultSeo();
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
     return {
-      title: data?.title || "امریان واچ",
+      title: data?.title || "فروشگاه اینترنتی وینش",
       description: data?.description || "فروشگاه اینترنتی گالری ساعت Vinesh",
       keywords: data?.keywords || "",
       robots:
@@ -31,7 +31,7 @@ async function getDefaultSeo() {
         description: data?.ogDescription || data?.description,
         url: data?.canonical || baseUrl,
         images: data?.ogImage ? [`${baseUrl}${data?.ogImage.path}`] : [],
-        siteName: "Your Site Name",
+        siteName: "Vinesh Tech e-commerce Website ",
         type: "website",
       },
       twitter: {

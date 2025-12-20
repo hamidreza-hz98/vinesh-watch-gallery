@@ -14,7 +14,7 @@ export async function loginAdmin(body) {
 
   const cookieStore = await cookies();
 
-  cookieStore.set("token", token, {
+  cookieStore.set("admin_token", token, {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
@@ -33,7 +33,7 @@ export async function createAdmin(body) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const data = await validate(createAdminSchema, body);

@@ -89,7 +89,7 @@ export async function updateSettingsSection(section, data) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const validatedData = await validate(updateSettingsSchema, data);

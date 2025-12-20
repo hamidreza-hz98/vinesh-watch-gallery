@@ -160,8 +160,6 @@ const MediaForm = ({ mode, data, onClose, onSuccess }) => {
                 <Image
                   src={previewUrl}
                   alt="Preview"
-                  unoptimized
-                  crossOrigin="anonymous"
                   width={500}
                   height={300}
                   style={{

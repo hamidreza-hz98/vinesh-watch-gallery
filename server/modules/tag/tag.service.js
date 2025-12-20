@@ -7,7 +7,7 @@ const tagService = {
   async create(data) {
     try {
       const existing = await Tag.exists({ slug: slugify(data.name) });
-      
+
       if (existing) {
         throwError("برچسب با این نام قبلا ایجاد شده است", 409);
       }

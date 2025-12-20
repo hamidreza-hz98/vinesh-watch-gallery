@@ -665,6 +665,8 @@ const ProductForm = ({ data, mode = "create", onSubmit }) => {
           </Grid>
 
           <Grid size={{ xs: 12 }} display="flex" justifyContent="space-between">
+            <Box flex="1 1" />
+
             <Button type="submit" variant="contained" disabled={isSubmitting}>
               {mode === "edit" ? "ویرایش محصول" : "ایجاد محصول"}
             </Button>

@@ -25,8 +25,6 @@ export const brandColumns = [
           <Image
             src={image.path}
             alt={image.filename}
-            unoptimized
-            crossOrigin="anonymous"
             loading="lazy"
             width={0}
             height={0}
@@ -90,8 +88,6 @@ export const categoryColumns = [
           <Image
             src={image.path}
             alt={image.filename}
-            unoptimized
-            crossOrigin="anonymous"
             loading="lazy"
             width={0}
             height={0}
@@ -150,8 +146,6 @@ export const productColumns = [
           <Image
             src={image.path}
             alt={image.filename}
-            unoptimized
-            crossOrigin="anonymous"
             loading="lazy"
             width={0}
             height={0}

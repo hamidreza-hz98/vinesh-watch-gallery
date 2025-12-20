@@ -47,8 +47,6 @@ const AboutPageWrapper = () => {
           <Image
             src={settings.about.image.path}
             alt={settings.about.image.mediaAlt}
-            crossOrigin="anonymous"
-            unoptimized
             width={0}
             height={0}
             sizes="100vw"

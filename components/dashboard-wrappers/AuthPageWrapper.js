@@ -51,8 +51,6 @@ const AuthPageWrapper = () => {
           >
             <Image
               src="https://vinesh-minio-01.chbk.dev/vinesh-watch/1766217820589-05.png"
-              unoptimized
-              crossOrigin="anonymous"
               alt="Logo"
               fill
               style={{ objectFit: "cover" }}

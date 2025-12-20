@@ -34,7 +34,7 @@ export async function getAllOrders(query = {}) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const { orders, total } = await orderService.getAll(query);
@@ -54,7 +54,7 @@ export async function getOrderDetails(_id) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const order = await orderService.getDetails(_id);
@@ -72,7 +72,7 @@ export async function updateOrder(_id, data) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const validatedData = await validate(updateOrderSchema, data);

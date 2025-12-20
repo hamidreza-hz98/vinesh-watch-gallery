@@ -16,7 +16,7 @@ export async function getAllMedia(query = {}) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const { items, total } = await mediaService.getAll(query);
@@ -34,7 +34,7 @@ export async function uploadMedia(formData) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const file = formData.get("file");
@@ -88,7 +88,7 @@ export async function updateMedia(id, formData) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     // New file OR existing file
@@ -154,7 +154,7 @@ export async function deleteMedia(_id) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const media = await mediaService.delete(_id);

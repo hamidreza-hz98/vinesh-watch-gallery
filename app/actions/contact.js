@@ -35,7 +35,7 @@ export async function getAllContacts(query = {}) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const { contacts, total } = await contactService.getAll(query);

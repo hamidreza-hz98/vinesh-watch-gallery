@@ -67,8 +67,6 @@ export default function TopProducts({ title, data, suffix, suffixLabel }) {
                       alt={item.title}
                       width={60}
                       height={60}
-                      unoptimized
-                      crossOrigin="anonymous"
                       loading="lazy"
                       style={{
                         objectFit: "cover",

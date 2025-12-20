@@ -69,8 +69,6 @@ export default function Footer() {
                   alt={settings?.general?.name}
                   width={64}
                   height={64}
-                  unoptimized
-                  crossOrigin="anonymous"
                   sizes="100vw"
                   style={{ borderRadius: "50%" }}
                 />
@@ -234,8 +232,6 @@ export default function Footer() {
                       width={0}
                       height={0}
                       sizes="100vw"
-                      unoptimized
-                      crossOrigin="anonymous"
                       style={{
                         width: "100%",
                         height: "auto",

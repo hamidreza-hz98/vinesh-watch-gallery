@@ -59,8 +59,6 @@ const FullscreenImage = ({ slides, initialSlide, onClose }) => {
                 width={0}
                 height={0}
                 sizes="100vw"
-                unoptimized
-                crossOrigin="anonymous"
                 style={{
                   objectFit: "contain",
                   width: "100%",

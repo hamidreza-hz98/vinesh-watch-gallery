@@ -146,8 +146,6 @@ const PrimaryProductCard = ({ product }) => {
         width={0}
         height={0}
         sizes="100vw"
-        unoptimized
-        crossOrigin="anonymous"
         style={{
           position: "relative",
           aspectRatio: "1 / 1",

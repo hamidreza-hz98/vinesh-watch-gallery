@@ -91,8 +91,6 @@ export default function MediaMasonry({
                   onClick={() => handleSelectItem(item)}
                   src={item.path}
                   alt={item?.title}
-                  crossOrigin="anonymous"
-                  unoptimized
                   loading="lazy"
                   width={0}
                   height={0}

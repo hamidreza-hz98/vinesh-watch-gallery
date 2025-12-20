@@ -31,8 +31,6 @@ export default function HeroSlider({ slides = [], height = "83vh" }) {
                 width={0}
                 height={0}
                 sizes="100vw"
-                crossOrigin="anonymous"
-                unoptimized
                 alt={slide.title}
                 style={{
                   width: "100%",

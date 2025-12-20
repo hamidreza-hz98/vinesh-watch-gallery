@@ -17,7 +17,7 @@ export async function createBrand(body) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const data = await validate(createBrandSchema, body);
@@ -72,7 +72,7 @@ export async function updateBrand(brandId, body) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const data = await validate(updateBrandSchema, body);
@@ -94,7 +94,7 @@ export async function deleteBrand(brandId) {
   try {
     await connectDB();
 
-    const auth = await authenticate();
+    const auth = await authenticate({adminOnly: true});
     requireAdmin(auth);
 
     const brand = await brandService.delete(brandId);

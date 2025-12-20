@@ -93,6 +93,7 @@ export default function TagField({ initialTags = [], value = [], onChange }) {
         autoHideDuration: 3000,
       });
     } catch (error) {
+      console.log(error)
       notifications.show(error.message || "مشکلی پیش آمد.", {
         severity: "error",
         autoHideDuration: 3000,
