@@ -61,7 +61,7 @@ export default function DashboardLayout({ children }) {
       >
         <DashboardHeader
           title="گالری ساعت وینش"
-          logo="/images/logo.jpg"
+          logo="https://vinesh-minio-01.chbk.dev/vinesh-watch/1766217820589-05.png"
           menuOpen={isNavigationExpanded}
           onToggleMenu={handleToggleHeaderMenu}
         />

@@ -41,7 +41,7 @@ const PrimaryProductCard = ({ product }) => {
 
   // sample image fallback
   const imagePath =
-    product.media?.[0].path ||
+    product.media?.[0]?.path ||
     "https://via.placeholder.com/400x400?text=No+Image";
 
   const handleAddToCart = async () => {
@@ -155,9 +155,7 @@ const PrimaryProductCard = ({ product }) => {
           height: "100%",
           borderRadius: 8,
           overflow: "hidden",
-          backgroundImage: `url(${imagePath})`,
-          backgroundSize: "contain",
-          backgroundPosition: "center",
+          objectFit: "cover",
           transition: "transform 0.4s ease",
           "&:hover": { transform: "scale(1.05)" },
         }}
