@@ -2,8 +2,7 @@ import { alpha } from "@mui/material/styles";
 import { menuItemClasses } from "@mui/material/MenuItem";
 import { pickersDayClasses, yearCalendarClasses } from "@mui/x-date-pickers";
 
-// src/theme/mui/components.js
-export default function getDashboardComponents(theme) {
+export default function getComponents(theme) {
   const { palette, typography, shape } = theme;
 
   return {
@@ -56,7 +55,14 @@ export default function getDashboardComponents(theme) {
     },
 
     MuiDrawer: {
-      styleOverrides: { paper: { direction: "rtl" } },
+      styleOverrides: {
+        paper: ({ ownerState }) => ({
+          direction: "rtl",
+          ...(ownerState.docked && {
+            left: "auto", // This is what you wanted
+          }),
+        }),
+      },
     },
 
     MuiPaper: {
@@ -168,7 +174,7 @@ export default function getDashboardComponents(theme) {
     MuiAlert: {
       styleOverrides: {
         root: { borderRadius: 10, textAlign: "right" },
-        action: { padding: "4px 16px 0 0 !important" },
+        action: { padding: "4px 16px 0 0" },
       },
     },
 

@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import LandingThemeProvider from "@/theme/providers/LandingThemeProvider";
 import DesktopHeader from "@/components/layout/landing/DesktopHeader";
 import MobileHeader from "@/components/layout/landing/MobileHeader";
 import Footer from "@/components/layout/landing/Footer";
@@ -8,6 +7,7 @@ import { getLandingData } from "@/lib/landing-data";
 import LandingDataProvider from "@/providers/LandingDataProvider";
 import settingsService from "@/server/modules/settings/settings.service";
 import connectDB from "@/server/db";
+import LandingThemeProvider from "@/theme/landing/provider";
 
 async function getDefaultSeo() {
   try {

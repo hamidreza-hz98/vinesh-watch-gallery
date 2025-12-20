@@ -5,7 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import { useThemeMode } from "@/theme/providers/DashboardThemeProvider";
+import { useThemeMode } from "@/theme/dashboard/theme-mode";
 
 export default function ThemeSwitcher() {
   const { themeMode, setThemeMode } = useThemeMode();

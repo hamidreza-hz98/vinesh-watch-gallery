@@ -2,7 +2,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import PageContainer from "../common/PageContainer";
 import Loader from "../common/Loader";
 import HeroSlider from "../common/HeroSlider";
 import { Box, Button, Grid, Typography, useTheme } from "@mui/material";
@@ -17,6 +16,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { useLandingData } from "@/providers/LandingDataProvider";
 import { getAllProducts } from "@/app/actions/product";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
+import LandingPageContainer from "../common/LandingPageContainer";
 
 const HomepageWrapper = () => {
   const { categories, brands, settings } = useLandingData();
@@ -84,7 +84,7 @@ const HomepageWrapper = () => {
   };
 
   return (
-    <PageContainer>
+    <LandingPageContainer>
       <HeroSlider slides={settings?.general?.homepageSlider} />
 
       <Grid container mt={6} spacing={4}>
@@ -259,7 +259,7 @@ const HomepageWrapper = () => {
           />
         </>
       )}
-    </PageContainer>
+    </LandingPageContainer>
   );
 };
 

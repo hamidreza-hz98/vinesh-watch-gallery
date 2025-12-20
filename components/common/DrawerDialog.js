@@ -4,7 +4,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Drawer, Divider, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import LandingThemeProvider from "@/theme/providers/LandingThemeProvider";
+import LandingThemeProvider from "@/theme/landing/provider";
 
 function DrawerDialog({ open, payload, onClose }) {
   const { title, children = null } = payload;

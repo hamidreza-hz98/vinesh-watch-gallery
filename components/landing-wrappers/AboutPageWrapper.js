@@ -6,9 +6,9 @@ import { Box, useTheme } from "@mui/system";
 import Image from "next/image";
 import React from "react";
 import Loader from "../common/Loader";
-import PageContainer from "../common/PageContainer";
 import routes from "@/constants/landing.routes";
 import { useLandingData } from "@/providers/LandingDataProvider";
+import LandingPageContainer from "../common/LandingPageContainer";
 
 const AboutPageWrapper = () => {
   const theme = useTheme();
@@ -17,7 +17,7 @@ const AboutPageWrapper = () => {
   if (!settings) return <Loader />;
 
   return (
-    <PageContainer breadcrumbs={[
+    <LandingPageContainer breadcrumbs={[
       {
         name: routes.home.label,
         path: routes.home.link,
@@ -70,7 +70,7 @@ const AboutPageWrapper = () => {
 
         <div dangerouslySetInnerHTML={{ __html: settings.about.description }} />
       </Box>
-    </PageContainer>
+    </LandingPageContainer>
   );
 };
 

@@ -3,7 +3,7 @@ import { menuItemClasses } from "@mui/material/MenuItem";
 import { pickersDayClasses, yearCalendarClasses } from "@mui/x-date-pickers";
 
 // src/theme/mui/components.js
-export default function getLandingComponents(theme) {
+export default function getComponents(theme) {
   const { palette, typography, shape } = theme;
 
   return {
@@ -74,13 +74,16 @@ export default function getLandingComponents(theme) {
       styleOverrides: {
         root: {
           backgroundColor: "#121212",
-          borderRadius: shape.borderRadius,
         },
       },
     },
 
     MuiDrawer: {
       styleOverrides: { paper: { direction: "rtl" } },
+    },
+
+    MuiPaper: {
+      styleOverrides: { root: { borderRadius: shape.borderRadius } },
     },
 
     MuiCard: { styleOverrides: { root: { borderRadius: shape.borderRadius } } },
@@ -160,10 +163,8 @@ export default function getLandingComponents(theme) {
 
     MuiBreadcrumbs: {
       styleOverrides: {
-        root: {
-          "& .MuiBreadcrumbs-li + .MuiBreadcrumbs-li": {
-            marginRight: 8,
-          },
+        li: {
+          "& + &": { marginRight: 8 },
         },
       },
     },
@@ -194,23 +195,15 @@ export default function getLandingComponents(theme) {
     },
 
     MuiAlert: {
-      styleOverrides: {
-        root: { borderRadius: 10, textAlign: "right" },
-        action: { padding: "4px 16px 0 0 !important" },
-      },
+      styleOverrides: { root: { borderRadius: 10, textAlign: "right" } },
     },
 
     MuiSnackbarContent: { styleOverrides: { root: { direction: "rtl" } } },
 
     MuiAutocomplete: {
       styleOverrides: {
-        inputRoot: {
-          "& .MuiInputBase-input": {
-            paddingRight: "8px",
-          },
-        },
         endAdornment: {
-          right: "unset",
+          right: "unset !important",
           left: 8,
         },
       },

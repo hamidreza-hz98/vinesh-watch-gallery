@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import DashboardHeader from "@/components/layout/dashboard/DashboardHeader";
 import DashboardSidebar from "@/components/layout/dashboard/DashboardSidebar";
-import DashboardThemeProvider from "@/theme/providers/DashboardThemeProvider";
+import DashboardThemeProvider from "@/theme/dashboard/provider";
 
 export default function DashboardLayout({ children }) {
   const theme = useTheme();

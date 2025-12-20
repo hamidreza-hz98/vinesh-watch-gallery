@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import QueryString from "qs";
 import React, { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
-import PageContainer from "@/components/common/PageContainer";
 import {
   Box,
   Button,
@@ -37,6 +35,7 @@ import { useLandingData } from "@/providers/LandingDataProvider";
 import sanitize from "sanitize-html";
 import { getProductDetails } from "@/app/actions/product";
 import { updateCart } from "@/app/actions/cart";
+import LandingPageContainer from "../common/LandingPageContainer";
 
 function TabPanel({ children, value, index }) {
   return (
@@ -192,7 +191,7 @@ const ProductDetailsPageWrapper = ({ slug }) => {
   };
 
   return (
-    <PageContainer
+    <LandingPageContainer
       breadcrumbs={[
         { name: "گالری ساعت Vinesh", path: "/" },
         { name: "همه محصولات", path: "/products" },
@@ -466,7 +465,7 @@ const ProductDetailsPageWrapper = ({ slug }) => {
           }
         />
       )}
-    </PageContainer>
+    </LandingPageContainer>
   );
 };
 

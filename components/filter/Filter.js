@@ -18,7 +18,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { formatPrice } from "@/lib/number";
 import { useLandingData } from "@/providers/LandingDataProvider";
-import LandingThemeProvider from "@/theme/providers/LandingThemeProvider";
+import LandingThemeProvider from "@/theme/landing/provider";
 
 const SidebarFilter = ({ onChange, onClose }) => {
   const theme = useTheme();
@@ -196,178 +196,183 @@ const SidebarFilter = ({ onChange, onClose }) => {
   };
 
   return (
-        <LandingThemeProvider>
-    <Box
-      sx={{
-        position: "sticky",
-        top: 80,
-        p: 2,
-        backgroundColor: theme.palette.background.paper,
-        borderRadius: 2,
-        boxShadow: 1,
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-        width: "100%",
-      }}
-    >
-      {isMobile && (
+    <LandingThemeProvider>
+      <Box
+        sx={{
+          position: "sticky",
+          top: 80,
+          p: 2,
+          backgroundColor: theme.palette.background.paper,
+          borderRadius: 2,
+          boxShadow: 1,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          width: "100%",
+        }}
+      >
+        {isMobile && (
+          <Box>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={onClose}
+              fullWidth
+            >
+              بستن
+            </Button>
+          </Box>
+        )}
+
         <Box>
-          <Button variant="outlined" color="error" onClick={onClose} fullWidth>
-            بستن
+          <Button
+            variant="outlined"
+            color="inherit"
+            onClick={resetFilters}
+            fullWidth
+          >
+            حذف فیلترها
           </Button>
         </Box>
-      )}
 
-      <Box>
-        <Button
-          variant="outlined"
-          color="inherit"
-          onClick={resetFilters}
+        <TextField
+          placeholder="جستجو..."
           fullWidth
-        >
-          حذف فیلترها
-        </Button>
-      </Box>
-
-      <TextField
-        placeholder="جستجو..."
-        fullWidth
-        size="small"
-        variant="outlined"
-        value={searchValue}
-        onChange={handleSearchQuery}
-      />
-
-      <Box>
-        <Typography fontWeight={700} mb={1}>
-          دسته بندی
-        </Typography>
-
-        <Autocomplete
-          multiple
-          options={categories || []}
-          getOptionLabel={(option) => option.name}
-          value={
-            categories?.filter((c) => selectedCategories.includes(c._id)) || []
-          }
-          onChange={(e, newValue) => {
-              const updated = newValue.map((v) => v._id);
-    setSelectedCategories(updated);
-
-    pushFiltersToUrl({
-      categories: updated,
-      brands: selectedBrands,
-      price: priceRange,
-      inStock: inStockOnly,
-      discount: discountOnly,
-    });
-
-    onChange();
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              size="small"
-              placeholder="انتخاب دسته بندی"
-            />
-          )}
-        />
-      </Box>
-
-      <Box>
-        <Typography fontWeight={700} mb={1}>
-          برند
-        </Typography>
-
-        <Autocomplete
-          multiple
-          options={brands || []}
-          getOptionLabel={(option) => option.name}
-          value={brands?.filter((b) => selectedBrands.includes(b._id)) || []}
-          onChange={(e, newValue) => {
-            const updated = newValue.map((v) => v._id);
-    setSelectedBrands(updated);
-           
-           pushFiltersToUrl({
-      categories: selectedCategories,
-      brands: updated,
-      price: priceRange,
-      inStock: inStockOnly,
-      discount: discountOnly,
-    });
-
-    onChange();
-          }}
-          renderInput={(params) => (
-            <TextField {...params} size="small" placeholder="انتخاب برند" />
-          )}
-        />
-      </Box>
-
-      {/* Price */}
-      <Box>
-        <Typography fontWeight={700} mb={1}>
-          محدوده قیمت
-        </Typography>
-        <Slider
-          value={priceRange}
-          onChange={(e, newValue) => setPriceRange(newValue)}
-          onChangeCommitted={handlePriceChangeCommitted}
-          step={100000}
-          valueLabelDisplay="auto"
           size="small"
-          min={0}
-          max={100000000}
-          valueLabelFormat={(value) => formatPrice(value)}
-          sx={{
-            "& .MuiSlider-thumb": {
-              transform: "translate(50%, -50%)",
-            },
-          }}
+          variant="outlined"
+          value={searchValue}
+          onChange={handleSearchQuery}
         />
-        <Box display="flex" justifyContent="space-between" mt={0}>
-          <Typography variant="caption">
-            {formatPrice(priceRange[0])} تومان
+
+        <Box>
+          <Typography fontWeight={700} mb={1}>
+            دسته بندی
           </Typography>
-          <Typography variant="caption">
-            {formatPrice(priceRange[1])} تومان
+
+          <Autocomplete
+            multiple
+            options={categories || []}
+            getOptionLabel={(option) => option.name}
+            value={
+              categories?.filter((c) => selectedCategories.includes(c._id)) ||
+              []
+            }
+            onChange={(e, newValue) => {
+              const updated = newValue.map((v) => v._id);
+              setSelectedCategories(updated);
+
+              pushFiltersToUrl({
+                categories: updated,
+                brands: selectedBrands,
+                price: priceRange,
+                inStock: inStockOnly,
+                discount: discountOnly,
+              });
+
+              onChange();
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size="small"
+                placeholder="انتخاب دسته بندی"
+              />
+            )}
+          />
+        </Box>
+
+        <Box>
+          <Typography fontWeight={700} mb={1}>
+            برند
           </Typography>
+
+          <Autocomplete
+            multiple
+            options={brands || []}
+            getOptionLabel={(option) => option.name}
+            value={brands?.filter((b) => selectedBrands.includes(b._id)) || []}
+            onChange={(e, newValue) => {
+              const updated = newValue.map((v) => v._id);
+              setSelectedBrands(updated);
+
+              pushFiltersToUrl({
+                categories: selectedCategories,
+                brands: updated,
+                price: priceRange,
+                inStock: inStockOnly,
+                discount: discountOnly,
+              });
+
+              onChange();
+            }}
+            renderInput={(params) => (
+              <TextField {...params} size="small" placeholder="انتخاب برند" />
+            )}
+          />
+        </Box>
+
+        {/* Price */}
+        <Box>
+          <Typography fontWeight={700} mb={1}>
+            محدوده قیمت
+          </Typography>
+          <Slider
+            value={priceRange}
+            onChange={(e, newValue) => setPriceRange(newValue)}
+            onChangeCommitted={handlePriceChangeCommitted}
+            step={100000}
+            valueLabelDisplay="auto"
+            size="small"
+            min={0}
+            max={100000000}
+            valueLabelFormat={(value) => formatPrice(value)}
+            sx={{
+              "& .MuiSlider-thumb": {
+                transform: "translate(50%, -50%)",
+              },
+            }}
+          />
+          <Box display="flex" justifyContent="space-between" mt={0}>
+            <Typography variant="caption">
+              {formatPrice(priceRange[0])} تومان
+            </Typography>
+            <Typography variant="caption">
+              {formatPrice(priceRange[1])} تومان
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* In Stock */}
+        <Box>
+          <FormControlLabel
+            sx={{ mr: 0 }}
+            control={
+              <Checkbox
+                size="small"
+                checked={inStockOnly}
+                onChange={toggleInStock}
+              />
+            }
+            label="فقط کالاهای موجود"
+          />
+        </Box>
+
+        {/* Discount */}
+        <Box>
+          <FormControlLabel
+            sx={{ mr: 0 }}
+            control={
+              <Checkbox
+                size="small"
+                checked={discountOnly}
+                onChange={toggleDiscount}
+              />
+            }
+            label="فقط کالاهای دارای تخفیف"
+          />
         </Box>
       </Box>
-
-      {/* In Stock */}
-      <Box>
-        <FormControlLabel
-          sx={{ mr: 0 }}
-          control={
-            <Checkbox
-              size="small"
-              checked={inStockOnly}
-              onChange={toggleInStock}
-            />
-          }
-          label="فقط کالاهای موجود"
-        />
-      </Box>
-
-      {/* Discount */}
-      <Box>
-        <FormControlLabel
-          sx={{ mr: 0 }}
-          control={
-            <Checkbox
-              size="small"
-              checked={discountOnly}
-              onChange={toggleDiscount}
-            />
-          }
-          label="فقط کالاهای دارای تخفیف"
-        />
-      </Box>
-    </Box>
-        </LandingThemeProvider>
-
+    </LandingThemeProvider>
   );
 };
 

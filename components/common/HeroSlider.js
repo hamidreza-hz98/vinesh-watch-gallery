@@ -15,6 +15,7 @@ export default function HeroSlider({ slides = [], height = "83vh" }) {
         loop
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         modules={[Autoplay]}
+        spaceBetween={12}
         style={{ width: "100%", height: "100%" }}
       >
         {slides.map((slide, index) => (

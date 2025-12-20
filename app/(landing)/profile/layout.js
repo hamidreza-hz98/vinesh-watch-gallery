@@ -1,12 +1,12 @@
 "use client";
 
-import PageContainer from "@/components/common/PageContainer";
+import LandingPageContainer from "@/components/common/LandingPageContainer";
 import ProfileSidebar from "@/components/layout/profile/ProfileSidebar";
 import { Grid } from "@mui/material";
 
 export default function ProfileLayout({ children }) {
   return (
-    <PageContainer>
+    <LandingPageContainer>
       <Grid
       spacing={4}
         container
@@ -32,6 +32,6 @@ export default function ProfileLayout({ children }) {
           {children}
         </Grid>
       </Grid>
-    </PageContainer>
+    </LandingPageContainer>
   );
 }

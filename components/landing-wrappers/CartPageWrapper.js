@@ -11,7 +11,6 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
-import PageContainer from "@/components/common/PageContainer";
 import CartCheckoutPageWrapper from "./CartCheckoutPageWrapper";
 import CartShipmentPageWrapper from "./CartShipmentPageWrapper";
 import CartFinalizePageWrapper from "./CartFinalizePageWrapper";
@@ -23,6 +22,7 @@ import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { useLandingData } from "@/providers/LandingDataProvider";
 import { createOrder } from "@/app/actions/order";
 import { initiateTransaction } from "@/app/actions/transaction";
+import LandingPageContainer from "../common/LandingPageContainer";
 
 const PersianStepIcon = (props) => {
   const { icon, active, completed } = props;
@@ -136,7 +136,7 @@ const CartPageWrapper = () => {
   };
 
   return (
-    <PageContainer>
+    <LandingPageContainer>
       <Stepper activeStep={activeStep}>
         {steps.map((label) => {
           const stepProps = {};
@@ -253,7 +253,7 @@ const CartPageWrapper = () => {
           setOpenAuth(false);
         }}
       />
-    </PageContainer>
+    </LandingPageContainer>
   );
 };
 

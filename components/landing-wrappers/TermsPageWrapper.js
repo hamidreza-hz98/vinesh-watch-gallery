@@ -2,7 +2,6 @@
 
 import React from "react";
 import Loader from "../common/Loader";
-import PageContainer from "../common/PageContainer";
 import routes from "@/constants/landing.routes";
 import {
   Accordion,
@@ -14,6 +13,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useLandingData } from "@/providers/LandingDataProvider";
+import LandingPageContainer from "../common/LandingPageContainer";
 
 const TermsPageWrapper = () => {
   const theme = useTheme();
@@ -23,7 +23,7 @@ const TermsPageWrapper = () => {
     return <Loader />;
   }
   return (
-    <PageContainer
+    <LandingPageContainer
       breadcrumbs={[
         {
           name: routes.home.label,
@@ -86,7 +86,7 @@ const TermsPageWrapper = () => {
             </AccordionDetails>
           </Accordion>
         ))}
-    </PageContainer>
+    </LandingPageContainer>
   );
 };
 

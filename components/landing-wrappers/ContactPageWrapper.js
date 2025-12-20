@@ -1,11 +1,9 @@
 "use client";
 
 import React from "react";
-import PageContainer from "../common/PageContainer";
 import routes from "@/constants/landing.routes";
-import { Box, Divider, Grid, Typography, useTheme } from "@mui/material";
+import { Box, Grid, Typography, useTheme } from "@mui/material";
 import Loader from "../common/Loader";
-import Link from "next/link";
 import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
@@ -19,6 +17,7 @@ import { toPersian } from "@/lib/number";
 import ContactRow from "../common/ContactRow";
 import ContactForm from "../forms/ContactForm";
 import { useLandingData } from "@/providers/LandingDataProvider";
+import LandingPageContainer from "../common/LandingPageContainer";
 
 const ContactPageWrapper = () => {
   const theme = useTheme();
@@ -32,7 +31,7 @@ const ContactPageWrapper = () => {
   const { contactInfo, social } = general;
 
   return (
-    <PageContainer
+    <LandingPageContainer
       breadcrumbs={[
         {
           name: routes.home.label,
@@ -251,7 +250,7 @@ const ContactPageWrapper = () => {
           <div dangerouslySetInnerHTML={{ __html: contactInfo.mapIframe }} />
         </Grid>
       </Grid>
-    </PageContainer>
+    </LandingPageContainer>
   );
 };
 

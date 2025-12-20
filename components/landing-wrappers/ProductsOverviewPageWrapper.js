@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import PageContainer from "../common/PageContainer";
 import Loader from "../common/Loader";
 import {
   Box,
@@ -29,6 +28,7 @@ import NoDataAvailable from "../common/NoDataAvailable";
 import routes from "@/constants/landing.routes";
 import { useLandingData } from "@/providers/LandingDataProvider";
 import { getAllProducts } from "@/app/actions/product";
+import LandingPageContainer from "../common/LandingPageContainer";
 
 const ProductsOverviewPageWrapper = () => {
   const theme = useTheme();
@@ -76,7 +76,7 @@ const ProductsOverviewPageWrapper = () => {
   }
 
   return (
-    <PageContainer>
+    <LandingPageContainer>
       <Grid container spacing={4}>
         {/* ✅ LEFT COLUMN — FILTER (only visible on desktop) */}
         {!isMobile && (
@@ -222,7 +222,7 @@ const ProductsOverviewPageWrapper = () => {
           </Box>
         </Drawer>
       )}
-    </PageContainer>
+    </LandingPageContainer>
   );
 };
 

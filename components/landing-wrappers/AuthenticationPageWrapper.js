@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import PageContainer from "../common/PageContainer";
 import { Box, useTheme } from "@mui/material";
 import LoginForm from "../forms/LoginForm";
 import SignupForm from "../forms/SignupForm";
+import LandingPageContainer from "../common/LandingPageContainer";
 
 const AuthenticationPageWrapper = () => {
   const [form, setForm] = useState("login");
@@ -12,7 +12,7 @@ const AuthenticationPageWrapper = () => {
   const theme = useTheme();
 
   return (
-    <PageContainer>
+    <LandingPageContainer>
       <Box
         height={"80vh"}
         width={"100vw"}
@@ -24,7 +24,7 @@ const AuthenticationPageWrapper = () => {
           {form === "login" ? <LoginForm onSwitch={() => setForm("signup")} /> : <SignupForm onSwitch={() => setForm("login")} />}
         </Box>
       </Box>
-    </PageContainer>
+    </LandingPageContainer>
   );
 };
 

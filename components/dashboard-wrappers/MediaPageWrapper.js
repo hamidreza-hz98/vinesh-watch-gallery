@@ -25,11 +25,7 @@ import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { useDialogs } from "@/hooks/useDialogs/useDialogs";
 import { deleteMedia, getAllMedia } from "@/app/actions/media";
 
-const MediaPageWrapper = ({
-  isOnForm = false,
-  multiple = false,
-  onSelect,
-}) => {
+const MediaPageWrapper = ({ isOnForm = false, multiple = false, onSelect }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -52,7 +48,7 @@ const MediaPageWrapper = ({
       setLoading(true);
 
       const query = { page_size: 1000 };
-      const res = await getAllMedia(query)
+      const res = await getAllMedia(query);
 
       setMedia(res.data);
     } catch (error) {
@@ -123,7 +119,7 @@ const MediaPageWrapper = ({
     if (!confirmed) return;
 
     try {
-      const res = await deleteMedia(_id)
+      const res = await deleteMedia(_id);
 
       fetchMedia();
 
@@ -191,6 +187,9 @@ const MediaPageWrapper = ({
         anchor="left"
         open={drawerOpen}
         onClose={handleDrawerClose}
+        sx={{
+          zIndex: 2301,
+        }}
         PaperProps={{
           sx: {
             ...(isMobile

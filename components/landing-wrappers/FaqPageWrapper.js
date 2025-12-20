@@ -15,6 +15,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Loader from "../common/Loader";
 import { useLandingData } from "@/providers/LandingDataProvider";
+import LandingPageContainer from "../common/LandingPageContainer";
 
 const FaqPageWrapper = () => {
   const theme = useTheme();
@@ -25,7 +26,7 @@ const FaqPageWrapper = () => {
   }
 
   return (
-    <PageContainer
+    <LandingPageContainer
       breadcrumbs={[
         {
           name: routes.home.label,
@@ -88,7 +89,7 @@ const FaqPageWrapper = () => {
             </AccordionDetails>
           </Accordion>
         ))}
-    </PageContainer>
+    </LandingPageContainer>
   );
 };
 

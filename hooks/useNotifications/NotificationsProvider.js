@@ -12,7 +12,6 @@ import SnackbarContent from '@mui/material/SnackbarContent';
 import CloseIcon from '@mui/icons-material/Close';
 import useSlotProps from '@mui/utils/useSlotProps';
 import NotificationsContext from './NotificationsContext';
-import LandingThemeProvider from '@/theme/providers/LandingThemeProvider';
 
 const RootPropsContext = React.createContext(null);
 
