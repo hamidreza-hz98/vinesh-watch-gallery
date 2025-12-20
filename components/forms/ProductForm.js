@@ -326,7 +326,7 @@ const ProductForm = ({ data, mode = "create", onSubmit }) => {
                     size="small"
                     fullWidth
                     options={categories || []}
-                    getOptionLabel={(option) => option.name}
+                    getOptionLabel={(option) => option?.name}
                     value={selectedCategories}
                     noOptionsText="دسته بندی ای یافت نشد!"
                     onChange={(e, newValue) =>
