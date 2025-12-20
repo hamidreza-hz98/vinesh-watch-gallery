@@ -45,7 +45,7 @@ const AboutPageWrapper = () => {
           }}
         >
           <Image
-            src={`/media/${encodeURIComponent(settings.about.image.filename)}`}
+            src={settings.about.image.path}
             alt={settings.about.image.mediaAlt}
             crossOrigin="anonymous"
             unoptimized

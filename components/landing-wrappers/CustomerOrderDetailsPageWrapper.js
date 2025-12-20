@@ -292,7 +292,7 @@ const CustomerOrderDetailsPageWrapper = ({ code }) => {
             >
               <Box display="flex" justifyContent="start" gap={2}>
                 <Image
-                  src={`/media/${encodeURIComponent(item?.product?.media?.[0].filename)}`}
+                  src={item?.product?.media?.[0].path}
                   alt={item?.product?.title}
                   width={0}
                   height={0}

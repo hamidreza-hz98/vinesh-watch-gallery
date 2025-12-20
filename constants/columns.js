@@ -23,7 +23,7 @@ export const brandColumns = [
           padding={1}
         >
           <Image
-            src={`/media/${encodeURIComponent(image.filename)}`}
+            src={image.path}
             alt={image.filename}
             unoptimized
             crossOrigin="anonymous"
@@ -88,7 +88,7 @@ export const categoryColumns = [
           padding={1}
         >
           <Image
-            src={`/media/${encodeURIComponent(image.filename)}`}
+            src={image.path}
             alt={image.filename}
             unoptimized
             crossOrigin="anonymous"
@@ -148,7 +148,7 @@ export const productColumns = [
           padding={1}
         >
           <Image
-            src={`/media/${encodeURIComponent(image.filename)}`}
+            src={image.path}
             alt={image.filename}
             unoptimized
             crossOrigin="anonymous"

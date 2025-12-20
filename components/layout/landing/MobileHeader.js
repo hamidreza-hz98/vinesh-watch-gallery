@@ -82,7 +82,7 @@ export default function MobileHeader() {
           }}
         >
           <Image
-            src={`/media/${encodeURIComponent(settings?.general?.logo?.filename)}`}
+            src={settings?.general?.logo?.path}
             alt={settings?.general?.name}
             width={48}
             height={48}

@@ -25,8 +25,8 @@ const SearchResultCard = ({ entity }) => {
       <Box height={80}>
         <Image
           src={
-            `/media/${encodeURIComponent(entity?.media?.[0].filename)}` ||
-            `/media/${encodeURIComponent(entity.image.filename)}`
+            entity?.media?.[0].path ||
+            entity.image.path
           }
           alt={entity?.title || entity.name}
           width={0}

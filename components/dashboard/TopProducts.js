@@ -63,7 +63,7 @@ export default function TopProducts({ title, data, suffix, suffixLabel }) {
                     }}
                     >
                     <Image
-                      src={`/media/${encodeURIComponent(item.media[0].filename)}`}
+                      src={item.media[0].path}
                       alt={item.title}
                       width={60}
                       height={60}
