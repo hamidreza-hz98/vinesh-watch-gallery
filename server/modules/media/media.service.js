@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const throwError = require("../../middlewares/throw-error");
 const Media = require("./media.model");
-const { buildMongoSort } = require("@/server/lib/filter");
+const { buildMongoSort, buildMongoFindQuery } = require("@/server/lib/filter");
 const { deleteFromB2, deleteFromMinio } = require("@/lib/minio");
 
 const mediaService = {
@@ -58,17 +58,24 @@ const mediaService = {
   },
 
   async getAll({
-    filter = {},
+    search = "",
+    filters = {},
     sort = [{ field: "createdAt", order: "desc" }],
     page = 1,
     page_size = 1000,
   }) {
+    const query = buildMongoFindQuery(filters, search, [
+      "title",
+      "description",
+      "mediaAlt",
+    ]);
+
     const skip = (page - 1) * page_size;
     const sortOption = buildMongoSort(sort);
 
     const [items, total] = await Promise.all([
-      Media.find(filter).sort(sortOption).skip(skip).limit(page_size),
-      Media.countDocuments(filter),
+      Media.find(query).sort(sortOption).skip(skip).limit(page_size),
+      Media.countDocuments(query),
     ]);
 
     return { items, total };

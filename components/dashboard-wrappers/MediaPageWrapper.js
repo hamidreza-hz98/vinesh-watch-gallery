@@ -25,12 +25,21 @@ import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { useDialogs } from "@/hooks/useDialogs/useDialogs";
 import { deleteMedia, getAllMedia } from "@/app/actions/media";
 
+import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
+import TextField from "@mui/material/TextField";
+import Spinner from "../common/spinner";
+
 const MediaPageWrapper = ({ isOnForm = false, multiple = false, onSelect }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const notifications = useNotifications();
   const dialogs = useDialogs();
+
+  const [searchOpen, setSearchOpen] = React.useState(false);
+  const [search, setSearch] = React.useState("");
+  const [debouncedSearch, setDebouncedSearch] = React.useState("");
 
   const [media, setMedia] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
@@ -40,26 +49,94 @@ const MediaPageWrapper = ({ isOnForm = false, multiple = false, onSelect }) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [selectedMedia, setSelectedMedia] = React.useState(null);
 
+  const [page, setPage] = React.useState(1);
+  const [hasMore, setHasMore] = React.useState(true);
+  const loadMoreRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!hasMore || loading) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasMore, loading]);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
   /* ---------------------------------- */
   /* FETCH MEDIA */
   /* ---------------------------------- */
-  const fetchMedia = React.useCallback(async () => {
-    try {
-      setLoading(true);
+  const PAGE_SIZE = 24;
 
-      const query = { page_size: 1000 };
-      const res = await getAllMedia(query);
+  const fetchMedia = React.useCallback(
+    async (pageNumber = 1) => {
+      try {
+        setLoading(true);
 
-      setMedia(res.data);
-    } catch (error) {
-      notifications.show(error.message || "خطا در دریافت مدیا", {
-        severity: "error",
-        autoHideDuration: 3000,
-      });
-    } finally {
-      setLoading(false);
+        const query = {
+          page: pageNumber,
+          page_size: PAGE_SIZE,
+        };
+
+        if (debouncedSearch && debouncedSearch.length > 2) {
+          query.search = debouncedSearch;
+        }
+
+        const res = await getAllMedia(query);
+        const items = res.data.items || [];
+
+        setMedia((prev) =>
+          pageNumber === 1
+            ? res.data
+            : {
+                ...res.data,
+                items: [...(prev?.items || []), ...items],
+              }
+        );
+
+        if (items.length < PAGE_SIZE) {
+          setHasMore(false);
+        }
+      } catch (error) {
+        notifications.show(error.message || "خطا در دریافت مدیا", {
+          severity: "error",
+          autoHideDuration: 3000,
+        });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [notifications, debouncedSearch]
+  );
+
+  React.useEffect(() => {
+    if (page > 1) {
+      fetchMedia(page);
     }
-  }, [notifications]);
+  }, [page, fetchMedia]);
+
+  React.useEffect(() => {
+    setPage(1);
+    setHasMore(true);
+    fetchMedia(1);
+  }, [debouncedSearch, fetchMedia]);
 
   React.useEffect(() => {
     fetchMedia();
@@ -148,6 +225,43 @@ const MediaPageWrapper = ({ isOnForm = false, multiple = false, onSelect }) => {
       ]}
       actions={
         <Stack direction="row" alignItems="center" gap={1}>
+          {/* SEARCH */}
+          {searchOpen ? (
+            <TextField
+              size="small"
+              autoFocus
+              placeholder="جستجو..."
+              value={search}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value);
+
+                if (value.length === 0) {
+                  fetchMedia();
+                }
+              }}
+              InputProps={{
+                endAdornment: (
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setSearch("");
+                      setSearchOpen(false);
+                    }}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                ),
+              }}
+            />
+          ) : (
+            <Tooltip title="جستجو" placement="top" enterDelay={1000}>
+              <IconButton size="small" onClick={() => setSearchOpen(true)}>
+                <SearchIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+
           <Tooltip title="بارگذاری مجدد" placement="top" enterDelay={1000}>
             <IconButton size="small" onClick={handleRefresh}>
               <RefreshIcon />
@@ -159,7 +273,7 @@ const MediaPageWrapper = ({ isOnForm = false, multiple = false, onSelect }) => {
             onClick={handleCreateClick}
             startIcon={<AddIcon />}
           >
-            آپلود مدیای جدید
+            آپلود جدید
           </Button>
 
           {isOnForm && (
@@ -175,13 +289,27 @@ const MediaPageWrapper = ({ isOnForm = false, multiple = false, onSelect }) => {
           )}
         </Stack>
       }
-    >
+    >      
       <MediaMasonry
         media={media?.items}
         multiple={multiple}
         onSelect={handleRowEdit}
         onDelete={handleDeleteMedia}
       />
+
+      {hasMore && (
+        <Box
+          ref={loadMoreRef}
+          sx={{
+            height: 40,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Spinner />
+        </Box>
+      )}
 
       <Drawer
         anchor="left"

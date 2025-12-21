@@ -28,15 +28,58 @@ const customerService = {
       throwError("مشتری با این مشخصات یافت نشد.", 404);
     }
 
-    const updated = await Customer.findByIdAndUpdate(_id, data, { new: true });
+    const {
+      oldPassword,
+      newPassword,
+      newPasswordConfirmation,
+      ...profileData
+    } = data;
+
+    const updated = await Customer.findByIdAndUpdate(_id, profileData, {
+      new: true,
+    });
+
     return updated;
+  },
+
+  async changePassword(customerId, oldPassword, newPassword) {
+    const customer = await Customer.findById(customerId).select("+password");
+
+    if (!customer) {
+      throwError("مشتری با این مشخصات یافت نشد.", 404);
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, customer.password);
+    if (!isMatch) {
+      throwError("رمز عبور فعلی اشتباه است.", 400);
+    }
+
+    if (oldPassword === newPassword) {
+      throwError("رمز عبور جدید نمی‌تواند مشابه رمز قبلی باشد.", 400);
+    }
+
+    customer.password = newPassword;
+    await customer.save(); // bcrypt handled by pre-save hook
+
+    return true;
   },
 
   /* -------------------- */
   /* GET ALL CUSTOMERS    */
   /* -------------------- */
-  async getAll({ search = "", sort = [{ field: "createdAt", order: "desc" }], page = 1, page_size = 10, filters = {} }) {
-    const query = buildMongoFindQuery(filters, search, ["firstName", "lastName", "phone", "email"]);
+  async getAll({
+    search = "",
+    sort = [{ field: "createdAt", order: "desc" }],
+    page = 1,
+    page_size = 10,
+    filters = {},
+  }) {
+    const query = buildMongoFindQuery(filters, search, [
+      "firstName",
+      "lastName",
+      "phone",
+      "email",
+    ]);
     const sortOption = buildMongoSort(sort);
     const skip = (page - 1) * page_size;
 

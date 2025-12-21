@@ -123,7 +123,7 @@ export default function DesktopHeader() {
                 searchParams={searchParams}
               />
 
-              {[routes.about, routes.contact, routes.faq].map((item, index) => (
+              {[routes.about, routes.contact].map((item, index) => (
                 <Link
                   key={index}
                   href={item.link}

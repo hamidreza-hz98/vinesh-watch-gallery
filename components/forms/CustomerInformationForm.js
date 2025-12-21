@@ -22,9 +22,11 @@ import { toPersian } from "@/lib/number";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { userInformationSchema } from "@/validation/landing.validations";
 import { updateCustomer } from "@/app/actions/customer";
+import nookies from "nookies";
 
 const CustomerInformationForm = ({ data }) => {
-  const notifications = useNotifications()
+  const notifications = useNotifications();
+  const { customer } = nookies.get();
 
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -42,25 +44,31 @@ const CustomerInformationForm = ({ data }) => {
   });
 
   useEffect(() => {
-    reset(userInformationDefaultValues(data));
+    reset({
+      firstName: data?.firstName || "",
+      lastName: data?.lastName || "",
+      phone: data?.phone || "",
+      email: data?.email || "",
+      birthdate: data?.birthdate || "",
+      // ❌ DO NOT RESET PASSWORD FIELDS
+    });
   }, [data, reset]);
 
   const handleFormSubmit = async (body) => {
     try {
-      const {message} = await updateCustomer(body)
-      
-           notifications.show(message, {
+      const { message } = await updateCustomer(customer, body);
+
+      notifications.show(message, {
         severity: "success",
         autoHideDuration: 3000,
       });
     } catch (error) {
-        notifications.show(error.message, {
+      notifications.show(error.message, {
         severity: "error",
         autoHideDuration: 3000,
       });
     }
-    
-  }
+  };
 
   return (
     <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
@@ -146,17 +154,24 @@ const CustomerInformationForm = ({ data }) => {
             name="birthdate"
             control={control}
             render={({ field }) => (
-              <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Typography ml={2} variant="caption"> تاریخ تولد: </Typography>
-              
-              <CustomDatePicker
-                value={field.value}
-                onChange={field.onChange}
-                error={!!errors.birthdate}
-                helperText={errors.birthdate?.message}
-                label="تاریخ تولد"
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography ml={2} variant="caption">
+                  {" "}
+                  تاریخ تولد:{" "}
+                </Typography>
+
+                <CustomDatePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={!!errors.birthdate}
+                  helperText={errors.birthdate?.message}
+                  label="تاریخ تولد"
                 />
-                </Box>
+              </Box>
             )}
           />
         </Grid>
@@ -295,11 +310,10 @@ const CustomerInformationForm = ({ data }) => {
           />
         </Grid>
 
-        <Grid display='flex' justifyContent="end" size={{ xs:12 }}>
-            
-            <Button variant="contained" type="submit">
-              ذخیره تغییرات
-            </Button>
+        <Grid display="flex" justifyContent="end" size={{ xs: 12 }}>
+          <Button variant="contained" type="submit">
+            ذخیره تغییرات
+          </Button>
         </Grid>
       </Grid>
     </Box>

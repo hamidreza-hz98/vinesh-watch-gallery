@@ -50,11 +50,9 @@ export default function MediaMasonry({
   };
 
   return (
-    <Box sx={{ width: "100%", minHeight: 829 }}>
+    <Box sx={{ width: "100%", maxWidth: "100%" }}>
       <Masonry
-        sx={{ width: "100%" }}
-        columns={{ xs: 2, sm: 3, md: 4 }}
-        spacing={4}
+        columns={{ xs: 2, sm: 3, md: 4, lg: 6, xl: 7 }}
       >
         {media?.map((item, index) => {
           const selectedState = isSelected(item);

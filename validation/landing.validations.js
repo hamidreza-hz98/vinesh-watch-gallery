@@ -21,68 +21,64 @@ export const signupFormValidationSchema = yup.object({
 });
 
 export const addressFormValidationSchema = yup.object().shape({
-    name: yup.string().required("نام آدرس الزامی است"),
-    recipientName: yup.string(),
-    recipientPhone: yup.string().matches(iranPhoneRegex, "شماره همراه معتبر نیست."),
-    address: yup.string().required("آدرس الزامی است"),
-    zipCode: yup.string().length(10, "کد پستی باید 10 رقم باشد.").required("کد پستی الزامی است"),
-    province: yup.string().required("استان الزامی است"),
-    city: yup.string().required("شهر الزامی است"),
-  });
-
-  export const userInformationSchema = yup.object().shape({
-  firstName: yup
+  name: yup.string().required("نام آدرس الزامی است"),
+  recipientName: yup.string(),
+  recipientPhone: yup
     .string()
-    .trim()
-    .required("نام ضروری است"),
-
-  lastName: yup
+    .matches(iranPhoneRegex, "شماره همراه معتبر نیست."),
+  address: yup.string().required("آدرس الزامی است"),
+  zipCode: yup
     .string()
-    .trim()
-    .required("نام‌خانوادگی ضروری است"),
+    .length(10, "کد پستی باید 10 رقم باشد.")
+    .required("کد پستی الزامی است"),
+  province: yup.string().required("استان الزامی است"),
+  city: yup.string().required("شهر الزامی است"),
+});
+
+export const userInformationSchema = yup.object().shape({
+  firstName: yup.string().trim().required("نام ضروری است"),
+
+  lastName: yup.string().trim().required("نام‌خانوادگی ضروری است"),
 
   phone: yup
     .string()
     .matches(iranPhoneRegex, "شماره موبایل معتبر نیست (مثال: 09123456789)")
     .required("شماره موبایل ضروری است"),
 
-  email: yup
+  email: yup.string().email("ایمیل معتبر نیست").nullable(),
+
+  birthdate: yup.string().nullable(),
+
+  oldPassword: yup.string().nullable(),
+
+  newPassword: yup
     .string()
-    .email("ایمیل معتبر نیست")
-    .required("ایمیل ضروری است"),
+    .nullable()
+    .when("oldPassword", {
+      is: (val) => !!val,
+      then: (schema) => schema.min(8, "رمز عبور باید حداقل ۸ کاراکتر باشد"),
+    }),
 
-  birthdate: yup
+  newPasswordConfirmation: yup
     .string()
-    .nullable(),
-
- oldPassword: yup
-  .string()
-  .nullable()
-  .transform((value) => (value === "" ? null : value)),
-
-newPassword: yup
-  .string()
-  .nullable()
-  .transform((value) => (value === "" ? null : value)),
-
-newPasswordConfirmation: yup
-  .string()
-  .nullable()
-  .transform((value) => (value === "" ? null : value))
-  .oneOf([yup.ref("newPassword"), null], "تکرار رمز جدید مطابق نیست")
+    .nullable()
+    .oneOf([yup.ref("newPassword"), null], "تکرار رمز جدید مطابق نیست"),
 });
 
 export const contactSchema = yup.object().shape({
-  fullName: yup.string()
+  fullName: yup
+    .string()
     .required("وارد کردن نام و نام خانوادگی الزامی است")
     .min(3, "حداقل ۳ کاراکتر وارد کنید")
     .max(50, "حداکثر ۵۰ کاراکتر وارد کنید"),
 
-  mobile: yup.string()
+  mobile: yup
+    .string()
     .required("شماره تماس الزامی است")
     .matches(/^09[0-9]{9}$/, "شماره تلفن معتبر وارد کنید"),
 
-  message: yup.string()
+  message: yup
+    .string()
     .required("نوشتن پیام الزامی است")
     .min(10, "حداقل ۱۰ کاراکتر وارد کنید")
     .max(2000, "حداکثر ۲۰۰۰ کاراکتر وارد کنید"),

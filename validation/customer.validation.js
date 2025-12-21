@@ -11,20 +11,17 @@ export const createCustomerSchema = yup.object().shape({
   birthdate: yup.date().nullable(),
 });
 
-export const updateCustomerSchema = yup
-  .object().shape({
-    firstName: yup.string().nullable(),
-    lastName: yup.string().nullable(),
-    phone: yup.string().matches(iranPhoneRegex).nullable(),
-    email: yup.string().email().nullable(),
-    password: yup.string().nullable(),
-    birthdate: yup.date().nullable(),
-  })
-  .test(
-    "at-least-one",
-    "You must provide at least one field to update",
-    (value) => value && Object.keys(value).length > 0
-  );
+export const updateCustomerSchema = yup.object().shape({
+  firstName: yup.string().nullable(),
+  lastName: yup.string().nullable(),
+  phone: yup.string().matches(iranPhoneRegex).nullable(),
+  email: yup.string().email().nullable(),
+  password: yup.string().nullable(),
+  birthdate: yup
+    .date()
+    .nullable()
+    .transform((value, originalValue) => (originalValue === "" ? null : value)),
+});
 
 export const loginCustomerSchema = yup.object().shape({
   phone: yup.string().matches(iranPhoneRegex).required(),

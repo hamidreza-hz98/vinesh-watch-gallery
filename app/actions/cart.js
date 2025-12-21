@@ -37,7 +37,7 @@ export async function getCustomerCart(customerId) {
 
     const cart = await cartService.getCustomerCart(customerId);
 
-    return { data: serialize( "getCustomerCart", cart) };
+    return { data: serialize( cart) };
   } catch (error) {
     return { message: error.message, status: error.statusCode || 500 };
   }

@@ -3,11 +3,8 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
 import Breadcrumbs, { breadcrumbsClasses } from "@mui/material/Breadcrumbs";
-import Container from "@mui/material/Container";
 import MuiLink from "@mui/material/Link";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Link from "next/link";
@@ -69,11 +66,11 @@ function PageContainer(props) {
         </PageHeaderBreadcrumbs>
       </Grid>
 
-      <Grid size={{ xs: 12, md: 6 }}>
+      <Grid size={{ xs: 12, md: 4 }}>
         {title ? <Typography variant="h4">{title}</Typography> : null}
       </Grid>
 
-      <Grid size={{ xs: 12, md: 6 }}>
+      <Grid size={{ xs: 12, md: 8 }}>
         <PageHeaderToolbar>{actions}</PageHeaderToolbar>
       </Grid>
 

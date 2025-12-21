@@ -22,7 +22,7 @@ export async function createCustomer(body) {
   try {
     await connectDB();
 
-    const auth = await authenticate({adminOnly: true});
+    const auth = await authenticate({ adminOnly: true });
     requireAdmin(auth);
 
     const data = await validate(createCustomerSchema, body);
@@ -81,7 +81,7 @@ export async function getAllCustomers(query = {}) {
   try {
     await connectDB();
 
-    const auth = await authenticate({adminOnly: true});
+    const auth = await authenticate({ adminOnly: true });
     requireAdmin(auth);
 
     const { customers, total } = await customerService.getAll(query);
@@ -119,15 +119,32 @@ export async function updateCustomer(customerId, body) {
 
     const auth = await authenticate();
     allowCustomerOrAdmin(auth, customerId);
-
+    
     const data = await validate(updateCustomerSchema, body);
+
+    // 🔐 password change (optional)
+    if (data.oldPassword?.length && data.newPassword?.length) {
+      try {
+        await customerService.changePassword(
+          customerId,
+          data.oldPassword,
+          data.newPassword
+        );
+      } catch (error) {
+        throw error;
+      }
+    }
+
     const customer = await customerService.update(data, customerId);
 
     return {
       message: `کاربر ${customer.firstName} ${customer.lastName} با موفقیت ویرایش شد.`,
     };
   } catch (error) {
-    return { message: error.message, status: error.statusCode || 500 };
+    return {
+      message: error.message,
+      status: error.statusCode || 500,
+    };
   }
 }
 
@@ -138,7 +155,7 @@ export async function deleteCustomer(customerId) {
   try {
     await connectDB();
 
-    const auth = await authenticate({adminOnly: true});
+    const auth = await authenticate({ adminOnly: true });
     requireAdmin(auth);
 
     const customer = await customerService.delete(customerId);
