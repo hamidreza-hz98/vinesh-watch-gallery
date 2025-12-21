@@ -1,16 +1,14 @@
 "use client";
 
 import React from "react";
-import { Box, Typography, Avatar, Chip, Stack, useTheme } from "@mui/material";
+import { Box, Typography, Stack } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { calculateFinalPrice, formatPrice, toPersian } from "@/lib/number";
 import { orderStatuses } from "@/constants/general";
 import { formatDate } from "@/lib/date";
 import Link from "next/link";
 import routes from "@/constants/landing.routes";
 import Image from "next/image";
-import { setFilePath } from "@/lib/media";
 
 const OrderCard = ({ order }) => {
   return (

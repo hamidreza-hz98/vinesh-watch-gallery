@@ -1,5 +1,4 @@
 import HomeIcon from "@mui/icons-material/Home";
-import CategoryIcon from "@mui/icons-material/Category";
 import PersonIcon from "@mui/icons-material/PersonOutline";
 import WatchIcon from "@mui/icons-material/Watch";
 import ImportContactsIcon from "@mui/icons-material/ImportContacts";
@@ -7,7 +6,6 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PaymentIcon from "@mui/icons-material/Payment";
 import LocationPinIcon from "@mui/icons-material/LocationPin";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import SearchIcon from "@mui/icons-material/Search";
 import InfoIcon from "@mui/icons-material/Info";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import QuizIcon from "@mui/icons-material/Quiz";

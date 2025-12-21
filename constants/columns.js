@@ -1,5 +1,4 @@
 import { formatDate, formatDateAndTime } from "@/lib/date";
-import { setFilePath } from "@/lib/media";
 import { calculateFinalPrice, formatPrice, toPersian } from "@/lib/number";
 import { Box, Chip } from "@mui/material";
 import Image from "next/image";

@@ -1,4 +1,3 @@
-import { setFilePath } from "@/lib/media";
 
 export const productsSliderOptions = {
   breakpoints: {

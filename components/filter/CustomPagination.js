@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-import { Pagination, Select, MenuItem, FormControl, InputLabel, PaginationItem } from "@mui/material";
+import { Pagination, PaginationItem } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toPersian } from "@/lib/number";
 

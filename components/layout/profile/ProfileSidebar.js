@@ -3,7 +3,7 @@
 import { Box, Typography, Stack, Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Link from "next/link";
-import { usePathname, customer, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import nookies from "nookies";
 import { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";

@@ -1,6 +1,5 @@
 "use client";
 
-import { userInformationDefaultValues } from "@/constants/forms";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Box,
@@ -23,6 +22,7 @@ import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { userInformationSchema } from "@/validation/landing.validations";
 import { updateCustomer } from "@/app/actions/customer";
 import nookies from "nookies";
+import { userInformationDefaultValues } from "@/constants/default-form-values";
 
 const CustomerInformationForm = ({ data }) => {
   const notifications = useNotifications();

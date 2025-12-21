@@ -4,7 +4,6 @@ import connectDB from "@/server/db";
 import { authenticate, requireAdmin } from "@/server/middlewares/auth";
 import validate from "@/server/middlewares/validate";
 import adminService from "@/server/modules/admin/admin.service";
-import { setCookie } from "nookies";
 import { cookies } from "next/headers";
 
 export async function loginAdmin(body) {

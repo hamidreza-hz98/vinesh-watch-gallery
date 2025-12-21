@@ -1,6 +1,5 @@
 "use client";
 
-import { setFilePath } from "@/lib/media";
 import { Typography } from "@mui/material";
 import { Box, useTheme } from "@mui/system";
 import Image from "next/image";

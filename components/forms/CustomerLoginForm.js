@@ -14,7 +14,6 @@ import {
 import { toEnglish, toPersian } from "@/lib/number";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import useNotifications from "@/hooks/useNotifications/useNotifications";
-import { useRouter } from "next/navigation";
 import { setCookie } from "nookies";
 import { loginFormValidationSchema } from "@/validation/landing.validations";
 import { loginCustomer } from "@/app/actions/customer";

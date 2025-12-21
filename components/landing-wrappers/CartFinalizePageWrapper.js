@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import nookies from "nookies";
 import { Box, Stack, Typography } from "@mui/material";
 import InCartProductCard from "../cards/InCartProductCard";
 import AddressCard from "../cards/AddressCard";
@@ -9,7 +8,6 @@ import { useLandingData } from "@/providers/LandingDataProvider";
 
 const CartFinalizePageWrapper = () => {
   const { cart } = useLandingData()
-  const { customer } = nookies.get();
 
   return (
     <Stack spacing={2}>

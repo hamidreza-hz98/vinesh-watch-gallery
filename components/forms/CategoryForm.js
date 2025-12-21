@@ -37,7 +37,6 @@ const CategoryForm = ({ data, mode = "create", onSubmit }) => {
     control,
     handleSubmit,
     reset,
-    getValues,
     setValue,
     formState: { isSubmitting },
   } = useForm({

@@ -24,31 +24,3 @@ export const revenueData = [
   { month: "بهمن", value: 270 },
   { month: "اسفند", value: 350 },
 ]
-
-export const topVisitedProducts = [
-  { name: "Amiran X1", visits: 540 },
-  { name: "Amiran Classic", visits: 430 },
-  { name: "Amiran Gold", visits: 290 },
-]
-
-export const topSoldProducts = [
-  { name: "Amiran Gold", sales: 120 },
-  { name: "Amiran Pro", sales: 95 },
-  { name: "Amiran X1", sales: 70 },
-]
-
-export const orders = {
-  processing: [
-    { id: 1, user: "علی رضایی", price: 5600000, date: "1403/02/12" },
-    { id: 2, user: "سارا محمدی", price: 3200000, date: "1403/02/13" },
-    { id: 3, user: "امیر احمدی", price: 7900000, date: "1403/02/10" },
-    { id: 4, user: "رضا کریمی", price: 4200000, date: "1403/02/08" },
-    { id: 5, user: "حسن نادری", price: 3100000, date: "1403/02/05" },
-  ],
-  shipping: [
-    { id: 4, user: "رضا کریمی", price: 4200000, date: "1403/02/08" },
-  ],
-  failed: [
-    { id: 5, user: "حسن نادری", price: 3100000, date: "1403/02/05" },
-  ]
-}

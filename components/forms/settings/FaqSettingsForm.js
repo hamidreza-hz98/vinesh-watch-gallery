@@ -5,16 +5,13 @@ import {
   Button,
   Divider,
   Grid,
-  IconButton,
   TextField,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import React from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { faqSettingsDefaultValues } from "@/constants/default-form-values";
 import { toPersian } from "@/lib/number";
 
 const FaqSettingsForm = ({ data, onSubmit }) => {

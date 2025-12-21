@@ -4,16 +4,12 @@ import {
   Card,
   Typography,
   List,
-  ListItem,
-  ListItemText,
   Divider,
   useTheme,
   Box,
-  ListItemAvatar,
   Chip,
 } from "@mui/material";
 import Loader from "../common/Loader";
-import { setFilePath } from "@/lib/media";
 import Image from "next/image";
 import { formatPrice, toPersian } from "@/lib/number";
 import VisibilityIcon from "@mui/icons-material/Visibility";

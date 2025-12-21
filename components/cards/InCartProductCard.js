@@ -80,7 +80,7 @@ const InCartProductCard = ({ product, quantity, isFinalize = false }) => {
       elevation={1}
       sx={{
         display: "flex",
-        flexDirection: { xs: "column", sm: "row" }, // mobile: column, desktop: row
+        flexDirection: { xs: "column", sm: "row" },
         p: 1,
         borderRadius: 2,
         alignItems: { xs: "flex-start", sm: "center" },

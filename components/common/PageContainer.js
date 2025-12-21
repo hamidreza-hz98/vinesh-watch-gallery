@@ -27,7 +27,6 @@ const PageHeaderToolbar = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent:"end",
   gap: theme.spacing(1),
-  // Ensure the toolbar is always on the right side, even after wrapping
   marginLeft: "auto",
 }));
 

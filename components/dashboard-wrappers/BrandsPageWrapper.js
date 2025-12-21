@@ -4,8 +4,6 @@ import React from "react";
 import Overview from "../common/overview/Overview";
 import { brandColumns } from "@/constants/columns";
 import { transformGridQuery } from "@/lib/request";
-import QueryString from "qs";
-import { fetchWithAuth } from "@/lib/fetch";
 import { deleteBrand, getAllBrands } from "@/app/actions/brand";
 
 const BrandsPageWrapper = () => {

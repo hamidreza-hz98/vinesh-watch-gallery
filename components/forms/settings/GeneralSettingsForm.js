@@ -1,6 +1,5 @@
 "use client";
 
-import Loader from "@/components/common/Loader";
 import MediaPageWrapper from "@/components/dashboard-wrappers/MediaPageWrapper";
 import { defaultGeneralSettingsValues } from "@/constants/default-form-values";
 import {
@@ -31,7 +30,6 @@ const GeneralSettingsForm = ({ data, onSubmit }) => {
     control,
     handleSubmit,
     reset,
-    getValues,
     setValue,
     formState: { isSubmitting },
   } = useForm({

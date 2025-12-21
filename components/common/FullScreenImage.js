@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Slider from "./Slider";
 
@@ -9,8 +9,6 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 
 const FullscreenImage = ({ slides, initialSlide, onClose }) => {
-  const [thumbsSwiper, setThumbsSwiper] = useState(null);
-
   return (
     <Box
       sx={{

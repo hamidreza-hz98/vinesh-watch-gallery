@@ -6,7 +6,6 @@ import {
   Box,
   Typography,
   Checkbox,
-  FormGroup,
   FormControlLabel,
   Slider,
   Button,

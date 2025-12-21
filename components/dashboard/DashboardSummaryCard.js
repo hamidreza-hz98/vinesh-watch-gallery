@@ -1,12 +1,10 @@
 "use client";
 
 import {
-  Grid,
   Card,
   Typography,
   CardContent,
   Box,
-  useTheme,
   Stack,
   Divider,
 } from "@mui/material";

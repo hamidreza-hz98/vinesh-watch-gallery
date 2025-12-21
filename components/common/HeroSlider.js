@@ -5,7 +5,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import { Box } from "@mui/material";
-import { setFilePath } from "@/lib/media";
 import Image from "next/image";
 
 export default function HeroSlider({ slides = [], height = "83vh" }) {

@@ -1,16 +1,13 @@
 "use client";
 
 import React from "react";
-import PageContainer from "../common/PageContainer";
 import routes from "@/constants/landing.routes";
 import {
-  Box,
   Typography,
   useTheme,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Divider,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Loader from "../common/Loader";

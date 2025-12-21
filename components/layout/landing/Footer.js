@@ -2,17 +2,12 @@
 import { Box, Container, Grid, Typography, Link, Stack } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CallIcon from "@mui/icons-material/Call";
-import EmailIcon from "@mui/icons-material/Email";
-import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import SendIcon from "@mui/icons-material/Send";
-import GroupIcon from "@mui/icons-material/Group";
 import React, { useEffect } from "react";
-import { paramifyLink, setRequestQuery } from "@/lib/request";
+import { paramifyLink } from "@/lib/request";
 import nookies from "nookies";
 import Image from "next/image";
 import routes from "@/constants/landing.routes";
 import Loader from "../../common/Loader";
-import { setFilePath } from "@/lib/media";
 import { useSearchParams } from "next/navigation";
 import { toPersian } from "@/lib/number";
 import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";

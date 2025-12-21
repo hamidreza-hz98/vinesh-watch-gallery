@@ -3,7 +3,6 @@
 import useNotifications from "@/hooks/useNotifications/useNotifications";
 import { purifyData } from "@/lib/request";
 import { useRouter, useSearchParams } from "next/navigation";
-import QueryString from "qs";
 import React from "react";
 import Loader from "../common/Loader";
 import PageContainer from "../common/PageContainer";

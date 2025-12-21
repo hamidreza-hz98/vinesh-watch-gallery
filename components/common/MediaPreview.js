@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Box, Typography } from "@mui/material";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import AudiotrackOutlinedIcon from "@mui/icons-material/AudiotrackOutlined";
-import { setFilePath } from "@/lib/media";
 
 const MediaPreview = ({ file, size = 96 }) => {
   if (!file) return null;
